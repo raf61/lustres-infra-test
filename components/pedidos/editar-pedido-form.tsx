@@ -621,7 +621,7 @@ export function EditarPedidoForm({
               <div className="flex flex-wrap gap-1 items-center min-h-[32px] border rounded-md p-1 px-2 border-border bg-card shadow-sm overflow-hidden">
                 {medicoesMulti.filter(m => m.valor.trim() !== "").length > 0 ? (
                   medicoesMulti.filter(m => m.valor.trim() !== "").map((med, idx) => (
-                    <span key={idx} className="text-[11px] font-mono text-foreground bg-secondary border border-slate-100 px-1 rounded whitespace-nowrap">
+                    <span key={idx} className="text-[11px] font-mono text-foreground bg-secondary border border-border/40 px-1 rounded whitespace-nowrap">
                       {med.valor}
                     </span>
                   ))
@@ -639,7 +639,7 @@ export function EditarPedidoForm({
                   <div className="space-y-3 py-3">
                     <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
                       {medicoesMulti.map((med, idx) => (
-                        <div key={idx} className="flex gap-2 items-center bg-secondary p-2 rounded-md border border-slate-100">
+                        <div key={idx} className="flex gap-2 items-center bg-secondary p-2 rounded-md border border-border">
                           <div className="flex-1">
                             <Label className="text-[10px] uppercase text-muted-foreground font-semibold">Torre/Local</Label>
                             <Input
@@ -827,7 +827,7 @@ export function EditarPedidoForm({
                                   e.preventDefault()
                                   addItemFromSuggestion(suggestion)
                                 }}
-                                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted"
+                                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-secondary/40"
                                 disabled={blockEdit}
                               >
                                 <div>

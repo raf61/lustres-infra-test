@@ -884,7 +884,7 @@ export function PedidoDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="w-full max-w-full md:w-auto md:min-w-[900px] lg:min-w-[1024px] h-[100dvh] md:h-auto md:max-h-[calc(100vh-24px)] flex flex-col overflow-hidden border-0 md:border border-slate-200 bg-gradient-to-b from-slate-50 to-white shadow-xl rounded-none md:rounded-xl p-3 md:p-6">
+      <DialogContent className="w-full max-w-full md:w-auto md:min-w-[900px] lg:min-w-[1024px] h-[100dvh] md:h-auto md:max-h-[calc(100vh-24px)] flex flex-col overflow-hidden border-0 md:border border-border bg-card shadow-2xl rounded-none md:rounded-xl p-3 md:p-6">
         <DialogHeader>
           <DialogTitle className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -1011,12 +1011,12 @@ export function PedidoDetailsDialog({
             </div>
           </DialogTitle>
           <DialogDescription asChild>
-            <div className="mt-2 grid gap-2 md:grid-cols-2 text-[13px] text-slate-700">
-              <div className="rounded-md border border-slate-200 bg-white/80 p-2">
+            <div className="mt-2 grid gap-2 md:grid-cols-2 text-[13px] text-foreground">
+              <div className="rounded-md border border-border bg-secondary/20 p-2">
                 <span className="text-[11px] uppercase text-muted-foreground font-semibold">Criado em</span>
                 <p className="font-medium">{formatDate(localPedidoData?.createdAt ?? undefined)}</p>
               </div>
-              <div className="rounded-md border border-slate-200 bg-white/80 p-2 flex flex-row gap-4 items-start overflow-x-auto">
+              <div className="rounded-md border border-border bg-secondary/20 p-2 flex flex-row gap-4 items-start overflow-x-auto">
                 <div className="flex-1">
                   <span className="text-[11px] uppercase text-muted-foreground font-semibold block">Empresa</span>
                   {editingEmpresa ? (
@@ -1027,7 +1027,9 @@ export function PedidoDetailsDialog({
                         </SelectTrigger>
                         <SelectContent>
                           {empresas.map((e) => (
-                            <SelectItem key={e.id} value={String(e.id)}>{e.nome}</SelectItem>
+                            <SelectItem key={e.id} value={String(e.id)}>
+                              {e.id === 1 ? "Unidade 1" : e.id === 2 ? "Unidade 2" : e.nome}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -1040,7 +1042,9 @@ export function PedidoDetailsDialog({
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5">
-                      <p className="font-medium text-blue-700">{localPedidoData?.empresa ?? "—"}</p>
+                      <p className="font-medium text-sky-400">
+                        {localPedidoData?.empresaId === 1 ? "Unidade 1" : localPedidoData?.empresaId === 2 ? "Unidade 2" : (localPedidoData?.empresa ?? "—")}
+                      </p>
                       <Can roles={["MASTER", "ADMINISTRADOR", "FINANCEIRO"]}>
                         <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => { setEditingEmpresa(true); setEditingFilial(false); handleOpenEditEmpresa(); }} title="Alterar empresa">
                           <Pencil className="h-3 w-3 text-slate-400" />
@@ -1089,34 +1093,34 @@ export function PedidoDetailsDialog({
         </DialogHeader>
 
         <Tabs defaultValue="pedido" className="mt-2 flex-1 flex flex-col min-h-0 space-y-2">
-          <TabsList className="inline-flex w-full overflow-x-auto flex-nowrap justify-start gap-1 rounded-md border border-slate-200 bg-white p-0.5 flex-shrink-0">
+          <TabsList className="inline-flex w-full overflow-x-auto flex-nowrap justify-start gap-1 rounded-md border border-border bg-secondary/30 p-0.5 flex-shrink-0">
             <TabsTrigger
               value="pedido"
-              className="rounded-md px-3 py-1 text-[12px] font-medium text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
+              className="rounded-md px-3 py-1 text-[12px] font-medium text-muted-foreground data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
             >
               Dados
             </TabsTrigger>
             <TabsTrigger
               value="documentos"
-              className="rounded-md px-3 py-1 text-[12px] font-medium text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
+              className="rounded-md px-3 py-1 text-[12px] font-medium text-muted-foreground data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
             >
               Documentos
             </TabsTrigger>
             <TabsTrigger
               value="visitas"
-              className="rounded-md px-3 py-1 text-[12px] font-medium text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
+              className="rounded-md px-3 py-1 text-[12px] font-medium text-muted-foreground data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
             >
               Visitas
             </TabsTrigger>
             <TabsTrigger
               value="financeiro"
-              className="rounded-md px-3 py-1 text-[12px] font-medium text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
+              className="rounded-md px-3 py-1 text-[12px] font-medium text-muted-foreground data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
             >
               Financeiro
             </TabsTrigger>
             <TabsTrigger
               value="nfe"
-              className="rounded-md px-3 py-1 text-[12px] font-medium text-slate-600 data-[state=active]:bg-blue-600 data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
+              className="rounded-md px-3 py-1 text-[12px] font-medium text-muted-foreground data-[state=active]:bg-primary data-[state=active]:text-white whitespace-nowrap flex-shrink-0"
             >
               NFS-e
             </TabsTrigger>
@@ -1251,9 +1255,9 @@ export function PedidoDetailsDialog({
                 <p>Nenhum documento operacional para este pedido.</p>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+              <div className="overflow-hidden rounded-xl border border-border bg-secondary/10 shadow-sm">
                 <Table>
-                  <TableHeader className="bg-slate-50">
+                  <TableHeader className="bg-secondary/30">
                     <TableRow>
                       <TableHead className="w-[40%]">Documento</TableHead>
                       <TableHead className="w-[20%]">Status</TableHead>
@@ -1348,9 +1352,9 @@ export function PedidoDetailsDialog({
                 <p>Nenhuma visita associada a este pedido.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-border bg-white shadow-sm">
+              <div className="overflow-x-auto rounded-xl border border-border bg-secondary/10 shadow-sm">
                 <Table className="border-separate border-spacing-0 text-foreground min-w-[700px] text-[11px] sm:text-[13px]">
-                  <TableHeader className="bg-slate-50 text-foreground">
+                  <TableHeader className="bg-secondary/30 text-foreground">
                     <TableRow>
                       <TableHead className="w-[15%] border-b border-border">Visita</TableHead>
                       <TableHead className="w-[13%] border-b border-border">Status</TableHead>

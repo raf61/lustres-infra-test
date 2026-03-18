@@ -310,7 +310,7 @@ export function CriarOrcamentoDialog({ clienteId, clienteNome, open, onClose, on
 
   return (
     <Dialog open={open} onOpenChange={(value) => (!value ? onClose() : undefined)}>
-      <DialogContent className="w-[min(100vw-2rem,960px)] max-h-[90vh] overflow-hidden sm:max-w-3xl">
+      <DialogContent className="w-[min(100vw-2rem,960px)] max-h-[90vh] overflow-hidden sm:max-w-3xl border-border bg-card shadow-2xl">
         <DialogHeader>
           <DialogTitle>Criar orçamento</DialogTitle>
           <DialogDescription>
@@ -334,14 +334,14 @@ export function CriarOrcamentoDialog({ clienteId, clienteNome, open, onClose, on
                   <SelectContent>
                     {empresas.map((empresa) => (
                       <SelectItem key={empresa.id} value={String(empresa.id)}>
-                        {empresa.nome}
+                        {empresa.id === 1 ? "Unidade 1" : empresa.id === 2 ? "Unidade 2" : empresa.nome}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <Label className="text-sm font-semibold text-foreground">Adicionar produtos/serviços</Label>
-              <div className="flex flex-col gap-2 rounded-xl border border-border/80 bg-muted/30 p-4">
+              <div className="flex flex-col gap-2 rounded-xl border border-border bg-secondary/20 p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
                   <div className="flex-1 relative">
                     <Input
@@ -380,7 +380,7 @@ export function CriarOrcamentoDialog({ clienteId, clienteNome, open, onClose, on
                           : "Digite ao menos duas letras para buscar."}
                       </div>
                     ) : (
-                      <div className="divide-y divide-border/60">
+                      <div className="divide-y divide-border/60 bg-secondary/10">
                         {suggestions.map((suggestion) => (
                           <button
                             key={suggestion.id}
@@ -389,7 +389,7 @@ export function CriarOrcamentoDialog({ clienteId, clienteNome, open, onClose, on
                               e.preventDefault()
                               addItemFromSuggestion(suggestion)
                             }}
-                            className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted"
+                            className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-secondary/30"
                           >
                             <div>
                               <p className="text-sm font-semibold text-foreground">{suggestion.nome}</p>
@@ -412,7 +412,7 @@ export function CriarOrcamentoDialog({ clienteId, clienteNome, open, onClose, on
               </div>
             </div>
 
-            <div className="rounded-xl border border-border/80 bg-card overflow-hidden">
+            <div className="rounded-xl border border-border bg-secondary/10 overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <Table className="min-w-[720px]">
                   <TableHeader>

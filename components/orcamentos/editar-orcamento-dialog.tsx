@@ -552,7 +552,7 @@ export function EditarOrcamentoDialog({
 
   return (
     <Dialog open={open} onOpenChange={(value) => (!value ? onClose() : undefined)}>
-      <DialogContent className="w-[min(100vw-2rem,860px)] max-h-[85vh] overflow-hidden sm:max-w-3xl">
+      <DialogContent className="w-[min(100vw-2rem,860px)] max-h-[85vh] overflow-hidden sm:max-w-3xl border-border bg-card shadow-2xl">
         <DialogHeader className="flex flex-row items-start pt-5 justify-between gap-4">
           <div>
             <DialogTitle className="text-[14px] flex items-center gap-2">
@@ -563,8 +563,8 @@ export function EditarOrcamentoDialog({
                 </span>
               )}
             </DialogTitle>
-            <DialogDescription className="text-[12px]">
-              {clienteNome ?? "Cliente"}{filialUf && ` • Filial: ${filialUf}`}
+            <DialogDescription className="text-[12px] text-muted-foreground">
+              {clienteNome ?? "Cliente"}{filialUf && ` • Filial: ${filialUf}`} • {empresaId === 1 ? "Unidade 1" : empresaId === 2 ? "Unidade 2" : "Empresa Selecionada"}
             </DialogDescription>
           </div>
           {!statusBloqueado && !loadingOrcamento && (
@@ -639,7 +639,7 @@ export function EditarOrcamentoDialog({
                       <SelectContent>
                         {empresas.map((empresa) => (
                           <SelectItem key={empresa.id} value={String(empresa.id)}>
-                            {empresa.nome}
+                            {empresa.id === 1 ? "Unidade 1" : empresa.id === 2 ? "Unidade 2" : empresa.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -711,7 +711,7 @@ export function EditarOrcamentoDialog({
                                   : "Digite ao menos duas letras para buscar."}
                               </div>
                             ) : (
-                              <div className="divide-y divide-border/60">
+                              <div className="divide-y divide-border/60 bg-secondary/20">
                                 {suggestions.map((suggestion) => (
                                   <button
                                     key={suggestion.id}
@@ -720,7 +720,7 @@ export function EditarOrcamentoDialog({
                                       e.preventDefault()
                                       addItemFromSuggestion(suggestion)
                                     }}
-                                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-muted"
+                                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-secondary/40"
                                     disabled={statusBloqueado}
                                   >
                                     <div>
