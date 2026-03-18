@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "VisitaTecnicaStatus" ADD VALUE 'ANALISE_NAO_AUTORIZADO';

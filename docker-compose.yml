@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  webhook:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.webhook
+    env_file:
+      - .env
+    environment:
+      # Evita estourar max_connections no Postgres
+      PRISMA_CONNECTION_LIMIT: "5"
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  nfe_webhook:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nfe-webhook
+    env_file:
+      - .env
+    environment:
+      PRISMA_CONNECTION_LIMIT: "1"
+    ports:
+      - "4002:4002"
+    restart: unless-stopped
+
+  realtime:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.realtime
+    env_file:
+      - .env
+    environment:
+      PRISMA_CONNECTION_LIMIT: "1"
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  workers:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.workers
+    env_file:
+      - .env
+    environment:
+      PRISMA_CONNECTION_LIMIT: "5"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=false"
+

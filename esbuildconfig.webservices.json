@@ -1,0 +1,26 @@
+{
+    "entryPoints": {
+        "all.worker": "chat/worker/all.worker.ts",
+        "webhook": "chat/webhook/server.ts",
+        "realtime": "chat/realtime/server.ts",
+        "nfe-webhook": "nfe/webhook/nfe-server.ts"
+    },
+    "bundle": true,
+    "platform": "node",
+    "target": "node20",
+    "outdir": "dist",
+    "format": "cjs",
+    "external": [
+        "prisma",
+        "@prisma/client",
+        "bullmq",
+        "express",
+        "socket.io",
+        "bcryptjs",
+        "pg",
+        "sharp",
+        "pdfkit",
+        "gerar-boletos"
+    ],
+    "logLevel": "info"
+}

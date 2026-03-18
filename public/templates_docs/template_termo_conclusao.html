@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Template A4</title>
+  <style>
+    /* Reset básico */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #ccc; /* só para visualização em tela */
+      padding: 20px;
+    }
+
+    /* Página A4 */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: #fff;
+      margin: auto;
+      padding: 20mm;
+      padding-top: 60px;
+      box-shadow: 0 0 10px rgba(0,0,0,.3);
+    }
+
+    /* Impressão */
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .page {
+        box-shadow: none;
+        margin: 0;
+        width: auto;
+        min-height: auto;
+      }
+    }
+
+    /* Tipografia */
+    h1 {
+      margin-bottom: 10mm;
+    }
+
+    h2 {
+      margin-bottom: 5mm;
+    }
+
+    p, span, div {
+      
+      line-height: 1.4;
+    }
+
+    /* Layout utilitário */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5mm;
+    }
+
+    .col {
+      flex: 1;
+    }
+
+    .col.small { flex: 0.4; }
+    .col.large { flex: 1.6; }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .value {
+      margin-top: 2mm;
+    }
+
+    /* Assinaturas */
+    .signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20mm;
+    }
+
+    .signature {
+      width: 45%;
+      text-align: center;
+    }
+
+    .signature img {
+      max-height: 60px;
+    }
+
+    .signature-name {
+      margin-top: 5mm;
+      
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- Cabeçalho -->
+    <div class="row">
+      <div class="col">
+        <img src="{{logo}}" alt="Logo" style="max-height:150px">
+      </div>
+      
+    </div>
+
+    <div class="w-full font-size: 15pt;" style="text-align:center">
+        <strong>TERMO DE CONCLUSÃO DE SERVIÇOS DO {{condominio}}</strong>
+        <br/>
+        <br/>
+        <br/>
+        
+    </div>
+
+    <!-- Dados principais -->
+    <div class="row">
+      <div class="col large">
+        <p>DE ACORDO COM O PEDIDO {{pedido}} CONCLUÍMOS O SERVIÇO DE {{tipoServico}}.</p>
+        </div>
+    </div>
+
+    <!-- Horários -->
+    <div class="" style="margin-top: 40px;">
+      <div class="row">
+        <span class="">Horário de entrada do funcionário: <strong>{{hora_entrada}}</strong></span> 
+      </div>
+      <div class="row">
+        <span class="">Horário de saída do funcionário: {{hora_saida}}</span> 
+      </div>
+    </div>
+
+    <!-- Assinaturas -->
+    <div class="signatures">
+      <div class="signature">
+        <img src="{{assinatura_funcionario}}" alt="Assinatura funcionário">
+        <div>________________________________</div>
+        <div class="signature-name">{{nome_funcionario}}</div>
+        <div class="signature-position">(Funcionário)</div>
+      </div>
+      <div class="signature">
+        <img src="{{assinatura_funcionario_condominio}}" alt="Assinatura funcionário do condomínio">
+        <div>________________________________</div>
+
+        <div class="signature-name">{{nome_funcionario_condominio}}</div>
+        <div class="signature-position">(Funcionário do Condomínio)</div>
+
+      </div>
+
+    </div>
+
+    <!-- Data -->
+    <div style="margin-top:10mm; text-align:right">
+      <strong>Data:</strong> {{data}}
+    </div>
+
+  </div>
+
+</body>
+</html>

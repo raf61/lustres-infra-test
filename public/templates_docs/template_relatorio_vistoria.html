@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laudo Técnico – SPDA</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+    body { background: #f5f5f5; padding: 16px; }
+    .page { width: 210mm; min-height: 297mm; margin: 0 auto; background: #fff; padding: 14mm; padding-top: 0; box-shadow: 0 0 8px rgba(0,0,0,0.25); }
+    @page { size: A4; margin: 0; }
+    @media print { body { background: none; padding: 0; } .page { box-shadow: none; margin: 0; } }
+
+    .top-row { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; margin-bottom: 6mm; font-size: 9pt; }
+    .top-row .center { text-align: center; font-weight: bold; }
+    .top-row .right { text-align: right; }
+
+    .header { display: grid; grid-template-columns: 1fr 1.4fr 1fr; align-items: center; margin-bottom: 6mm; }
+    .logo { max-height: 90px; }
+    .header-center { text-align: center; font-size: 9pt; }
+    .header-right .title { font-size: 13pt; font-weight: bold; margin-bottom: 6px; }
+    .header-right .number { font-size: 11pt; margin-bottom: 4px; }
+    .header-right .date { font-size: 9pt; }
+
+    .info { font-size: 9pt; line-height: 1.3;}
+    .info strong { font-weight: bold; }
+    .info .line { margin-bottom: 2px; }
+    .info .inline { display: inline-block; margin-right: 8px; }
+
+    .pay-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 4px; margin-bottom: 4mm; font-size: 9pt; }
+    .pay-row span { font-weight: bold; }
+
+    .section-title { border: 1px solid #bfbfbf; padding: 6px; text-align: center; font-weight: bold; font-size: 9.5pt; margin-bottom: 2mm; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #bfbfbf; padding: 6px 5px; font-size: 9pt; }
+    th { background: #f2f2f2; font-weight: bold; text-align: center; }
+    td { vertical-align: top; }
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+
+    .note { margin-top: 5mm; font-size: 9pt; }
+    .sig-line { border-top: 1px solid #000; height: 28px; margin-bottom: 3px; }
+    .sig-text { font-size: 9pt; }
+    .footer { margin-top: 8mm; font-size: 8.5pt; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="" style="padding-top:10px;">
+      
+    </div>
+
+    <div class="header" style="border: 1px solid #bfbfbf;">
+      <div><img class="logo" src="/logo_ebr.png" alt="Logo"></div>
+      <div class="header-center">
+        <div>CNPJ: {{cnpj_empresa}}</div>
+      </div>
+      <div class="header-right" style="border: 1px solid #bfbfbf; padding: 8px; text-align: center;">
+        <div class="title">LAUDO TÉCNICO</div>
+        <div class="number">Nº {{numero_laudo}}</div>
+        <div class="date">{{data_laudo}}</div>
+      </div>
+    </div>
+
+    <div class="info" style="border: 1px solid #bfbfbf;">
+      <div class="line"><strong>Contato:</strong> {{contato}}</div>
+      <div class="line"><strong>Cliente:</strong> {{cliente}}</div>
+      <div class="line"><strong>Endereço:</strong> {{endereco}}</div>
+      <div class="line" hidden>
+        <span class="inline"><strong>.</strong> {{tel_res}}</span>
+        <span class="inline"><strong>Tel. cel.</strong> {{tel_cel}}</span>
+        <span class="inline"><strong>Administrador/gerente:</strong> {{administrador}}</span>
+      </div>
+      <div class="line">
+        <span class="inline"><strong>CNPJ:</strong> {{cnpj_cliente}}</span>
+      </div>
+      <div class="pay-row">
+      <div><span>Cond. de Pagto:</span> {{cond_pagamento}}</div>
+      <div><span>N.F.Nº:</span> {{nf_numero}}</div>
+      <div><span>Data N.F.:</span> {{nf_data}}</div>
+    </div>
+    </div>
+
+    <div class="" style="font-size: 9.5pt; padding-top:10px; padding-bottom:10px;"><strong>Observações:</strong> {{observacoes}}</div>
+
+    <div class="section-title">Relatório de medição em sistema de proteção contra descargas atmosféricas (SPDA)</div>
+
+    <table style="margin-bottom: 2mm;">
+      <thead>
+        <tr>
+          <th>Equipamento</th>
+          <th>Condições</th>
+          <th>Qtd.</th>
+          <th>Substituído</th>
+          <th>Preço unitário</th>
+          <th>Preço total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{tabela_equipamentos}}
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th colspan="4">SERVIÇOS</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{tabela_servicos}}
+        <tr>
+          <td colspan="4" class="right bold">Valor total</td>
+          <td class="right bold">{{valor_total}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="row" style="padding: 0; display:flex; border: 1px solid #bfbfbf; ">
+        <div style="padding-bottom:40px; border-right: 1px solid #bfbfbf;">
+        <div class="col" style="font-size: 9.5pt;  padding:5px; text-align:center; ">
+            <span>Iniciamos nesta data os devidos procedimentos de manutenção. Caso não seja feita a adequação necessária dos sistemas, o laudo técnico será cobrado.</span>
+            <div style="padding-top:58px"><img style="width:300px;" src="{{assinatura_funcionario_condominio}}" /></div>
+                    <div>__________________________</div>
+        <div>({{funcionario_nome}})</div>
+        <span style="padding-bottom:20px; ">Acompanhei os serviços e confirmo o pedido acima</span>
+        </div>
+    </div>
+
+        <div class="signature-block" style="display: grid; padding-left:10px;padding-top:20px; grid-template-columns: 1.2fr 1fr; gap: 10mm; align-items: start;">
+            
+            <div>
+              <div class="sig-text">Data: {{data_assinatura}}</div>
+              <div class="sig-text">Vendedor: {{vendedor}}</div>
+              <div class="sig-text">Quant. SPDA: {{qtd_spda}}</div>
+            </div>
+          </div>
+    </div>
+    
+
+    
+
+    
+  </div>
+</body>
+</html>

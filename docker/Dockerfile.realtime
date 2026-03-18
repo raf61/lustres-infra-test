@@ -1,0 +1,31 @@
+FROM node:20-bookworm-slim AS builder
+
+WORKDIR /app
+
+RUN corepack enable
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+
+RUN pnpm build:webservices
+
+FROM node:20-bookworm-slim AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/dist ./dist
+COPY --chown=node:node package.json ./
+
+USER node
+
+EXPOSE 3001
+CMD ["node", "-r", "dotenv/config", "dist/realtime.js"]
+
+

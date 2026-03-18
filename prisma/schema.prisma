@@ -1,0 +1,1213 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  fullname     String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(VENDEDOR)
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+  active       Boolean  @default(true)
+  
+  // relacionamentos
+  clientes     Client[]     @relation("ClientVendedor")
+  orcamentos   Orcamento[] @relation("OrcamentoVendedor")
+  pedidos      Pedido[]     @relation("PedidoVendedor")
+  fichasPesquisadas Ficha[] @relation("FichaPesquisador")
+  fichaLogs         FichaLog[] @relation("FichaLogAuthor")
+  visitasTecnicas   VisitaTecnica[] @relation("TecnicoVisitas")
+  visitasCriadas    VisitaTecnica[] @relation("VisitaTecnicaCreator")
+  visitaAnexos      VisitaAnexo[]   @relation("VisitaAnexoUser")
+  movimentacoesEstoque MovimentacaoEstoque[]
+  dadosCadastrais   UserDadosCadastrais?
+  lancamentos       UserLancamento[]
+  registrosClientes ClientRegistro[]
+  assignedConversations ChatConversation[] @relation("ConversationAssignee")
+  chatBroadcasts        ChatBroadcast[]
+  unusedCnpjs           UnusedCnpjs[]
+  notifications         UserNotification[] @relation("UserNotifications")
+  contratosManutencao   ContratoManutencao[]
+}
+
+model UserDadosCadastrais {
+  id            Int      @id
+  idUser        String
+  cpf           String
+  cep           String
+  logradouro    String?
+  numero        String?
+  complemento   String?
+  bairro        String?
+  cidade        String?
+  estado        String?
+  telefone      String?
+  celular       String?
+  banco         String?
+  agencia       String?
+  conta         String?
+  metaMin       Float?
+  metaMinPerc   Float?
+  metaNormal    Float?
+  metaNormalPerc Float?
+  observacao    String?
+  salario       Float?
+
+  user          User     @relation(fields: [idUser], references: [id], onDelete: Cascade)
+
+  @@unique([idUser])
+}
+
+model UserLancamento {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  data       DateTime @db.Timestamptz(6)
+  descricao  String
+  valor      Float?
+  tipo       String
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Empresa {
+  id      Int      @id @default(autoincrement())
+  nome    String
+  logoUrl String?
+  filiais Filial[]
+  orcamentos Orcamento[]
+
+  @@unique([nome])
+}
+
+model Filial {
+  id        Int     @id @default(autoincrement())
+  empresaId Int
+  cnpj      String
+  uf        String
+  inscricao_municipal String?
+  cod_atividade   String?
+  dadosCadastrais Json //razao_social,logradouro,numero,complemento,municipio,bairro,cep,tel
+
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  orcamentos Orcamento[]
+
+  @@unique([cnpj])
+  @@index([empresaId])
+}
+
+model Administradora {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  cnpj      String?  @unique
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  
+  // relacionamentos
+  clientes  Client[]
+  fichas    Ficha[]   @relation("AdministradoraFichas")
+  gerentes  GerenteAdministradora[]
+}
+
+model GerenteAdministradora {
+  id               Int      @id @default(autoincrement())
+  nome             String
+  cpf              String?
+  email            String?
+  celular          String?
+  whatsapp         String?
+  administradoraId Int
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6)
+  
+  administradora   Administradora @relation(fields: [administradoraId], references: [id], onDelete: Cascade)
+  vinculos         GerenteAdministradoraVinculo[]
+
+  @@index([administradoraId])
+}
+
+// Tabela única para vincular gerentes a clientes OU fichas
+model GerenteAdministradoraVinculo {
+  id        Int      @id @default(autoincrement())
+  clientId  Int?
+  fichaId   Int?
+  gerenteId Int
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  client    Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  ficha     Ficha?   @relation(fields: [fichaId], references: [id], onDelete: Cascade)
+  gerente   GerenteAdministradora @relation(fields: [gerenteId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, gerenteId])
+  @@unique([fichaId, gerenteId])
+  @@index([clientId])
+  @@index([fichaId])
+  @@index([gerenteId])
+}
+
+model Client {
+  id                         Int             @id @default(autoincrement())
+  cnpj                       String          @unique
+  razaoSocial                String
+  categoria                  ClientCategoria?
+  ultimaManutencao           DateTime? @db.Timestamptz(6)
+  cep                        String?
+  logradouro                 String?
+  numero                     String?
+  complemento                String?
+  bairro                     String?
+  estado                     String?
+  cidade                     String?
+  telefoneCondominio         String?
+  celularCondominio          String?
+  nomeSindico                String?
+  telefoneSindico            String?
+  dataInicioMandato          DateTime? @db.Timestamptz(6)
+  dataFimMandato             DateTime? @db.Timestamptz(6)
+  dataAniversarioSindico     DateTime? @db.Timestamptz(6)
+  emailSindico               String?
+  nomePorteiro               String?
+  telefonePorteiro           String?
+  quantidadeSPDA             Int?
+  quantidadeAndares          Int?
+  especificacaoCondominio    EspecificacaoCondominio?
+  administradoraStringAntigo String?
+  observacao                 String?
+  dataContatoAgendado        DateTime? @db.Timestamptz(6)
+  administradoraId           Int?
+  vendedorId                 String?
+  vendedorAlocadoEm          DateTime?       @db.Timestamptz(6)
+  createdAt                  DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt                  DateTime        @updatedAt @db.Timestamptz(6)
+  administradora             Administradora? @relation(fields: [administradoraId], references: [id])
+  vendedor                   User?           @relation("ClientVendedor", fields: [vendedorId], references: [id])
+  kanbanEstado               ClientKanbanEstado?
+  pedidos                    Pedido[]
+  debitos                    Debito[]
+  visitasTecnicas            VisitaTecnica[]
+  
+  // relacionamentos
+  orcamentos                 Orcamento[]
+  registros                  ClientRegistro[]
+  gerentesAdministradora     GerenteAdministradoraVinculo[]
+  chatContacts               ClientChatContact[]
+  cobrancaEnvios             CobrancaCampanhaEnvio[]
+  contratosManutencao        ContratoManutencao[]
+  
+  // Dashboard do vendedor
+  visivelDashVendedor        Boolean         @default(false)
+
+  chatBroadcastRecipients ChatBroadcastRecipient[]
+
+  @@index([vendedorId])
+  @@index([administradoraId])
+  @@index([visivelDashVendedor])
+}
+
+model ClientKanbanEstado {
+  id         Int      @id @default(autoincrement())
+  clientId   Int      @unique
+  code       Int      @default(0)
+  position   Float    @default(0)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@index([position])
+}
+
+// Histórico de eventos do dashboard do vendedor
+// Sem FK para manter simplicidade - apenas registros de eventos
+model HistoricoClient {
+  id         Int      @id @default(autoincrement())
+  clientId   Int
+  vendedorId String
+  type       String   // "INDASH" ou "OUTDASH"
+  category   String?  // Categoria do cliente no momento do evento (ATIVO, AGENDADO, EXPLORADO)
+  reason     String?  // Motivo do evento (ex: "cron mensal", "perda", etc.)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([clientId])
+  @@index([vendedorId])
+  @@index([type])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model Ficha {
+  id                     Int             @id @default(autoincrement())
+  cnpj                   String          @unique
+  razaoSocial            String?
+  fichaStatus            FichaStatus     @default(EM_PESQUISA)
+  ultimaManutencao       DateTime? @db.Timestamptz(6)
+  cep                    String?
+  logradouro             String?
+  numero                 String?
+  complemento            String?
+  bairro                 String?
+  estado                 String?
+  cidade                 String?
+  telefoneCondominio     String?
+  celularCondominio      String?
+  nomeSindico            String?
+  telefoneSindico        String?
+  dataInicioMandato      DateTime? @db.Timestamptz(6)
+  dataFimMandato         DateTime? @db.Timestamptz(6)
+  dataAniversarioSindico DateTime? @db.Timestamptz(6)
+  emailSindico           String?
+  nomePorteiro           String?
+  telefonePorteiro       String?
+  quantidadeSPDA         Int?
+  especificacaoCondominio EspecificacaoCondominio?
+  observacao             String?
+  dataContatoAgendado    DateTime? @db.Timestamptz(6)
+  administradoraId       Int?
+  pesquisadorId          String?
+  createdAt              DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime        @updatedAt @db.Timestamptz(6)
+
+  administradora         Administradora? @relation("AdministradoraFichas", fields: [administradoraId], references: [id])
+  pesquisador            User?           @relation("FichaPesquisador", fields: [pesquisadorId], references: [id])
+  logs                   FichaLog[]
+  gerentesAdministradora GerenteAdministradoraVinculo[]
+
+  @@index([pesquisadorId])
+  @@index([administradoraId])
+}
+
+model FichaLog {
+  id        Int          @id @default(autoincrement())
+  fichaId   Int
+  tipo      FichaLogTipo
+  userId    String
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime     @updatedAt @db.Timestamptz(6)
+
+  ficha     Ficha        @relation(fields: [fichaId], references: [id])
+  user      User         @relation("FichaLogAuthor", fields: [userId], references: [id])
+
+  @@index([fichaId])
+  @@index([userId])
+}
+
+enum FichaLogTipo {
+  ENVIADO
+  RETORNADO
+}
+
+enum Role {
+  MASTER
+  ADMINISTRADOR
+  SUPERVISOR
+  VENDEDOR
+  PESQUISADOR
+  TECNICO
+  FINANCEIRO
+  SAC
+  CHATBOT
+}
+
+enum ClientCategoria {
+  ATIVO
+  AGENDADO
+  EXPLORADO
+}
+
+enum EspecificacaoCondominio {
+  COMERCIAL
+  RESIDENCIAL
+  MISTO
+}
+
+enum FichaStatus {
+  EM_PESQUISA
+  FINALIZADA
+}
+
+enum OrcamentoStatus {
+  EM_ABERTO
+  APROVADO
+  REPROVADO
+  CANCELADO
+}
+
+enum PedidoStatus {
+  AGUARDANDO
+  AGENDADO
+  EXECUCAO
+  CONCLUIDO
+  CANCELADO
+  SAC
+  AGUARDANDO_APROVACAO_SUPERVISAO
+  AGUARDANDO_APROVACAO_FINAL
+  ANALISE_CANCELAMENTO
+  ANALISE_CANCELAMENTO_SUPERVISAO
+}
+
+enum PedidoTipoEspecial {
+  OS
+}
+
+enum VisitaTecnicaStatus {
+  AGUARDANDO
+  EM_EXECUCAO
+  FINALIZADO
+  CANCELADO
+  ANALISE_NAO_AUTORIZADO
+}
+
+enum AnaliseCancelamentoTipo {
+  PRE_AGENDAMENTO
+  VISITA_AGENDADA
+  NAO_AUTORIZADO
+  AVULSO
+}
+
+enum DocumentoOperacionalTipo {
+  RELATORIO_VISTORIA
+  TERMO_CONCLUSAO
+  LAUDO_TECNICO
+  CARTA_ENDOSSO
+  ORDEM_SERVICO
+}
+
+enum DocumentoOperacionalStatus {
+  PENDENTE
+  COMPLETO
+}
+
+model ContratoManutencao {
+  id            Int             @id @default(autoincrement())
+  clienteId     Int
+  cliente       Client          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  vendedorId    String?
+  vendedor      User?           @relation(fields: [vendedorId], references: [id], onDelete: SetNull)
+  
+  status        String          @default("PENDENTE") // "PENDENTE", "OK", "CANCELADO"
+  
+  dataInicio    DateTime        @db.Timestamptz(6)
+  dataFim       DateTime        @db.Timestamptz(6)
+  
+  valorTotal    Float
+  parcelas      Int?
+  
+  arquivoUrl    String?         // URL do contrato assinado ou gerado no S3
+  observacoes   String?
+  
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(6)
+  
+  pedidos       Pedido[]
+
+  @@index([clienteId])
+  @@index([vendedorId])
+}
+
+model Orcamento {
+  id                 Int              @id @default(autoincrement())
+  clienteId          Int
+  cliente            Client           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  empresaId          Int?
+  empresa            Empresa?         @relation(fields: [empresaId], references: [id], onDelete: SetNull)
+
+  filialId           Int?
+  filial             Filial?          @relation(fields: [filialId], references: [id], onDelete: SetNull)
+
+  status             OrcamentoStatus?  
+
+  parcelas           Int?
+  primeiroVencimento DateTime? @db.Timestamptz(6)
+  observacoes        String?
+  anexo              String?
+
+  vendedorId         String?
+  vendedor           User?            @relation("OrcamentoVendedor", fields: [vendedorId], references: [id], onDelete: SetNull)
+
+  createdAt          DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime         @updatedAt @db.Timestamptz(6)
+
+  pedido             Pedido?          // 1:1 — um orçamento pode gerar um pedido
+  itens              OrcamentoItem[]  // 1:N — um orçamento pode ter vários itens
+  visitasTecnicas    VisitaTecnica[]
+
+  @@index([clienteId])
+  @@index([vendedorId])
+  @@index([empresaId])
+  @@index([filialId])
+}
+
+model Pedido {
+  id                 Int              @id @default(autoincrement())
+  orcamentoId        Int              @unique
+  orcamento          Orcamento        @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+
+  bancoEmissorId     Int?
+  bancoEmissor       Banco?           @relation(fields: [bancoEmissorId], references: [id], onDelete: SetNull)
+
+  legacyBanco               String?
+  legacyEmpresaFaturamento  String?
+
+  clienteId          Int
+  cliente            Client           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  status             PedidoStatus     @default(AGUARDANDO)
+  tipoEspecial       PedidoTipoEspecial?
+  medicaoOhmica      Float?
+  medicaoOhmicaMulti Json?
+  analiseCancelamentoTipo AnaliseCancelamentoTipo?
+  motivoCancelamento String?
+  observacoes        String?
+  detalhamento       String?
+  geradoComissao     Boolean          @default(false)
+  geradoART          Boolean?
+
+  vendedorId         String?
+  vendedor           User?            @relation("PedidoVendedor", fields: [vendedorId], references: [id], onDelete: SetNull)
+
+  // Categoria do cliente no momento em que o pedido foi criado
+  categoriaClienteNoMomento ClientCategoria?
+
+  createdAt          DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime         @updatedAt @db.Timestamptz(6)
+
+  itens              PedidoItem[]    // 1:N — um pedido pode ter vários itens
+  debitos            Debito[]        // 1:N — um pedido pode ter vários débitos
+  visitasTecnicas    VisitaTecnica[]
+  documentosOperacionais DocumentoOperacional[]
+  comissoes          Comissao[]
+  nfes               Nfe[]
+
+  contratoId         Int?
+  contrato           ContratoManutencao? @relation(fields: [contratoId], references: [id], onDelete: SetNull)
+
+  @@index([vendedorId])
+  @@index([bancoEmissorId])
+  @@index([categoriaClienteNoMomento])
+}
+
+model Comissao {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @db.Timestamptz(6)
+  vencimento DateTime  @db.Timestamptz(6)
+  pedidoId   Int
+  valor      Float
+
+  pedido     Pedido      @relation(fields: [pedidoId], references: [id], onDelete: SetNull)
+  contaPagar ContaPagar? @relation("ComissaoContaPagar")
+
+  @@index([pedidoId])
+}
+
+model DocumentoOperacional {
+  id           Int                     @id @default(autoincrement())
+  pedidoId     Int
+  tipo         DocumentoOperacionalTipo
+  status       DocumentoOperacionalStatus
+  dadosExtras  Json?
+  createdAt    DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime                @updatedAt @db.Timestamptz(6)
+
+  pedido       Pedido                  @relation(fields: [pedidoId], references: [id])
+  url          String? //indica se ele já foi renderizado .
+  assinaturas  DocumentoOperacionalAssinatura[]
+
+  @@unique([pedidoId, tipo])
+  @@index([pedidoId])
+}
+
+model DocumentoOperacionalAssinatura {
+  id                     Int        @id @default(autoincrement())
+  documentoOperacionalId Int
+  nomeCompletoAssinante  String
+  cpfAssinante           String?
+  ip                     String
+  localizacao            String
+  url                    String?
+  dadosExtras            Json?
+  createdAt              DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt              DateTime   @updatedAt @db.Timestamptz(6)
+
+  documentoOperacional   DocumentoOperacional @relation(fields: [documentoOperacionalId], references: [id], onDelete: Cascade)
+
+  @@index([documentoOperacionalId])
+}
+
+
+
+model Item {
+  id        BigInt   @id @default(autoincrement())
+  nome      String
+  valor     Float
+  urlFoto   String?
+  fornecedor String?
+  precoCusto Float?
+  categoria String?
+  estoque   Int      @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  orcamentoItens    OrcamentoItem[]  // 1:N — um item pode estar em vários orçamentos
+  pedidoItens       PedidoItem[]     // 1:N — um item pode estar em vários pedidos
+  listaExtraItens   ListaExtraItem[]
+  movimentacoes     MovimentacaoEstoque[]
+}
+
+model MovimentacaoEstoque {
+  id          Int                        @id @default(autoincrement())
+  tipo        MovimentacaoEstoqueTipo
+  itemId      BigInt
+  item        Item                       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantidade  Int
+  totalAntes  Int
+  userId      String?
+  user        User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  observacao  String
+  createdAt   DateTime                   @default(now())
+
+  @@index([itemId])
+  @@index([userId])
+}
+
+enum MovimentacaoEstoqueTipo {
+  ENTRADA
+  SAIDA
+}
+
+model PedidoItem {
+  id                      Int       @id @default(autoincrement())
+  pedidoId                Int
+  pedido                  Pedido    @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  
+  itemId                  BigInt
+  item                    Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  quantidade              Int
+  valorUnitarioPraticado  Float
+  
+  createdAt               DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt               DateTime  @updatedAt @db.Timestamptz(6)
+  
+  @@index([pedidoId])
+  @@index([itemId])
+}
+
+model OrcamentoItem {
+  id          Int       @id @default(autoincrement())
+  orcamentoId Int
+  orcamento   Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  
+  itemId      BigInt
+  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  quantidade  Int
+  valor       Float
+  
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+  
+  @@index([orcamentoId])
+  @@index([itemId])
+}
+
+model VisitaTecnica {
+  id                 Int                  @id @default(autoincrement())
+  pedidoId           Int?
+  pedido             Pedido?              @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  orcamentoId        Int
+  orcamento          Orcamento            @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  clienteId          Int
+  cliente            Client               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  tecnicoId          String
+  tecnico            User                 @relation("TecnicoVisitas", fields: [tecnicoId], references: [id])
+  creatorId          String
+  creator            User                 @relation("VisitaTecnicaCreator", fields: [creatorId], references: [id])
+  dataMarcada        DateTime @db.Timestamptz(6)
+  status             VisitaTecnicaStatus
+  observacao         String?
+  checklist          Json?
+  dataRegistroInicio DateTime? @db.Timestamptz(6)
+  dataRegistroFim    DateTime? @db.Timestamptz(6)
+  createdAt          DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime             @updatedAt @db.Timestamptz(6)
+  listaExtras        ListaExtra[]
+  anexos             VisitaAnexo[]
+  motivo_nao_autorizado       String?
+
+  @@index([pedidoId])
+  @@index([orcamentoId])
+  @@index([clienteId])
+  @@index([tecnicoId])
+  @@index([creatorId])
+}
+
+model VisitaAnexo {
+  id        Int           @id @default(autoincrement())
+  visitaId  Int
+  visita    VisitaTecnica @relation(fields: [visitaId], references: [id], onDelete: Cascade)
+  url       String
+  userId    String
+  user      User          @relation("VisitaAnexoUser", fields: [userId], references: [id])
+  createdAt DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([visitaId])
+}
+
+enum ListaExtraStatus {
+  APROVADO
+  REJEITADO
+  PENDENTE
+}
+
+model ListaExtra {
+  id         Int              @id @default(autoincrement())
+  visitaId   Int
+  visita     VisitaTecnica    @relation(fields: [visitaId], references: [id], onDelete: Cascade)
+  status     ListaExtraStatus @default(PENDENTE)
+  createdAt  DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime         @updatedAt @db.Timestamptz(6)
+  itens      ListaExtraItem[]
+
+  @@index([visitaId])
+}
+
+model ListaExtraItem {
+  id             Int         @id @default(autoincrement())
+  listaExtraId   Int
+  listaExtra     ListaExtra  @relation(fields: [listaExtraId], references: [id], onDelete: Cascade)
+  itemId         BigInt
+  item           Item        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantidade     Int
+  valorPraticado Float       @default(0)
+  createdAt      DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime    @updatedAt @db.Timestamptz(6)
+
+  @@index([listaExtraId])
+  @@index([itemId])
+}
+
+model Debito {
+  id              Int       @id @default(autoincrement())
+  pedidoId        Int
+  pedido          Pedido    @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  
+  clienteId       Int
+  cliente         Client    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  receber         Float
+  dataOcorrencia  DateTime? @db.Timestamptz(6)
+  recebido        Float?
+  vencimento      DateTime @db.Timestamptz(6)
+  acrescimos      Float?
+  descontos       Float?
+  email           String?
+  banCobrador     String?
+  stats           Int       // -1, 0 ou 2
+  remessa         Boolean       // 0 ou 1
+  linkBoleto      String?
+  
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
+  
+  @@index([pedidoId])
+  @@index([clienteId])
+  cobrancaEnvios CobrancaCampanhaEnvio[]
+}
+
+model CobrancaCampanhaEnvio {
+  id          Int      @id @default(autoincrement())
+  debitoId    Int
+  clienteId   Int
+  messageId   String?
+  ruleKey     String
+  status      String   @default("QUEUED")
+  error       String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  debito   Debito           @relation(fields: [debitoId], references: [id], onDelete: Cascade)
+  cliente  Client           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@unique([debitoId, ruleKey])
+  @@index([debitoId])
+  @@index([clienteId])
+  @@index([ruleKey])
+  @@index([createdAt])
+}
+
+model Banco {
+  id                  Int      @id @default(autoincrement())
+  nome                String
+  razaoSocial         String
+  cnpj                String
+  bancoCodigo         Int      // Código FEBRABAN (ex.: 341 Itaú, 033 Santander)
+  agencia             String
+  agenciaDigito       String?
+  conta               String
+  contaDigito         String?
+  carteira            String
+  codigoBeneficiario  String?
+  codigoTransmissao   String?
+  endereco            Json?
+  custoBoleto         Float?
+
+  createdAt           DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime @updatedAt @db.Timestamptz(6)
+
+  pedidos             Pedido[]
+
+  @@unique([nome])
+  @@unique([cnpj, bancoCodigo, agencia, conta])
+}
+
+model ContaPagarCategoria {
+  id        Int           @id @default(autoincrement())
+  nome      String        @unique
+  createdAt DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime      @updatedAt @db.Timestamptz(6)
+
+  contas    ContaPagar[]
+}
+
+model ContaPagar {
+  id          Int                  @id @default(autoincrement())
+  descricao   String?
+  categoriaId Int?
+  valor       Float
+  status      Int                  @default(0) // 0 a pagar, 1 pago, -1 vencido
+  vencimento  DateTime             @db.Timestamptz(6)
+  pagoEm      DateTime?            @db.Timestamptz(6)
+  comissaoId  Int?                 @unique
+  createdAt   DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime             @updatedAt @db.Timestamptz(6)
+
+  categoria   ContaPagarCategoria? @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  comissao    Comissao?            @relation("ComissaoContaPagar", fields: [comissaoId], references: [id], onDelete: SetNull)
+
+  @@index([categoriaId])
+  @@index([status])
+  @@index([vencimento])
+  @@index([comissaoId])
+}
+
+model ClientRegistro {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  mensagem  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([clientId])
+  @@index([userId])
+}
+
+// --- Módulo de Chat (WhatsApp Cloud) ---
+
+model ChatInbox {
+  id                           String             @id @default(cuid())
+  name                         String
+  provider                     String             @default("whatsapp_cloud") // whatsapp_cloud, email, etc.
+  phoneNumberId                String?            @unique // ID da Meta
+  displayPhoneNumber           String?
+  settings                     Json               @default("{}") // token, apiVersion, etc.
+  messageTemplates             Json               @default("[]") // Templates do WhatsApp (igual Chatwoot)
+  messageTemplatesLastUpdated  DateTime?          @db.Timestamptz(6) // Última sync dos templates
+  createdAt                    DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt                    DateTime           @updatedAt @db.Timestamptz(6)
+
+  conversations      ChatConversation[]
+  contacts           ChatContactInbox[]
+  broadcasts         ChatBroadcast[]
+  chatbotDefaults    ChatInboxBotDefault[]
+  chatbotFlows       ChatbotFlow[]
+
+  @@map("chat_inboxes")
+}
+
+model ChatContact {
+  id        String             @id @default(cuid())
+  name      String?
+  waId      String             @unique // Número do WhatsApp (ex: 5521999...)
+  avatarUrl String?
+  createdAt DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime           @updatedAt @db.Timestamptz(6)
+
+  inboxes       ChatContactInbox[]
+  conversations ChatConversation[]
+  clients       ClientChatContact[]
+  broadcastRecipients ChatBroadcastRecipient[]
+
+  @@map("chat_contacts")
+}
+
+model ClientChatContact {
+  id        Int         @id @default(autoincrement())
+  clientId  Int
+  contactId String
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+
+  client  Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contact ChatContact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, contactId])
+  @@index([clientId])
+  @@index([contactId])
+  @@map("client_chat_contacts")
+}
+
+// Relacionamento N:N entre Contato e Inbox (igual Chatwoot)
+model ChatContactInbox {
+  id        String      @id @default(cuid())
+  contactId String
+  inboxId   String
+  sourceId  String?     // ID específico do canal (ex: waId no WhatsApp)
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+
+  contact   ChatContact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  inbox     ChatInbox   @relation(fields: [inboxId], references: [id], onDelete: Cascade)
+  broadcastRecipients ChatBroadcastRecipient[]
+
+  @@unique([contactId, inboxId])
+  @@index([sourceId])
+  @@map("chat_contact_inboxes")
+}
+
+model ChatConversation {
+  id               String         @id @default(cuid())
+  inboxId          String
+  contactId        String
+  status           String         @default("open") // open, resolved, pending, snoozed(ainda não está implementado)
+  assigneeId       String?        // ID do Vendedor/Atendente(não vai ser só vendedor, vai ter um monte de coisa, sac, financeiro, etc)
+  waitingSince     DateTime?      @db.Timestamptz(6) // Data da primeira msg não respondida
+  lastActivityAt   DateTime       @default(now()) @db.Timestamptz(6) // Para ordenação
+  agentLastSeenAt  DateTime?      @db.Timestamptz(6) // Última vez que o agente viu (para calcular unread)
+  createdAt        DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime       @updatedAt @db.Timestamptz(6)
+
+  inbox          ChatInbox      @relation(fields: [inboxId], references: [id], onDelete: Cascade)
+  contact        ChatContact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  assignee       User?          @relation("ConversationAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  messages       ChatMessage[]
+  chatbotSessions ChatbotSession[]
+  followUpControl ChatFollowUpControl?
+
+  @@index([inboxId])
+  @@index([contactId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([waitingSince])
+  @@index([lastActivityAt])
+  @@map("chat_conversations")
+}
+
+model ChatMessage {
+  id                 String             @id @default(cuid())
+  conversationId     String
+  providerMessageId  String?            @unique // ID que vem do WhatsApp
+  messageType        String             // incoming, outgoing
+  contentType        String             @default("text") // text, image, video, audio, document, location, etc.
+  content            String?            @db.Text // Texto da msg ou caption
+  status             String             @default("pending") // pending, sent, delivered, read, failed
+  externalError      String?            // Erro retornado pelo provedor (ex: "131047: Rate limit exceeded")
+  timestamp          DateTime?          @db.Timestamptz(6)
+  contentAttributes  Json               @default("{}") // contexts, interactive data, reactions
+  additionalAttributes Json              @default("{}") // metadata do provedor
+  createdAt          DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime           @updatedAt @db.Timestamptz(6)
+
+  conversation       ChatConversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  attachments        ChatAttachment[]
+  broadcastRecipients ChatBroadcastRecipient[]
+
+  @@index([conversationId])
+  @@index([providerMessageId])
+  @@map("chat_messages")
+}
+
+model ChatAttachment {
+  id          String      @id @default(cuid())
+  messageId   String
+  fileType    String      // image, video, audio, document, sticker
+  mediaId     String?     // ID da Meta (para re-download se necessário)
+  externalUrl String?     @db.Text // URL temporária da Meta (5 min)
+  fileUrl     String?     @db.Text // URL permanente no storage (privado - usar parseKeyFromUrl + getPrivateObjectUrl)
+  fileName    String?
+  fileSize    Int?
+  mimeType    String?
+  coordinatesLat Float?
+  coordinatesLong Float?
+  downloadStatus String   @default("pending") // pending, downloading, completed, failed
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @db.Timestamptz(6)
+
+  message     ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([downloadStatus])
+  @@map("chat_attachments")
+}
+
+enum ChatBroadcastStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum ChatBroadcastRecipientStatus {
+  PENDING
+  QUEUED
+  SENT
+  FAILED
+}
+
+model ChatBroadcast {
+  id          String             @id @default(cuid())
+  name        String?
+  inboxId     String
+  createdById String
+  status      ChatBroadcastStatus @default(QUEUED)
+  createdAt   DateTime           @default(now()) @db.Timestamptz(6)
+
+  inbox      ChatInbox               @relation(fields: [inboxId], references: [id], onDelete: Cascade)
+  createdBy  User                    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  recipients ChatBroadcastRecipient[]
+
+  @@index([inboxId])
+  @@index([createdById])
+  @@index([status])
+  @@map("chat_broadcasts")
+}
+
+model ChatBroadcastRecipient {
+  id             String                     @id @default(cuid())
+  broadcastId    String
+  contactId      String?
+  clientId       Int?
+  contactInboxId String?
+  messageId      String?
+  status         ChatBroadcastRecipientStatus @default(PENDING)
+  createdAt      DateTime                   @default(now()) @db.Timestamptz(6)
+
+  broadcast    ChatBroadcast     @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
+  contact      ChatContact?      @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  client       Client?           @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  contactInbox ChatContactInbox? @relation(fields: [contactInboxId], references: [id], onDelete: SetNull)
+  message      ChatMessage?      @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@index([broadcastId])
+  @@index([contactId])
+  @@index([clientId])
+  @@index([contactInboxId])
+  @@index([messageId])
+  @@index([status])
+  @@map("chat_broadcast_recipients")
+}
+
+model UnusedCnpjs {
+  id        Int      @id @default(autoincrement())
+  cnpj      String
+  confirmed Boolean  @default(false)
+  userId    String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+enum ChatbotFlowEngine {
+  FLOW
+  AI_AGENT
+}
+
+enum ChatbotFlowType {
+  INBOUND
+  OUTBOUND
+}
+
+enum ChatbotSessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+enum ChatbotPathEventType {
+  ENTERED
+  EXITED
+  INVALID_INPUT
+  CONDITION
+  EXPIRED
+  DISABLED_BY_AGENT
+}
+
+model ChatbotFlow {
+  id         String            @id @default(cuid())
+  name       String
+  engine     ChatbotFlowEngine @default(FLOW)
+  type       ChatbotFlowType   @default(INBOUND)
+  active     Boolean           @default(true)
+  inboxId    String?
+  definition Json              @default("{}")
+  aiConfig   Json?             @default("{}")
+  createdAt  DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime          @updatedAt @db.Timestamptz(6)
+
+  inbox    ChatInbox?           @relation(fields: [inboxId], references: [id], onDelete: SetNull)
+  sessions ChatbotSession[]
+  defaults ChatInboxBotDefault[]
+
+  @@index([inboxId])
+  @@index([type])
+  @@index([engine])
+  @@map("chatbot_flows")
+}
+
+model ChatbotSession {
+  id                  String               @id @default(cuid())
+  conversationId      String
+  flowId              String
+  status              ChatbotSessionStatus @default(ACTIVE)
+  currentStepId       String?
+  variables           Json                 @default("{}")
+  lastInteractionAt   DateTime?            @db.Timestamptz(6)
+  conversationSummary String?
+  createdAt           DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime             @updatedAt @db.Timestamptz(6)
+
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  flow         ChatbotFlow      @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  pathEvents   ChatbotPathEvent[]
+
+  @@index([conversationId])
+  @@index([flowId])
+  @@index([status])
+  @@map("chatbot_sessions")
+}
+
+model ChatFollowUpControl {
+  id             String   @id @default(cuid())
+  conversationId String   @unique
+  count          Int      @default(0)
+  lastFollowUpAt DateTime? @db.Timestamptz(6)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@map("chat_follow_up_controls")
+}
+
+model ChatbotPathEvent {
+  id        String              @id @default(cuid())
+  sessionId String
+  stepId    String?
+  eventType ChatbotPathEventType
+  payload   Json                @default("{}")
+  createdAt DateTime            @default(now()) @db.Timestamptz(6)
+
+  session   ChatbotSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([eventType])
+  @@map("chatbot_path_events")
+}
+
+model ChatInboxBotDefault {
+  id        String      @id @default(cuid())
+  inboxId   String      @unique
+  flowId    String
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @db.Timestamptz(6)
+
+  inbox ChatInbox   @relation(fields: [inboxId], references: [id], onDelete: Cascade)
+  flow  ChatbotFlow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+
+  @@index([flowId])
+  @@map("chat_inbox_bot_defaults")
+}
+
+model Nfe {
+  id              String   @id @default(cuid())
+  pedidoId        Int
+  companyId       String   // ID da Empresa na Nfe.io
+  nfeIoId         String   // ID da Nota na Nfe.io
+  status          NfeStatus @default(CREATED)
+  
+  number          String?  // Número da NF na prefeitura (quando autorizada)
+  verificationCode String? // Código de verificação
+  
+  amountInCents   Int      // Valor em centavos
+  
+  borrowerName    String?
+  borrowerCnpj    String?
+  
+  issuedOn        DateTime?
+  
+  pdfUrl          String?
+  xml             String?   @db.Text // Conteúdo oficial do XML
+  
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+  
+  pedido          Pedido   @relation(fields: [pedidoId], references: [id])
+  
+  @@unique([pedidoId, nfeIoId])
+  @@index([pedidoId])
+  @@index([status])
+  @@map("nfes")
+}
+
+model AgentMetric {
+  id             String   @id @default(cuid())
+  conversationId String
+  sessionId      String?
+  key            String   // Ex: TOOL_UPDATE_SYNDIC, HANDOFF, RESOLVED, RETURN_RESEARCH
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([key])
+  @@index([conversationId])
+  @@index([sessionId])
+  @@map("agent_metrics")
+}
+
+enum NfeStatus {
+  CREATED
+  QUEUED
+  AUTHORIZED
+  ERROR
+  CANCELLED
+}
+
+model UserNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_notifications")
+}

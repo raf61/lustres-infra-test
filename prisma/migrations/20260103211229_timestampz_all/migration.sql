@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Item" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMP(3),
+ALTER COLUMN "updatedAt" SET DATA TYPE TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "MovimentacaoEstoque" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMP(3);

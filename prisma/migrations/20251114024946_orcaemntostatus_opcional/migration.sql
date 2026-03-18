@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Orcamento" ALTER COLUMN "tipo" DROP DEFAULT,
+ALTER COLUMN "status" DROP DEFAULT;

@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/recalculate-client-categories",
+      "schedule": "10 3 * * *"
+    },
+    {
+      "path": "/api/cron/cobranca",
+      "schedule": "20 13 * * *"
+    },
+    {
+      "path": "/api/cron/rodar-dashboard-vendedor",
+      "schedule": "0 4 1 * *"
+    },
+    {
+      "path": "/api/cron/follow-up",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}
