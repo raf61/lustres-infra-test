@@ -81,6 +81,8 @@ import { getOutboundFlowTemplate, type OutboundTemplatePayload } from "@/lib/cha
 import { formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPedidoStatusLabel } from "@/components/pedidos/pedido-status-map-dialog"
+import { CrmCard } from "@/components/dashboard/crm-card"
+import type { CrmCardClient, CrmCardChatSummary } from "@/components/dashboard/crm-card"
 
 // Roles que podem visualizar dashboard de outros vendedores
 const ADMIN_ROLES = ["MASTER", "ADMINISTRADOR"] as const
@@ -331,54 +333,54 @@ const CRM_COLUMNS: CrmColumn[] = [
   {
     id: "livres-0",
     title: "A fazer contato",
-    headerBgColor: "bg-slate-500/20 dark:bg-slate-700/40",
-    badgeBgColor: "bg-slate-500",
+    headerBgColor: "border-slate-500",
+    badgeBgColor: "bg-slate-600",
     badgeTextColor: "text-white",
     dotColor: "bg-slate-400",
   },
   {
     id: "livres-1",
     title: "Contato feito",
-    headerBgColor: "bg-blue-500/20 dark:bg-blue-700/40",
-    badgeBgColor: "bg-blue-500",
+    headerBgColor: "border-blue-500",
+    badgeBgColor: "bg-blue-600",
     badgeTextColor: "text-white",
     dotColor: "bg-blue-400",
   },
   {
     id: "livres-2",
     title: "Follow-up 1",
-    headerBgColor: "bg-amber-500/20 dark:bg-amber-700/40",
-    badgeBgColor: "bg-amber-500",
+    headerBgColor: "border-amber-500",
+    badgeBgColor: "bg-amber-600",
     badgeTextColor: "text-white",
     dotColor: "bg-amber-400",
   },
   {
     id: "livres-3",
     title: "Follow-up 2",
-    headerBgColor: "bg-orange-500/20 dark:bg-orange-700/40",
-    badgeBgColor: "bg-orange-500",
+    headerBgColor: "border-orange-500",
+    badgeBgColor: "bg-orange-600",
     badgeTextColor: "text-white",
     dotColor: "bg-orange-400",
   },
   {
     id: "orcados",
     title: "Em Negociação",
-    headerBgColor: "bg-sky-500/20 dark:bg-sky-700/40",
+    headerBgColor: "border-sky-500",
     badgeBgColor: "bg-sky-600",
     badgeTextColor: "text-white",
   },
   {
     id: "renovacoes",
     title: "Vendas",
-    headerBgColor: "bg-emerald-500/20 dark:bg-emerald-700/40",
+    headerBgColor: "border-emerald-500",
     badgeBgColor: "bg-emerald-600",
     badgeTextColor: "text-white",
   },
   {
     id: "livres-4",
     title: "Perda",
-    headerBgColor: "bg-red-500/20 dark:bg-red-700/40",
-    badgeBgColor: "bg-red-500",
+    headerBgColor: "border-red-500",
+    badgeBgColor: "bg-red-600",
     badgeTextColor: "text-white",
     dotColor: "bg-red-400",
   },
@@ -556,7 +558,9 @@ const getOrdersRangeReferenceDate = (range: OrdersRange) => {
 export function VendedorDashboard() {
   const { toast } = useToast()
   const searchParams = useSearchParams()
-  const { data: session } = useSession()
+  const { data: session, status: sessionStatus } = useSession()
+  // Apenas dispara fetches depois que a sessão resolveu (evita race condition de impersonation)
+  const sessionLoaded = sessionStatus !== "loading"
 
   // Verifica se é admin visualizando outro vendedor
   const userRole = (session?.user as { role?: string })?.role ?? null
@@ -1855,21 +1859,24 @@ export function VendedorDashboard() {
   }, [inadimplenciaOrder, inadimplenciaPage, appendVendedorIdToParams, toast])
 
   useEffect(() => {
+    if (!sessionLoaded) return
     if (activeTab !== "leads" || !kanbanResetDone) return
     fetchClientes().catch((error) => console.error(error))
-  }, [activeTab, fetchClientes, kanbanResetDone])
+  }, [sessionLoaded, activeTab, fetchClientes, kanbanResetDone])
 
   useEffect(() => {
+    if (!sessionLoaded) return
     fetchAgendaData(agendaMonth, agendaYear).catch((error) => console.error(error))
-  }, [agendaMonth, agendaYear, fetchAgendaData])
+  }, [sessionLoaded, agendaMonth, agendaYear, fetchAgendaData])
 
 
 
   // Buscar contagem de atrasos ao carregar e quando a tab de leads estiver ativa
   useEffect(() => {
+    if (!sessionLoaded) return
     if (activeTab !== "leads") return
     fetchAtrasosCount().catch((error) => console.error(error))
-  }, [activeTab, fetchAtrasosCount])
+  }, [sessionLoaded, activeTab, fetchAtrasosCount])
 
   useEffect(() => {
     fetchVendorOrders(ordersMonth, ordersYear).catch((error) => console.error(error))
@@ -1943,10 +1950,10 @@ export function VendedorDashboard() {
     setOrdersReferenceDate(getOrdersRangeReferenceDate(range))
   }
 
-  const handleViewDetails = (id: number) => {
+  const handleViewDetails = useCallback((id: number) => {
     setDetailId(id.toString())
     setDetailOpen(true)
-  }
+  }, [])
 
 
 
@@ -1961,14 +1968,14 @@ export function VendedorDashboard() {
     telefonePorteiro: row.telefonePorteiro,
   })
 
-  const handleChatButtonClick = async (cliente: VendorClientRow) => {
+  const handleChatButtonClick = useCallback(async (cliente: VendorClientRow) => {
     openChatWithClient(mapRowToRef(cliente), { mode: "click" })
-  }
+  }, [openChatWithClient])
 
-  const handleChatButtonContextMenu = (event: React.MouseEvent, cliente: VendorClientRow) => {
+  const handleChatButtonContextMenu = useCallback((event: React.MouseEvent, cliente: VendorClientRow) => {
     event.preventDefault()
     openChatWithClient(mapRowToRef(cliente), { mode: "context" })
-  }
+  }, [openChatWithClient])
 
   const handleOpenVendorChatFromDetails = async (
     clientRef: any,
@@ -1978,19 +1985,19 @@ export function VendedorDashboard() {
   }
 
   // Handlers para o diálogo de Perda
-  const handleOpenPerda = (cliente: VendorClientRow) => {
+  const handleOpenPerda = useCallback((cliente: VendorClientRow) => {
     setPerdaClientId(cliente.id)
     setPerdaClientName(formatRazaoSocial(cliente.razaoSocial))
     setPerdaDataManutencao("")
     setPerdaDialogOpen(true)
-  }
+  }, [])
 
-  const handleClosePerda = () => {
+  const handleClosePerda = useCallback(() => {
     setPerdaDialogOpen(false)
     setPerdaClientId(null)
     setPerdaClientName("")
     setPerdaDataManutencao("")
-  }
+  }, [])
 
   const selectedContactsForDispatch = useMemo(() => {
     if (selectedClientIdsArray.length === 0) return []
@@ -2902,217 +2909,36 @@ export function VendedorDashboard() {
     )
   }
 
-  // Renderiza um card do cliente para o CRM
-  const renderCrmCard = (client: VendorClientRow, columnId: CrmColumnId) => {
-    const borderColor = getCardBorderColor(client, columnId)
-    const showBadge = !columnId.startsWith("livres")
-    const isOrcadosCol = columnId === "orcados"
 
-    const getBadgeInfo = () => {
-      if (columnId === "orcados") {
-        return { label: "ORÇADO", style: "bg-sky-600 text-white border-sky-600" }
-      }
-      if (columnId === "renovacoes") {
-        return { label: "VENDA", style: "bg-emerald-600 text-white border-emerald-600" }
-      }
-      return { label: getDisplayCategoria(client).label, style: getDisplayCategoria(client).style }
-    }
-    const { label: badgeLabel, style: badgeStyle } = getBadgeInfo()
+  // Callbacks estáveis para o CrmCard (sem recriar a cada render)
+  const handleCardDragStart = useCallback((clientId: number, e: React.DragEvent) => {
+    draggedClientIdRef.current = clientId
+    e.dataTransfer.effectAllowed = "move"
+    const el = e.currentTarget as HTMLElement
+    requestAnimationFrame(() => { el.style.opacity = '0.35' })
+  }, [])
 
-    const chatSummary = clientChatSummaries[client.id]
-    const isSelected = selectedClientIds.has(client.id)
+  const handleCardDragEnd = useCallback((e: React.DragEvent) => {
+    const el = e.currentTarget as HTMLElement
+    el.style.opacity = '1'
+    draggedClientIdRef.current = null
+  }, [])
 
-    // Valor do orçamento para coluna Em Negociação
-    const orcamentoValor = isOrcadosCol
-      ? (client.lastOrcamentoValor ?? client.ultimoPedidoValor ?? null)
-      : null
+  const handleCardOpenPerda = useCallback((client: CrmCardClient) => {
+    handleOpenPerda(client as VendorClientRow)
+  }, [handleOpenPerda])
 
-    return (
-      <div
-        key={`${columnId}-${client.id}`}
-        draggable
-        onDragStart={(e) => {
-          draggedClientIdRef.current = client.id
-          e.dataTransfer.effectAllowed = "move"
-          // Aplica opacidade diretamente no DOM — sem re-render
-          const el = e.currentTarget as HTMLElement
-          requestAnimationFrame(() => { el.style.opacity = '0.35' })
-        }}
-        onDragEnd={(e) => {
-          // Restaura opacidade sem re-render
-          const el = e.currentTarget as HTMLElement
-          el.style.opacity = '1'
-          draggedClientIdRef.current = null
-        }}
-        onClick={() => handleViewDetails(client.id)}
-        className={cn(
-          "rounded-xl bg-white dark:bg-slate-800 p-2.5 space-y-1.5 cursor-grab active:cursor-grabbing transition-all select-none border border-slate-200/70 dark:border-slate-700/60",
-          "hover:-translate-y-0.5 hover:shadow-md shadow-sm",
-          isSelected && "ring-2 ring-blue-500/70 ring-offset-1"
-        )}
-      >
-        <div className="flex items-start justify-between gap-1">
-          <div className="flex items-start gap-2">
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={() => toggleClientSelection(client.id)}
-              onClick={(e) => e.stopPropagation()}
-              className="h-3.5 w-3.5 mt-0.5 shrink-0"
-              aria-label={`Selecionar ${client.razaoSocial}`}
-            />
-            <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100 leading-tight line-clamp-2">
-              {client.nomeSindico || formatRazaoSocial(client.razaoSocial)}
-            </p>
-          </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {/* Seletor de Etapa Kanban para colunas livres */}
-            {columnId.startsWith("livres-") && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-5 w-5 p-0 hover:bg-slate-100 dark:hover:bg-slate-700 data-[state=open]:bg-slate-100"
-                    >
-                      <MoreHorizontal className="h-3 w-3 text-slate-400" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[180px]">
-                    {KANBAN_STAGES.map((stage) => (
-                      <DropdownMenuItem
-                        key={stage.code}
-                        onClick={() => handleUpdateKanbanState(client.id, stage.code)}
-                        className="cursor-pointer"
-                      >
-                        <span className="flex items-center gap-2">
-                          <span className={cn("w-2 h-2 rounded-full", stage.dotColor)} />
-                          {stage.title}
-                        </span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-            {showBadge && (
-              <Badge className={cn("text-[9px] px-1.5 py-0", badgeStyle)}>
-                {badgeLabel}
-              </Badge>
-            )}
-          </div>
-        </div>
+  const handleCardChatClick = useCallback((client: CrmCardClient) => {
+    handleChatButtonClick(client as VendorClientRow)
+  }, [handleChatButtonClick])
 
-        {/* Síndico + telefone */}
-        <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 leading-tight min-w-0">
-          <span className="font-medium text-slate-700 dark:text-slate-300 truncate">{client.nomeSindico ?? "N/I"}</span>
-          <span className="shrink-0 text-slate-300 dark:text-slate-600">•</span>
-          <span className="shrink-0">{client.telefoneSindico ? formatPhone(client.telefoneSindico) : "Sem tel."}</span>
-        </div>
+  const handleCardChatContextMenu = useCallback((e: React.MouseEvent, client: CrmCardClient) => {
+    handleChatButtonContextMenu(e as React.MouseEvent<HTMLButtonElement>, client as VendorClientRow)
+  }, [handleChatButtonContextMenu])
 
-        {/* Próximo contato — destaque especial */}
-        {client.dataContatoAgendado && (
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-md px-2 py-1">
-            <CalendarDays className="h-3 w-3 shrink-0" />
-            <span>Próximo: {formatDisplayDateTime(client.dataContatoAgendado)}</span>
-          </div>
-        )}
-
-        {/* Valor do último orçamento — só na coluna Em Negociação */}
-        {orcamentoValor != null && (
-          <div className="flex items-center gap-1 text-[11px] font-bold text-sky-700 dark:text-sky-400">
-            <span className="text-slate-400">Orç.</span>
-            <span>{formatCurrency(orcamentoValor)}</span>
-          </div>
-        )}
-
-        {chatSummary && chatSummary.lastActivityAt && (
-          <div className="flex items-center justify-between gap-2 text-[10px]">
-            <div className="flex-1 min-w-0 flex items-center justify-between gap-1 overflow-hidden">
-              <span
-                className={cn(
-                  "truncate flex-1 font-medium",
-                  chatSummary.lastMessageStatus === "failed"
-                    ? "text-red-600"
-                    : chatSummary.lastMessageType === "incoming"
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-slate-600 dark:text-slate-300"
-                )}
-                title={chatSummary.lastMessage || undefined}
-              >
-                {chatSummary.lastMessage ? (
-                  <span>{chatSummary.lastMessage}</span>
-                ) : (
-                  <span>{formatDisplayDateTime(chatSummary.lastActivityAt)}</span>
-                )}
-              </span>
-              {chatSummary.lastMessage && (
-                <span className={cn(
-                  "shrink-0 whitespace-nowrap ml-1 opacity-70 font-normal",
-                  chatSummary.lastMessageStatus === "failed"
-                    ? "text-red-400"
-                    : chatSummary.lastMessageType === "incoming"
-                      ? "text-blue-500 dark:text-blue-300"
-                      : "text-slate-500"
-                )}>
-                  • {formatDisplayDateTime(chatSummary.lastActivityAt)}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1 shrink-0">
-              {chatSummary.chatbotActive ? (
-                <Bot className="h-3 w-3 text-emerald-500" aria-label="Chatbot ativo" />
-              ) : null}
-              {chatSummary.unreadCount > 0 && (
-                <Badge className="h-4 px-1.5 text-[10px] bg-blue-600 text-white border-blue-700 shrink-0">
-                  {chatSummary.unreadCount}
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Botões de ação */}
-        <div className="flex items-center justify-between gap-1 text-[10px] text-slate-400">
-          <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="sm:shadow-none h-5 w-5 p-0 hover:bg-slate-100 dark:hover:bg-slate-700"
-              onClick={() => handleChatButtonClick(client)}
-              onContextMenu={(event) => handleChatButtonContextMenu(event, client)}
-              title="Abrir conversa"
-            >
-              <img src="/icone-zap.png" alt="WhatsApp" className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-            {client.recentlyResearched && (
-              <div
-                className="flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800"
-                title="Cliente retornou da pesquisa nos últimos 15 dias"
-              >
-                <CheckCircle2 className="h-2.5 w-2.5" />
-                <span>PESQUISADO</span>
-              </div>
-            )}
-            {columnId !== "renovados" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="sm:shadow-none h-5 px-1.5 cursor-pointer text-[10px] text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                onClick={() => handleOpenPerda(client)}
-              >
-                <X className="h-3 w-3 mr-0.5" />
-                Perda
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const handleCardMoveKanban = useCallback((clientId: number, code: number) => {
+    handleUpdateKanbanState(clientId, code)
+  }, [handleUpdateKanbanState])
 
   const renderCrmKanbanBoard = () => {
     if (loading) {
@@ -3164,7 +2990,10 @@ export function VendedorDashboard() {
     }
 
     return (
-      <div className="flex gap-3 h-full overflow-x-auto overflow-y-hidden pb-1 scrollbar-thin scrollbar-thumb-slate-600/50 scrollbar-track-transparent">
+      <div
+        className="flex gap-3 h-full overflow-x-auto overflow-y-hidden pb-1 scrollbar-thin scrollbar-thumb-slate-600/50 scrollbar-track-transparent"
+        style={{ willChange: "transform" }}
+      >
         {CRM_COLUMNS.map((column) => {
           const columnClientsAll = sortedCrmColumns[column.id] ?? []
           // Filtro IA: filtra pelo campo da API (clientChatSummaries) se ativo
@@ -3213,13 +3042,13 @@ export function VendedorDashboard() {
                 }
               }}
               className={cn(
-                "flex-shrink-0 flex flex-col rounded-xl border overflow-hidden transition-colors",
+                "flex-shrink-0 flex flex-col rounded-lg border overflow-hidden transition-colors",
                 "w-64",
-                "border-border/30 bg-slate-50/60 dark:bg-slate-900/50"
+                "border-border/60 bg-card"
               )}
             >
-              {/* Header da coluna — fundo da cor do estágio */}
-              <div className={cn("px-3 py-2.5 flex items-center justify-between border-b border-border/30 shrink-0", column.headerBgColor ?? "bg-white/50 dark:bg-slate-800/50")}>
+              {/* Header da coluna */}
+              <div className={cn("px-3 py-2.5 flex items-center justify-between border-b-2 shrink-0 bg-card", column.headerBgColor ?? "border-border/60")}>
                 <div className="flex items-center gap-2 min-w-0">
                   {columnClients.length > 0 && (
                     <Checkbox
@@ -3235,21 +3064,18 @@ export function VendedorDashboard() {
                   {column.dotColor && (
                     <span className={cn("w-2 h-2 rounded-full shrink-0", column.dotColor)} />
                   )}
-                  <span className="text-[11px] font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 truncate">
+                  <span className="text-xs font-bold text-foreground truncate">
                     {column.title}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {isSomeSelectedInColumn(column.id) && (
-                    <span className="text-[9px] text-blue-600 font-bold">
+                    <span className="text-[9px] text-primary font-bold">
                       {sortedCrmColumns[column.id]?.filter((c: VendorClientRow) => selectedClientIds.has(c.id)).length}✓
                     </span>
                   )}
                   <span
-                    className={cn(
-                      "min-w-[20px] text-center px-1.5 py-0.5 text-[10px] font-bold rounded-full text-white",
-                      column.badgeBgColor
-                    )}
+                    className="text-[10px] bg-background/50 px-1.5 py-0.5 rounded-full font-bold text-foreground"
                   >
                     {columnClients.length}
                   </span>
@@ -3257,13 +3083,30 @@ export function VendedorDashboard() {
               </div>
 
               {/* Lista de cards com scroll próprio */}
-              <div className="flex-1 overflow-y-auto p-2 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
+              <div
+                className="flex-1 overflow-y-auto p-2 space-y-2 bg-secondary/30 scrollbar-thin"
+                style={{ overscrollBehavior: "contain", willChange: "transform" }}
+              >
                 {columnClients.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-border/50 py-8 text-center text-[10px] text-muted-foreground/60">
-                    Vazio
-                  </div>
+                  <p className="text-[10px] text-muted-foreground text-center py-4">Vazio</p>
                 ) : (
-                  columnClients.map((client) => renderCrmCard(client, column.id))
+                  columnClients.map((client) => (
+                    <CrmCard
+                      key={`${column.id}-${client.id}`}
+                      client={client}
+                      columnId={column.id}
+                      isSelected={selectedClientIds.has(client.id)}
+                      chatSummary={chatSummariesRef.current[client.id] as CrmCardChatSummary | undefined}
+                      onSelect={toggleClientSelection}
+                      onViewDetails={handleViewDetails}
+                      onOpenPerda={handleCardOpenPerda}
+                      onChatClick={handleCardChatClick}
+                      onChatContextMenu={handleCardChatContextMenu}
+                      onMoveKanban={handleCardMoveKanban}
+                      onDragStart={handleCardDragStart}
+                      onDragEnd={handleCardDragEnd}
+                    />
+                  ))
                 )}
               </div>
             </div>

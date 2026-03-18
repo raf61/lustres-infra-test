@@ -167,6 +167,7 @@ export function LeadsGeral() {
   const [filterOrcamentoUnit, setFilterOrcamentoUnit] = useState<'d' | 'm'>('m')
   const [filterOrcamentoCustomInput, setFilterOrcamentoCustomInput] = useState("4")
   const [filterOrcamentoItemId, setFilterOrcamentoItemId] = useState<string>("")
+  const [filterOrcamentoMinItems, setFilterOrcamentoMinItems] = useState<number | null>(null)
   const [orcamentoContextMenu, setOrcamentoContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   const [filterPedidoMode, setFilterPedidoMode] = useState<'com' | 'sem' | null>(null)
@@ -174,6 +175,7 @@ export function LeadsGeral() {
   const [filterPedidoUnit, setFilterPedidoUnit] = useState<'d' | 'm'>('m')
   const [filterPedidoCustomInput, setFilterPedidoCustomInput] = useState("4")
   const [filterPedidoItemId, setFilterPedidoItemId] = useState<string>("")
+  const [filterPedidoMinItems, setFilterPedidoMinItems] = useState<number | null>(null)
   const [pedidoContextMenu, setPedidoContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   // Catálogo de itens para filtros
@@ -269,6 +271,10 @@ export function LeadsGeral() {
       if (filterOrcamentoMinItems !== null) {
         filters.orcamentoMinItems = filterOrcamentoMinItems.toString()
       }
+      if (filterOrcamentoItemId && filterOrcamentoItemId !== "all") {
+        // Here we'd need to add filterOrcamentoItemId to FetchFilters if backend supports it
+        // filters.orcamentoItemId = filterOrcamentoItemId
+      }
     }
 
     if (filterPedidoMode !== null) {
@@ -281,6 +287,9 @@ export function LeadsGeral() {
       }
       if (filterPedidoMinItems !== null) {
         filters.pedidoMinItems = filterPedidoMinItems.toString()
+      }
+      if (filterPedidoItemId && filterPedidoItemId !== "all") {
+        // filters.pedidoItemId = filterPedidoItemId
       }
     }
 

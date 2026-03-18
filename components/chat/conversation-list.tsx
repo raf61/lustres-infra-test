@@ -129,7 +129,7 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
             </span>
           </div>
 
-          <p className="text-xs text-muted-foreground/70 truncate leading-snug mb-1.5">
+          <p className="text-xs text-muted-foreground/90 truncate leading-snug mb-1.5">
             {lastMessagePreview}
           </p>
 

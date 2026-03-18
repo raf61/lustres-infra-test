@@ -29,7 +29,9 @@ import {
   Bot,
   User,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 function abbreviateRazaoSocial(value: string) {
@@ -68,6 +70,7 @@ export function ChatHeader() {
   const [propostaSelectOpen, setPropostaSelectOpen] = useState(false);
   const [propostaClient, setPropostaClient] = useState<{ id: number; razaoSocial: string } | null>(null);
   const [chatbotDialogOpen, setChatbotDialogOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   const contact = activeConversation?.contact;
   const contactName = contact?.name || contact?.phoneNumber || "Desconhecido";
@@ -117,7 +120,6 @@ export function ChatHeader() {
     setPropostaClient(conversationClients[0] ?? null);
     setPropostaDialogOpen(true);
   };
-
   const handleAssociateClient = async () => {
     const rawCnpj = unmask(associateCnpj);
     if (!rawCnpj) { setAssociateError("Informe o CNPJ."); return; }
@@ -130,6 +132,24 @@ export function ChatHeader() {
     } catch (error) {
       setAssociateError(error instanceof Error ? error.message : "Falha ao associar.");
     } finally { setIsAssociating(false); }
+  };
+
+  const { clearConversationMessages } = useChat();
+
+  const handleClearMessages = async () => {
+    if (!conversation || isClearing) return;
+    if (!confirm("Deseja realmente limpar todas as mensagens desta conversa? Esta ação é irreversível.")) return;
+
+    setIsClearing(true);
+    try {
+      await clearConversationMessages(conversation.id);
+      toast.success("Conversa limpa com sucesso!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao limpar conversa.");
+    } finally {
+      setIsClearing(false);
+    }
   };
 
   return (
@@ -228,6 +248,15 @@ export function ChatHeader() {
             <DropdownMenuItem onClick={() => setChatbotDialogOpen(true)} className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3">
               <Bot className="h-4 w-4 mr-3 text-primary" />
               Configurar Bot
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-border/50" />
+            <DropdownMenuItem
+              onClick={handleClearMessages}
+              disabled={isClearing}
+              className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3 text-red-500 focus:text-red-500 focus:bg-red-500/10"
+            >
+              <Trash2 className="h-4 w-4 mr-3" />
+              {isClearing ? "Limpando..." : "Limpar Conversa [Teste]"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -431,6 +431,12 @@ class ChatAPI {
     });
   }
 
+  async clearConversationMessages(id: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/conversations/${id}/clear`, {
+      method: "POST",
+    });
+  }
+
   async associateClientToConversation(
     conversationId: string,
     params: { cnpj?: string; clientId?: number }

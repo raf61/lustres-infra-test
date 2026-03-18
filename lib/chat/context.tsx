@@ -511,6 +511,7 @@ interface ChatContextValue {
     params: { cnpj?: string; clientId?: number }
   ) => Promise<Conversation | undefined>;
   unassociateClientFromConversation: (conversationId: string, clientId: number) => Promise<void>;
+  clearConversationMessages: (id: string) => Promise<void>;
 
   // Ações de Mensagem
   loadMessages: (conversationId: string) => Promise<void>;
@@ -1187,6 +1188,29 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const clearConversationMessages = useCallback(async (conversationId: string) => {
+    try {
+      await chatAPI.clearConversationMessages(conversationId);
+      // Limpa as mensagens no estado local
+      dispatch({
+        type: "SET_MESSAGES",
+        payload: {
+          conversationId,
+          messages: [],
+          meta: { hasMore: false },
+        },
+      });
+      // Também limpa lastMessage no estado da conversa
+      dispatch({
+        type: "UPDATE_CONVERSATION",
+        payload: { id: conversationId, lastMessage: null },
+      });
+    } catch (error) {
+      console.error("[Chat] Failed to clear messages:", error);
+      throw error;
+    }
+  }, []);
+
   const loadMoreMessages = useCallback(
     async (conversationId: string) => {
       if (loadingRef.current.messages.has(conversationId)) return;
@@ -1689,6 +1713,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       assignConversation,
       associateClientToConversation,
       unassociateClientFromConversation,
+      clearConversationMessages,
       loadMessages,
       loadMoreMessages,
       sendMessage,
@@ -1714,6 +1739,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       assignConversation,
       associateClientToConversation,
       unassociateClientFromConversation,
+      clearConversationMessages,
       loadMessages,
       loadMoreMessages,
       sendMessage,
