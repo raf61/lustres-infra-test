@@ -302,6 +302,7 @@ type RawVendorClient = {
   kanbanPosition: number | null
   hasRecentOrcamento: boolean
   lastOrcamentoAt: Date | null
+  lastOrcamentoValor: number | null
   totalPedidos: number
   ultimoPedidoValor: number | null
   ultimoPedidoValidoData: Date | null
@@ -451,6 +452,17 @@ export async function GET(request: Request) {
             WHERE o3."clienteId" = c.id
           ) AS "lastOrcamentoAt",
           (
+            SELECT COALESCE(SUM(oi.valor * oi.quantidade), 0)
+            FROM "OrcamentoItem" oi
+            JOIN "Orcamento" o_last ON o_last.id = oi."orcamentoId"
+            WHERE o_last.id = (
+              SELECT o5.id FROM "Orcamento" o5
+              WHERE o5."clienteId" = c.id
+              ORDER BY o5."createdAt" DESC
+              LIMIT 1
+            )
+          )::float AS "lastOrcamentoValor",
+          (
             SELECT COUNT(*)::int FROM "Pedido" p
             JOIN "Orcamento" o2 ON o2.id = p."orcamentoId"
             WHERE o2."clienteId" = c.id
@@ -542,6 +554,7 @@ export async function GET(request: Request) {
         ultimaAtualizacao: client.updatedAt.toISOString(),
         hasRecentOrcamento: client.hasRecentOrcamento,
         lastOrcamentoAt: client.lastOrcamentoAt ? client.lastOrcamentoAt.toISOString() : null,
+        lastOrcamentoValor: client.lastOrcamentoValor ?? null,
         totalPedidos: client.totalPedidos,
         ultimoPedidoValor: client.ultimoPedidoValor ?? 0,
         ultimoPedidoValidoData: client.ultimoPedidoValidoData ? client.ultimoPedidoValidoData.toISOString() : null,

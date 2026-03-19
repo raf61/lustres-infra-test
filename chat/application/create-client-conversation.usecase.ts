@@ -20,7 +20,8 @@ export type CreateClientConversationOutput = {
 const normalizePhoneNumber = (raw: string): string => {
   const digits = raw.replace(/\D/g, '');
   if (!digits) return '';
-  return digits.startsWith('55') ? digits : `55${digits}`;
+  // Store without country code 55 — start with DDD + number
+  return digits.startsWith('55') ? digits.slice(2) : digits;
 };
 
 /**

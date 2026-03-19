@@ -66,8 +66,16 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
   const lastMessagePreview = useMemo(() => {
     const msg = conversation.lastMessage;
     if (!msg) return "Sem mensagens";
-    if (msg.contentType !== "text") return `[${msg.contentType}]`;
-    return msg.content || "Mensagem";
+    if (msg.contentType === "text") return msg.content || "Mensagem";
+    if (msg.contentType === "template") return msg.content || "[Mensagem enviada]";
+    if (msg.contentType === "image") return "[Imagem]";
+    if (msg.contentType === "audio") return "[Áudio]";
+    if (msg.contentType === "video") return "[Vídeo]";
+    if (msg.contentType === "contact") return "[Contato]";
+    if (msg.contentType === "location") return "[Localização]";
+    if (msg.contentType === "document" || msg.contentType === "file") return "[Arquivo]";
+    if (msg.contentType === "sticker") return "[Figurinha]";
+    return msg.content || `[${msg.contentType}]`;
   }, [conversation.lastMessage]);
 
   const timeDisplay = useMemo(() => {
@@ -131,7 +139,7 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
             </span>
           </div>
 
-          <p className="text-xs text-muted-foreground/90 truncate leading-snug mb-1.5">
+          <p className="text-xs text-muted-foreground/70 truncate leading-snug mb-1.5">
             {lastMessagePreview}
           </p>
 

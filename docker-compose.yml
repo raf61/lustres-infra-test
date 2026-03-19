@@ -11,7 +11,7 @@ services:
       # Evita estourar max_connections no Postgres
       PRISMA_CONNECTION_LIMIT: "5"
     ports:
-      - "4000:4010"
+      - "4010:4010"
     restart: unless-stopped
 
   nfe_webhook:
@@ -23,7 +23,7 @@ services:
     environment:
       PRISMA_CONNECTION_LIMIT: "1"
     ports:
-      - "4002:4012"
+      - "4012:4012"
     restart: unless-stopped
 
   realtime:
@@ -35,7 +35,7 @@ services:
     environment:
       PRISMA_CONNECTION_LIMIT: "1"
     ports:
-      - "3001:3011"
+      - "3011:3011"
     restart: unless-stopped
 
   workers:
