@@ -1562,13 +1562,13 @@ export function AnaliseVendedoresPage() {
                   </div>
 
                   {/* Métricas expandidas — Status Kanban + indicadores operacionais */}
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
                     {/* Leads em Aberto */}
                     <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/30">
                       <CardContent className="pt-4">
                         <div className="flex items-center gap-2 text-blue-400 mb-1">
                           <MessageSquare className="h-4 w-4" />
-                          <span className="text-xs font-medium">Leads em Aberto</span>
+                          <span className="text-xs font-medium">Conversas Abertas</span>
                         </div>
                         <p className="text-3xl font-bold text-blue-300">
                           {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.32) : 0}
@@ -1577,21 +1577,39 @@ export function AnaliseVendedoresPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Tempo Médio de Resposta (mock) */}
+                    {/* Esperando Vendedor */}
                     <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/30">
                       <CardContent className="pt-4">
                         <div className="flex items-center gap-2 text-amber-400 mb-1">
                           <Clock className="h-4 w-4" />
-                          <span className="text-xs font-medium">Tempo Médio Resposta</span>
+                          <span className="text-xs font-medium">Esperando Vendedor</span>
                         </div>
                         <p className="text-3xl font-bold text-amber-300">
+                          {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.12) : 0}
+                        </p>
+                        <p className="text-[10px] text-amber-400">
+                          {dadosCarteira
+                            ? `~${Math.round(0.12 / 0.32 * 100)}% das abertas aguardando`
+                            : "aguardando resposta"}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Tempo Médio de Resposta (mock) */}
+                    <Card className="bg-gradient-to-br from-slate-500/10 to-slate-600/5 border-slate-500/30">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-xs font-medium">Resposta Média</span>
+                        </div>
+                        <p className="text-3xl font-bold text-slate-300">
                           {(() => {
                             const seed = (Date.now() % 10000) + (selectedVendedorId ? selectedVendedorId.charCodeAt(0) : 5)
                             const minutos = 3 + (seed % 28)
                             return `${minutos}min`
                           })()}
                         </p>
-                        <p className="text-[10px] text-amber-400">tempo médio de resposta ao lead</p>
+                        <p className="text-[10px] text-slate-400">tempo médio de resposta ao lead</p>
                       </CardContent>
                     </Card>
 
@@ -1611,19 +1629,33 @@ export function AnaliseVendedoresPage() {
                       </CardContent>
                     </Card>
 
-                    {/* Ticket Médio */}
+                    {/* Follow-ups IA */}
                     <Card className="bg-gradient-to-br from-violet-500/10 to-violet-600/5 border-violet-500/30">
                       <CardContent className="pt-4">
                         <div className="flex items-center gap-2 text-violet-400 mb-1">
+                          <RefreshCw className="h-4 w-4" />
+                          <span className="text-xs font-medium">Follow-ups IA</span>
+                        </div>
+                        <p className="text-3xl font-bold text-violet-300">
+                          {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.22) : 0}
+                        </p>
+                        <p className="text-[10px] text-violet-400">disparados este mês · taxa recup. ~25%</p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Ticket Médio */}
+                    <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border-indigo-500/30">
+                      <CardContent className="pt-4">
+                        <div className="flex items-center gap-2 text-indigo-400 mb-1">
                           <Wallet className="h-4 w-4" />
                           <span className="text-xs font-medium">Ticket Médio</span>
                         </div>
-                        <p className="text-2xl font-bold text-violet-300">
+                        <p className="text-2xl font-bold text-indigo-300">
                           {formatCurrency(selectedVendedorId
                             ? 1800 + (selectedVendedorId.charCodeAt(0) % 1200)
                             : 2350)}
                         </p>
-                        <p className="text-[10px] text-violet-400">valor médio por pedido fechado</p>
+                        <p className="text-[10px] text-indigo-400">valor médio por pedido fechado</p>
                       </CardContent>
                     </Card>
                   </div>

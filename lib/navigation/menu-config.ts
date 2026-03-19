@@ -160,6 +160,7 @@ export const MENU_CONFIG: MenuGroup[] = [
       // { name: "Financeiro", href: "/dashboard/financeiro", icon: DollarSign, roles: ["MASTER", "ADMINISTRADOR", "FINANCEIRO"] },
       { name: "Usuários", href: "/dashboard/usuarios", icon: Users, roles: ["MASTER", "ADMINISTRADOR", "FINANCEIRO"] },
       { name: "Estoque", href: "/dashboard/estoque", icon: Package, roles: ["MASTER", "ADMINISTRADOR"] },
+      { name: "Análise Leads & IA", href: "/dashboard/analise-leads", icon: BarChart3, roles: ["MASTER", "ADMINISTRADOR"] },
       { name: "Relatórios", href: "/dashboard/relatorios", icon: BarChart3, roles: ["MASTER", "ADMINISTRADOR"] },
       // { name: "Bancos", href: "/dashboard/bancos", icon: Landmark, roles: ["MASTER", "ADMINISTRADOR", "FINANCEIRO"] },
       // { name: "Filiais", href: "/dashboard/filiais", icon: Component, roles: ["MASTER", "ADMINISTRADOR"] },
