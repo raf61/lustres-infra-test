@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { BarChart3, TrendingUp, Users, AlertTriangle, MessageSquare, Bot, Clock, ChevronRight } from "lucide-react"
 import { Can } from "@/components/auth/can"
 import { cn } from "@/lib/utils"
-import { LeadsCanalChart } from "@/components/dashboard/leads-canal-chart"
+import { LeadsDayChart } from "@/components/dashboard/leads-day-chart"
+import { LeadStatusSummary } from "@/components/dashboard/lead-status-summary"
 import { SalesFunnel } from "@/components/dashboard/sales-funnel"
 import { UnidadesComparison } from "@/components/dashboard/unidades-comparison"
 import { VendedoresRanking } from "@/components/dashboard/vendedores-ranking"
@@ -31,14 +32,14 @@ export function DashboardMaster() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-3xl font-bold tracking-tighter text-foreground font-display">Dashboard Estratégico</h1>
-              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-[10px] font-bold text-emerald-500 border border-emerald-500/20 uppercase tracking-widest kpi-glow">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Tempo real
+              <h1 className="text-3xl font-bold tracking-tighter text-foreground font-display uppercase italic lora-font">Dashboard Alta Performance</h1>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-[10px] font-bold text-primary border border-primary/20 uppercase tracking-widest kpi-glow">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                Live: Central de I.A.
               </div>
             </div>
             <p className="text-[10px] font-bold text-muted-foreground bg-card px-3 py-1.5 rounded-lg border border-border inline-block mt-2 uppercase tracking-widest">
-              Performance Consolidada — Unidade 1
+              Performance Estratégica Consolidada — Lustres & Design
             </p>
           </div>
 
@@ -67,25 +68,8 @@ export function DashboardMaster() {
             <CardHeader className="border-b border-border/50 px-6 py-5 bg-background/50 backdrop-blur-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Evolução de Vendas</CardTitle>
-                  <CardDescription className="text-[10px] font-semibold text-muted-foreground/60 uppercase mt-1">Histórico mensal vs projeção estratégica</CardDescription>
-                </div>
-                <div className="p-2.5 rounded-xl bg-primary/10 text-primary kpi-glow">
-                  <BarChart3 className="h-4 w-4" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <SalesChart />
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-3 border-border/50 bg-card shadow-2xl overflow-hidden glass-card">
-            <CardHeader className="border-b border-border/50 px-6 py-5 bg-background/50 backdrop-blur-md">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Origem de Leads</CardTitle>
-                  <CardDescription className="text-[10px] font-semibold text-muted-foreground/60 uppercase mt-1">Canais de maior conversão no período</CardDescription>
+                  <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Leads por Dia</CardTitle>
+                  <CardDescription className="text-[10px] font-semibold text-muted-foreground/60 uppercase mt-1">Volume de entrada de novas oportunidades</CardDescription>
                 </div>
                 <div className="p-2.5 rounded-xl bg-primary/10 text-primary kpi-glow">
                   <TrendingUp className="h-4 w-4" />
@@ -93,7 +77,24 @@ export function DashboardMaster() {
               </div>
             </CardHeader>
             <CardContent className="p-6">
-              <LeadsCanalChart />
+              <LeadsDayChart />
+            </CardContent>
+          </Card>
+
+          <Card className="lg:col-span-3 border-border/50 bg-card shadow-2xl overflow-hidden glass-card">
+            <CardHeader className="border-b border-border/50 px-6 py-5 bg-background/50 backdrop-blur-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status Geral dos Leads</CardTitle>
+                  <CardDescription className="text-[10px] font-semibold text-muted-foreground/60 uppercase mt-1">Distribuição do funil em tempo real</CardDescription>
+                </div>
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary kpi-glow">
+                  <BarChart3 className="h-4 w-4" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <LeadStatusSummary />
             </CardContent>
           </Card>
         </div>
@@ -120,7 +121,7 @@ export function DashboardMaster() {
 
         <div className="grid gap-6 lg:grid-cols-12">
           <Card
-            className="lg:col-span-9 border-border/50 bg-card shadow-2xl overflow-hidden glass-card cursor-pointer hover:border-primary/50 transition-all hover:scale-[1.005] group"
+            className="lg:col-span-12 border-border/50 bg-card shadow-2xl overflow-hidden glass-card cursor-pointer hover:border-primary/50 transition-all hover:scale-[1.005] group"
             onClick={handleVendedoresCardClick}
           >
             <CardHeader className="border-b border-border/50 px-6 py-5 space-y-0 bg-background/50 flex flex-row items-center justify-between">
@@ -135,18 +136,6 @@ export function DashboardMaster() {
             </CardHeader>
             <CardContent className="p-0">
               <VendedoresRanking />
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-3 border-border/50 bg-card shadow-2xl overflow-hidden glass-card">
-            <CardHeader className="border-b border-border/50 px-6 py-5 space-y-0 bg-background/50">
-              <div className="flex items-center justify-between font-bold uppercase tracking-widest text-[10px] text-muted-foreground">
-                <span>Alertas Cruciais</span>
-                <AlertTriangle className="h-4 w-4 text-orange-500 kpi-glow" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <AlertasVencidos />
             </CardContent>
           </Card>
         </div>

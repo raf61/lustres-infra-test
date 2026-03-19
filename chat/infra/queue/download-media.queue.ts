@@ -51,7 +51,7 @@ export function getDownloadMediaQueue(): Queue<DownloadMediaJob> {
 export function ensureDownloadMediaWorker(handler: (data: DownloadMediaJob) => Promise<void>) {
   if (g.__downloadMediaWorkerStarted) return;
 
-  const concurrency = Number(process.env.BULLMQ_WORKER_CONCURRENCY || 5);
+  const concurrency = Number(process.env.BULLMQ_WORKER_CONCURRENCY || 1);
 
   new Worker<DownloadMediaJob>(
     'chat-download-media',

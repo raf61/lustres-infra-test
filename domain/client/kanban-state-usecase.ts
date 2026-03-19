@@ -125,7 +125,11 @@ function validateKanbanCode(code: number): number {
     // 2: Follow-up 1
     // 3: Follow-up 2
     // 4: Ignorado
-    if (typeof code !== "number" || code < 0 || code > 4) {
+    // 5: Interessado
+    // 6: Negociando
+    // 7: Venda Realizada
+    // 8: Perdido
+    if (typeof code !== "number" || code < 0 || code > 8) {
         return 0;
     }
     return code;

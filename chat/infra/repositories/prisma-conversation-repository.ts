@@ -84,6 +84,9 @@ export class PrismaConversationRepository implements IConversationRepository {
                     id: true,
                     razaoSocial: true,
                     nomeSindico: true,
+                    kanbanEstado: {
+                      select: { code: true }
+                    }
                   },
                 },
               },
@@ -492,6 +495,9 @@ export class PrismaConversationRepository implements IConversationRepository {
                       id: true,
                       razaoSocial: true,
                       nomeSindico: true,
+                      kanbanEstado: {
+                        select: { code: true }
+                      }
                     },
                   },
                 },
@@ -610,6 +616,7 @@ export class PrismaConversationRepository implements IConversationRepository {
           id: link.client.id,
           razaoSocial: link.client.razaoSocial,
           nomeSindico: link.client.nomeSindico,
+          kanbanEstado: link.client.kanbanEstado,
         })),
       },
       inbox: {
@@ -679,6 +686,9 @@ export class PrismaConversationRepository implements IConversationRepository {
                     id: true,
                     razaoSocial: true,
                     nomeSindico: true,
+                    kanbanEstado: {
+                      select: { code: true }
+                    }
                   },
                 },
               },
@@ -755,6 +765,7 @@ export class PrismaConversationRepository implements IConversationRepository {
           id: link.client.id,
           razaoSocial: link.client.razaoSocial,
           nomeSindico: link.client.nomeSindico,
+          kanbanEstado: link.client.kanbanEstado,
         })),
       },
       inbox: {

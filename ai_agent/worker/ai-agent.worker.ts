@@ -130,14 +130,14 @@ export const ensureAiAgentWorker = () => {
                 }
             }
 
-            // 3. Load History (Capped at 40 messages)
-            const MAX_HISTORY = 40;
-            const historyFetchLimit = Math.min(preset.maxHistoryMessages || 20, MAX_HISTORY);
+            // 3. Load History (Capped at 500 messages)
+            const MAX_HISTORY = 500;
+            const historyFetchLimit = preset.maxHistoryMessages || 100; // Prefer larger history if not specified
 
             const history = await prisma.chatMessage.findMany({
                 where: { conversationId },
                 orderBy: { createdAt: 'desc' },
-                take: historyFetchLimit
+                take: Math.min(historyFetchLimit, MAX_HISTORY)
             });
 
             const storedMessages = history.reverse().map(m => {
@@ -252,7 +252,6 @@ export const ensureAiAgentWorker = () => {
             }
 
             // Send Response
-            // Send Response
             if (lastMessage instanceof AIMessage && lastMessage.content) {
                 const content = lastMessage.content;
 
@@ -270,16 +269,40 @@ export const ensureAiAgentWorker = () => {
                 const wasResolved = decisions.includes('resolve_conversation');
 
                 if (!isSilence) {
-                    const responseText = typeof content === 'string' ? content : JSON.stringify(content);
+                    let messagesToSend: string[] = [];
+                    try {
+                        const jsonMatch = typeof content === 'string' ? content.match(/```json\s*([\s\S]*?)\s*```/) : null;
+                        const source = jsonMatch ? jsonMatch[1].trim() : (typeof content === 'string' ? content.trim() : content);
 
-                    // Verificação final para evitar o envio de "[]"
-                    if (responseText !== '[]' && responseText !== '[""]') {
+                        const parsed = typeof source === 'string' ? JSON.parse(source) : source;
+                        if (Array.isArray(parsed)) {
+                            messagesToSend = parsed.filter(m => typeof m === 'string' && m.trim() !== "" && m !== "[]");
+                        } else {
+                            messagesToSend = [typeof source === 'string' ? source : JSON.stringify(source)];
+                        }
+                    } catch (e) {
+                        const fallback = typeof content === 'string' ? content.replace(/```json|```/g, "").trim() : JSON.stringify(content);
+                        if (fallback && fallback !== "[]") {
+                            messagesToSend = [fallback];
+                        }
+                    }
+
+                    // Envia cada mensagem por vez com delay de 1s
+                    for (let i = 0; i < messagesToSend.length; i++) {
+                        const msg = messagesToSend[i];
+                        if (!msg || msg === '[]' || msg.trim() === '') continue;
+
                         await sendMessageUseCase.execute({
                             conversationId,
-                            content: responseText,
+                            content: msg,
                             messageType: "outgoing",
                             contentAttributes: wasResolved ? { skipReopen: true } : undefined as any
                         });
+
+                        // Delay de 1s se não for a última mensagem
+                        if (i < messagesToSend.length - 1) {
+                            await new Promise(resolve => setTimeout(resolve, 1500)); // levemente maior para melhor percepção
+                        }
                     }
                 } else if (wasResolved) {
                     // IA resolveu a conversa mas não enviou nenhuma mensagem (silêncio).
@@ -298,7 +321,7 @@ export const ensureAiAgentWorker = () => {
 
     }, {
         connection: buildConnection(),
-        concurrency: Number(process.env.AI_AGENT_CONCURRENCY || 5),
+        concurrency: Number(process.env.AI_AGENT_CONCURRENCY || 1),
         limiter: {
             max: 10,
             duration: 1000

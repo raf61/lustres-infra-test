@@ -315,10 +315,10 @@ export function EditarPedidoForm({
     if (open) {
       resetForm()
       fetchSuggestions("")
-      loadBancos().catch(console.error)
     } else {
       resetForm()
     }
+
 
     return () => {
       if (throttleTimeoutRef.current) {
@@ -579,151 +579,8 @@ export function EditarPedidoForm({
         </div>
       ) : (
         <>
-          <div className="grid gap-3 md:grid-cols-4">
-            {!isOs && (
-              <>
-                <div className="space-y-1">
-                  <Label className="text-[12px] font-semibold text-foreground">Parcelas</Label>
-                  <Input
-                    value={parcelasInput}
-                    onChange={(e) => setParcelasInput(e.target.value)}
-                    placeholder="Ex.: 12"
-                    disabled={blockEdit}
-                    className="h-8 text-[13px]"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-[12px] font-semibold text-foreground">1º vencimento</Label>
-                  <Input
-                    type="date"
-                    value={primeiroVencimentoInput}
-                    onChange={(e) => setPrimeiroVencimentoInput(e.target.value)}
-                    disabled={blockEdit}
-                    className="h-8 text-[13px]"
-                  />
-                </div>
-              </>
-            )}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label className="text-[12px] font-semibold text-foreground tracking-tight">Medições (Ω)</Label>
-                {!blockEdit && (
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="h-auto p-0 text-[10px] uppercase font-bold text-blue-600 no-underline hover:no-underline"
-                    onClick={() => setIsMedicaoDialogOpen(true)}
-                  >
-                    Edit
-                  </Button>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-1 items-center min-h-[32px] border rounded-md p-1 px-2 border-border bg-card shadow-sm overflow-hidden">
-                {medicoesMulti.filter(m => m.valor.trim() !== "").length > 0 ? (
-                  medicoesMulti.filter(m => m.valor.trim() !== "").map((med, idx) => (
-                    <span key={idx} className="text-[11px] font-mono text-foreground bg-secondary border border-border/40 px-1 rounded whitespace-nowrap">
-                      {med.valor}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-[10px] text-muted-foreground/60 italic">vazio</span>
-                )}
-              </div>
 
-              <Dialog open={isMedicaoDialogOpen} onOpenChange={setIsMedicaoDialogOpen}>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="text-sm uppercase font-bold text-foreground">Editar Medições</DialogTitle>
-                    <DialogDescription className="text-xs">Detalhamento ôhmico (Ω).</DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-3 py-3">
-                    <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-                      {medicoesMulti.map((med, idx) => (
-                        <div key={idx} className="flex gap-2 items-center bg-secondary p-2 rounded-md border border-border">
-                          <div className="flex-1">
-                            <Label className="text-[10px] uppercase text-muted-foreground font-semibold">Torre/Local</Label>
-                            <Input
-                              placeholder="Filtro"
-                              value={med.torre}
-                              onChange={(e) => {
-                                const next = [...medicoesMulti]
-                                next[idx].torre = e.target.value
-                                setMedicoesMulti(next)
-                              }}
-                              className="h-8 text-[12px] mt-0.5"
-                            />
-                          </div>
-                          <div className="w-24">
-                            <Label className="text-[10px] uppercase text-muted-foreground font-semibold">Valor</Label>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.0"
-                              value={med.valor}
-                              onChange={(e) => {
-                                const next = [...medicoesMulti]
-                                next[idx].valor = e.target.value
-                                setMedicoesMulti(next)
-                                if (idx === 0) setMedicaoOhmicaInput(e.target.value)
-                              }}
-                              className="h-8 text-[12px] mt-0.5"
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-red-500 mt-4"
-                            onClick={() => setMedicoesMulti(prev => prev.filter((_, i) => i !== idx))}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="w-full border-dashed h-9 text-xs text-muted-foreground"
-                      onClick={() => setMedicoesMulti(prev => [...prev, { torre: "", valor: "" }])}
-                    >
-                      <Plus className="h-3 w-3 mr-1" />
-                      Add Ponto
-                    </Button>
-                  </div>
-                  <DialogFooter>
-                    <Button type="button" className="w-full h-9 text-xs" onClick={() => setIsMedicaoDialogOpen(false)}>
-                      Confirmar
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
-            {!isOs && (
-              <div className="space-y-1">
-                <Label className="text-[12px] font-semibold text-foreground">Banco emissor</Label>
-                <Select
-                  value={bancoSelecionado || undefined}
-                  onValueChange={(value) => setBancoSelecionado(value)}
-                  disabled={loadingBancos || ((isConcluido || Boolean(bancoEmissorId)) && !isAdminOrFinance)}
-                >
-                  <SelectTrigger className="w-full h-8 text-[13px]">
-                    <SelectValue placeholder={loadingBancos ? "Carregando bancos..." : "Selecione um banco"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {bancos.map((banco) => (
-                      <SelectItem key={banco.id} value={banco.id.toString()} className="text-[13px]">
-                        {banco.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-[10px] text-muted-foreground">Banco legado: {legacyBanco ?? "—"}</p>
-                {bancosError ? <span className="text-[11px] text-destructive">{bancosError}</span> : null}
-              </div>
-            )}
-          </div>
+
 
           <div className="space-y-1">
             <Label className="text-[12px] font-semibold text-foreground">Observações(aparecem para a supervisão técnica, e para o técnico também)</Label>

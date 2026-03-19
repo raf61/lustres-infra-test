@@ -22,22 +22,24 @@ function getInitials(name: string) {
   return parts.slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
-const CRM_STAGES = [
-  { label: "A fazer contato", color: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
-  { label: "Contato feito",   color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  { label: "Follow-up 1",    color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  { label: "Follow-up 2",    color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  { label: "Perda",          color: "bg-red-500/20 text-red-400 border-red-500/30" },
-  { label: "Em Negociação",  color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-  { label: "Vendas",         color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-];
+const CRM_STAGES: Record<number, { label: string, color: string }> = {
+  0: { label: "A fazer contato", color: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
+  1: { label: "Contato feito",   color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  2: { label: "Follow-up 1",    color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  3: { label: "Follow-up 2",    color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
+  4: { label: "Ignorado",       color: "bg-red-500/20 text-red-500 border-red-500/30" },
+  5: { label: "Interessado",    color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  6: { label: "Negociando",     color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
+  7: { label: "Venda Feita",    color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  8: { label: "Perdido",        color: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
+};
 
-function getMockCrmStage(conversationId: string) {
-  let hash = 0;
-  for (let i = 0; i < conversationId.length; i++) {
-    hash = (hash * 31 + conversationId.charCodeAt(i)) | 0;
-  }
-  return CRM_STAGES[Math.abs(hash) % CRM_STAGES.length];
+function getCrmStage(conversation: Conversation) {
+  // Tentar pegar do primeiro cliente vinculado ao contato
+  const client = conversation.contact?.clients?.[0];
+  const code = (client as any)?.kanbanEstado?.code ?? 0;
+  
+  return CRM_STAGES[code] || CRM_STAGES[0];
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -59,7 +61,7 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
   // Todos os derived values antes de qualquer return condicional
   const hasAi = conversation.chatbotStatus === "ACTIVE";
   const unreadCount = conversation.unreadCount || 0;
-  const crmStage = getMockCrmStage(conversation.id);
+  const crmStage = getCrmStage(conversation);
 
   const lastMessagePreview = useMemo(() => {
     const msg = conversation.lastMessage;

@@ -34,6 +34,7 @@ import {
   Component,
   Receipt,
   ScrollText,
+  Megaphone,
 } from "lucide-react"
 
 import { type Role } from "@/lib/constants/roles"
@@ -104,6 +105,7 @@ export const MENU_CONFIG: MenuGroup[] = [
     roles: ["MASTER", "ADMINISTRADOR", "SUPERVISOR", "FINANCEIRO", "SAC"],
     items: [
       { name: "Pedidos", href: "/dashboard/pedidos", icon: ClipboardList },
+      { name: "Campanhas", href: "/dashboard/campaigns", icon: Megaphone },
       { name: "Orçamentos", href: "/dashboard/orcamentos", icon: FileText, roles: ["MASTER", "ADMINISTRADOR", "SUPERVISOR", "VENDEDOR", "FINANCEIRO"] },
       // { name: "Contratos", href: "/dashboard/contratos", icon: ScrollText, roles: ["MASTER", "ADMINISTRADOR", "FINANCEIRO", "VENDEDOR"] },
     ],

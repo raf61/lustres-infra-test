@@ -371,7 +371,7 @@ export function ensureChatbotEventsWorker() {
     },
     {
       connection: buildChatbotConnection(),
-      concurrency: Number(process.env.BULLMQ_CHATBOT_EVENTS_CONCURRENCY || 2),
+      concurrency: Number(process.env.BULLMQ_CHATBOT_EVENTS_CONCURRENCY || 1),
     }
   ).on("failed", (job, err) => {
     console.error(`[ChatbotEventsWorker] Job ${job?.id} failed:`, err.message);

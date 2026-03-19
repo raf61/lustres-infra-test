@@ -193,14 +193,32 @@ Hoje é: {current_date}
 };
 
 // =============================================================================
+// PRESET: INBOUND LUSTRES (Vendas)
+// =============================================================================
+
+export const INBOUND_LUSTRES_PRESET: AgentPreset = {
+  name: "Inbound Lustres - Especialista",
+  systemPrompt: "Você é um especialista em iluminação do Casarão Lustres. Ajude o cliente a encontrar a solução perfeita.",
+  enabledTools: ["consult_stock", "handoff_to_human", "resolve_conversation"],
+  temperature: 0.3,
+  maxHistoryMessages: 30,
+};
+
+// =============================================================================
 // REGISTRY E LOOKUP
 // =============================================================================
 
 /**
  * Busca o preset apropriado para um fluxo.
- * Por enquanto só temos outbound de vendas.
  */
 export function getPresetForFlow(flowId: string, flowName?: string): AgentPreset {
+  // Inbound Vendas Lustres (ID Hardcoded conforme pedido do usuário)
+  if (flowId === "cmmwk5hgv0001jv2rv3jzt5ms") {
+    console.log(`[AgentPreset] Flow ${flowId} → Inbound Lustres`);
+    return INBOUND_LUSTRES_PRESET;
+  }
+
   console.log(`[AgentPreset] Flow ${flowId} (${flowName || 'unnamed'}) → Outbound Vendas`);
   return OUTBOUND_VENDAS_PRESET;
 }
+

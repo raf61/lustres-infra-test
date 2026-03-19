@@ -56,7 +56,7 @@ export function getWhatsappWebhookQueue(): Queue<WhatsappWebhookJob> {
 export function ensureWhatsappWebhookWorker(handler: (data: WhatsappWebhookJob) => Promise<void>) {
     if (g.__whatsappWebhookWorkerStarted) return;
 
-    const concurrency = Number(process.env.WEBHOOK_PROCESSOR_CONCURRENCY || 5);
+    const concurrency = Number(process.env.WEBHOOK_PROCESSOR_CONCURRENCY || 1);
 
     new Worker<WhatsappWebhookJob>(
         "whatsapp-webhook-ingestion",

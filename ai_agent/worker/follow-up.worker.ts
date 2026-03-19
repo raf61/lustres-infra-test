@@ -45,7 +45,7 @@ export const ensureFollowUpWorker = () => {
         },
         {
             connection: buildConnection(),
-            concurrency: 5,
+            concurrency: 1,
         }
     );
 

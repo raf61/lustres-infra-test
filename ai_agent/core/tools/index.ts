@@ -6,6 +6,8 @@ import { handoffTool } from "../../infra/tools/handoff.tool";
 import { resolveConversationTool } from "../../infra/tools/resolve-conversation.tool";
 import { returnToResearchTool } from "../../infra/tools/return-to-research.tool";
 import { markAsLossTool } from "../../infra/tools/mark-as-loss.tool";
+import { consultStockTool } from "../../infra/tools/consult-stock.tool";
+import { updateKanbanTool } from "../../infra/tools/update-kanban.tool";
 
 export const tools = [
     updateMaintenanceDateTool,
@@ -16,5 +18,8 @@ export const tools = [
     resolveConversationTool,
     returnToResearchTool,
     markAsLossTool,
+    consultStockTool,
+    updateKanbanTool,
 ];
+
 

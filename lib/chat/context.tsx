@@ -591,6 +591,19 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const activeConversationIdRef = useRef<string | null>(state.activeConversationId);
   const activeConversationDetailsRef = useRef<Conversation | null>(state.activeConversationDetails);
 
+  const fetchConversationDetails = useCallback(async (id: string): Promise<Conversation | null> => {
+    if (conversationFetchInFlightRef.current.has(id)) return null;
+    conversationFetchInFlightRef.current.add(id);
+    try {
+      return await chatAPI.getConversation(id);
+    } catch (error) {
+      console.error("[Chat] Failed to fetch conversation:", error);
+      return null;
+    } finally {
+      conversationFetchInFlightRef.current.delete(id);
+    }
+  }, []);
+
   // ─────────────────────────────────────────────────────────────────────────
   // WEBSOCKET HANDLERS
   // ─────────────────────────────────────────────────────────────────────────
@@ -895,17 +908,41 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       dispatch({
         type: "UPDATE_CONVERSATION",
         payload: {
+          ...data,
           id,
           status: data.status as Conversation["status"],
-          waitingSince: data.waitingSince,
-          lastActivityAt: data.lastActivityAt,
-          assigneeId: data.assigneeId,
-          ...(unreadCount !== undefined && { unreadCount }),
-          ...(data.canReply !== undefined && { canReply: data.canReply }),
+          unreadCount: isActive ? 0 : data.unreadCount,
         },
       });
     }
   }, [state.activeConversationId, state.conversations, state.filters, currentUserId]);
+
+  const handleChatbotStatusChanged = useCallback((data: any) => {
+    console.log("[Chat] WebSocket chatbot.session status updated:", data);
+    const id = data.conversationId;
+    const isBotActive = data.active;
+    const newStatus = isBotActive ? "ACTIVE" : "COMPLETED";
+
+    // Atualiza na lista de conversas
+    dispatch({
+      type: "UPDATE_CONVERSATION",
+      payload: {
+        id,
+        chatbotStatus: newStatus as any,
+      },
+    });
+
+    // Se a conversa for a ativa, atualiza os detalhes também
+    if (activeConversationIdRef.current === id && activeConversationDetailsRef.current) {
+      dispatch({
+        type: "SET_ACTIVE_CONVERSATION_DETAILS",
+        payload: {
+          ...activeConversationDetailsRef.current,
+          chatbotStatus: newStatus as any,
+        },
+      });
+    }
+  }, []);
 
   const handleConnect = useCallback(() => {
     dispatch({
@@ -935,7 +972,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     onMessageUpdated: handleMessageUpdated,
     onConversationCreated: handleConversationCreated,
     onConversationUpdated: handleConversationUpdated,
+    onChatbotStatusChanged: handleChatbotStatusChanged,
     onConnect: handleConnect,
+
     onDisconnect: handleDisconnect,
     onError: handleError,
   });
@@ -1643,18 +1682,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     activeConversationDetailsRef.current = state.activeConversationDetails;
   }, [state.activeConversationId, state.activeConversationDetails]);
 
-  const fetchConversationDetails = useCallback(async (id: string): Promise<Conversation | null> => {
-    if (conversationFetchInFlightRef.current.has(id)) return null;
-    conversationFetchInFlightRef.current.add(id);
-    try {
-      return await chatAPI.getConversation(id);
-    } catch (error) {
-      console.error("[Chat] Failed to fetch conversation:", error);
-      return null;
-    } finally {
-      conversationFetchInFlightRef.current.delete(id);
-    }
-  }, []);
+
 
   // ─────────────────────────────────────────────────────────────────────────
   // EFEITOS

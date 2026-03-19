@@ -10,6 +10,8 @@ import { getChatEventsQueue } from '../infra/queue/chat-events.queue';
 import { getChatbotEventsQueue } from '../../chatbot/infra/queue/chatbot-events.queue';
 import { getBrazilianPhoneAlternatives } from './utils/brazil-phone';
 import { standardizeWaId } from './utils/standardize-wa-id';
+import { prisma } from '../../lib/prisma';
+
 
 export class HandleInboundUseCase {
   constructor(
@@ -159,6 +161,48 @@ export class HandleInboundUseCase {
         }, {
           jobId: `chatbot-msg-event-${savedMessage.id}`,
         });
+
+        // 6.2 LÓGICA ESPECIAL DEMO: Garantir que o contato tenha um Client associado
+        // (Isso é necessário para aparecer no dashboard do vendedor)
+        try {
+          const existingLinks = await prisma.clientChatContact.findMany({
+            where: { contactId: contactId }
+          });
+
+          if (existingLinks.length === 0) {
+            console.log(`[HandleInbound] Criando Client para novo contato ${contactId}`);
+            
+            // Gerar um CNPJ aleatório para o mock
+            const randomCnpj = Math.floor(Math.random() * 99999999999999).toString().padStart(14, '0');
+            
+            const client = await prisma.client.create({
+              data: {
+                razaoSocial: profileName || sourceId,
+                nomeSindico: profileName || sourceId,
+                cnpj: randomCnpj,
+                telefoneSindico: sourceId,
+                observacao: "Cliente criado automaticamente via Chat Inbound (Demo Lustres)",
+                kanbanEstado: {
+                    create: {
+                        code: 0 // "A fazer contato"
+                    }
+                }
+
+              }
+            });
+
+            await prisma.clientChatContact.create({
+              data: {
+                clientId: client.id,
+                contactId: contactId
+              }
+            });
+
+            console.log(`[HandleInbound] Client ${client.id} criado e vinculado ao contato ${contactId}`);
+          }
+        } catch (clientError) {
+          console.error("[HandleInbound] Erro ao garantir Client para o contato:", clientError);
+        }
 
         console.log(`[HandleInbound] Message ${msg.id} saved and event queued`);
 

@@ -53,7 +53,7 @@ export function getSendMessageQueue(): Queue<SendMessageJob> {
 export function ensureSendMessageWorker(handler: (data: SendMessageJob) => Promise<void>) {
   if (g.__sendMessageWorkerStarted) return;
 
-  const concurrency = Number(process.env.BULLMQ_WORKER_CONCURRENCY || 5);
+  const concurrency = Number(process.env.BULLMQ_WORKER_CONCURRENCY || 1);
 
   new Worker<SendMessageJob>(
     'chat-send-message',

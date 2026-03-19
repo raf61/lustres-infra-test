@@ -17,6 +17,9 @@ export interface Contact {
     razaoSocial: string;
     nomeSindico?: string;
     cidade?: string;
+    kanbanEstado?: {
+      code: number;
+    };
   }>;
 }
 

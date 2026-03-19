@@ -64,12 +64,23 @@ export interface ChatSocketConversation {
   canReply?: boolean;    // ← Enviado pelo backend (janela de 24h)
 }
 
+export interface ChatSocketChatbotStatus {
+  conversationId: string;
+  inboxId?: string;
+  sessionId?: string;
+  flowId?: string;
+  active: boolean;
+  reason?: string;
+}
+
 export interface ChatSocketEvents {
   "message.created": ChatSocketMessage;
   "message.updated": ChatSocketMessage;
   "conversation.created": ChatSocketConversation;
   "conversation.updated": ChatSocketConversation;
   "presence.update": { status: string; userId: string };
+  "chatbot.session.active": ChatSocketChatbotStatus;
+  "chatbot.session.inactive": ChatSocketChatbotStatus;
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -82,6 +93,7 @@ export interface UseChatSocketOptions {
   onMessageUpdated?: (message: ChatSocketMessage) => void;
   onConversationCreated?: (conversation: ChatSocketConversation) => void;
   onConversationUpdated?: (conversation: ChatSocketConversation) => void;
+  onChatbotStatusChanged?: (status: ChatSocketChatbotStatus) => void;
   onConnect?: () => void;
   onDisconnect?: (reason: string) => void;
   onError?: (error: Error) => void;
@@ -118,6 +130,7 @@ export function useChatSocket(options: UseChatSocketOptions = {}): UseChatSocket
     onMessageUpdated,
     onConversationCreated,
     onConversationUpdated,
+    onChatbotStatusChanged,
     onConnect,
     onDisconnect,
     onError,
@@ -131,6 +144,8 @@ export function useChatSocket(options: UseChatSocketOptions = {}): UseChatSocket
       "message.updated": onMessageUpdated,
       "conversation.created": onConversationCreated,
       "conversation.updated": onConversationUpdated,
+      "chatbot.session.active": onChatbotStatusChanged,
+      "chatbot.session.inactive": onChatbotStatusChanged,
     },
     onConnect,
     onDisconnect,

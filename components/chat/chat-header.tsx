@@ -56,6 +56,9 @@ export function ChatHeader() {
     resolveConversation,
     associateClientToConversation,
     assignConversation,
+    clearConversationMessages, 
+    selectConversation, 
+    loadConversations
   } = useChat();
   const { data: session } = useSession();
   const [clientDetailsId, setClientDetailsId] = useState<number | null>(null);
@@ -71,6 +74,7 @@ export function ChatHeader() {
   const [propostaClient, setPropostaClient] = useState<{ id: number; razaoSocial: string } | null>(null);
   const [chatbotDialogOpen, setChatbotDialogOpen] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [isDeletingContact, setIsDeletingContact] = useState(false);
 
   const contact = activeConversation?.contact;
   const contactName = contact?.name || contact?.phoneNumber || "Desconhecido";
@@ -134,7 +138,6 @@ export function ChatHeader() {
     } finally { setIsAssociating(false); }
   };
 
-  const { clearConversationMessages } = useChat();
 
   const handleClearMessages = async () => {
     if (!conversation || isClearing) return;
@@ -149,6 +152,31 @@ export function ChatHeader() {
       toast.error("Erro ao limpar conversa.");
     } finally {
       setIsClearing(false);
+    }
+  };
+
+  const handleDeleteContact = async () => {
+    if (!contact?.id) return;
+    if (!confirm(`TEM CERTEZA? Isso deletará o contato ${contactName}, todas as suas conversas, clientes vinculados e histórico permanentemente. Esta ação NÃO pode ser desfeita.`)) return;
+
+    setIsDeletingContact(true);
+    try {
+      const response = await fetch(`/api/chat/contacts/${contact.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        toast.success("Contato deletado com sucesso!");
+        selectConversation(null);
+        loadConversations();
+      } else {
+        toast.error("Erro ao deletar contato");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao deletar contato");
+    } finally {
+      setIsDeletingContact(false);
     }
   };
 
@@ -253,10 +281,19 @@ export function ChatHeader() {
             <DropdownMenuItem
               onClick={handleClearMessages}
               disabled={isClearing}
+              className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3 text-amber-500 focus:text-amber-500 focus:bg-amber-500/10"
+            >
+              <Trash2 className="h-4 w-4 mr-3" />
+              {isClearing ? "Limpando..." : "Limpar Mensagens"}
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={handleDeleteContact}
+              disabled={isDeletingContact}
               className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3 text-red-500 focus:text-red-500 focus:bg-red-500/10"
             >
               <Trash2 className="h-4 w-4 mr-3" />
-              {isClearing ? "Limpando..." : "Limpar Conversa [Teste]"}
+              {isDeletingContact ? "Deletando..." : "DELETAR CONTATO TOTAL"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

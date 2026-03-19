@@ -4,6 +4,7 @@
 import { multiAgentGraph } from "./multi-agent/graph";
 import { graph as legacyGraph } from "./graph";
 import { recuperadorGraph } from "../recuperador_info/graph";
+import { inboundLustresGraph } from "./inbound-lustres/graph";
 
 /**
  * [GAMBIARRA TEMPORÁRIA] Seletor de Grafos por FlowID
@@ -24,9 +25,15 @@ export const getActiveGraph = (flowId: string) => {
         return recuperadorGraph;
     }
 
+    // [NOVO FLUXO] Inbound Lustres (Vendas)
+    if (flowId === "cmmwk5hgv0001jv2rv3jzt5ms") {
+        return inboundLustresGraph;
+    }
+
     // Fallback padrão(deixar nulo mesmo)
     return null;
 };
+
 
 // Re-exporta para compatibilidade se necessário
 export { multiAgentGraph, legacyGraph };

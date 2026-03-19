@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Ban, Database, Download, Building2, MapPin, Plus, BarChart3, Users, Check, ChevronsUpDown, Loader2, Clock, Receipt, ShoppingCart } from "lucide-react"
+import { Search, Ban, Database, Download, Building2, MapPin, Plus, BarChart3, Users, Check, ChevronsUpDown, Loader2, Clock, Receipt, ShoppingCart, Zap } from "lucide-react"
 import { ClienteDetailDialog } from "./cliente-detail-dialog"
 import { Badge } from "@/components/ui/badge"
 import { CadastroClienteDialog } from "./cadastro-cliente-dialog"
+import { CampaignDialog } from "./campaign-dialog"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CriarOrcamentoDialog } from "@/components/orcamentos/criar-orcamento-dialog"
@@ -111,7 +112,10 @@ type FetchFilters = {
   historyMode?: "com" | "sem"
   historyValue?: string
   historyUnit?: "h" | "d" | "m"
-  orcamentoMode?: "com" | "sem"
+  orcamentoMinItems?: string
+  orcamentoMinValue?: string
+  orcamentoItemId?: string
+  pedidoMode?: "com" | "sem"
   orcamentoMonths?: string
   orcamentoDays?: string
   orcamentoUnit?: "d" | "m"
@@ -121,6 +125,8 @@ type FetchFilters = {
   pedidoDays?: string
   pedidoUnit?: "d" | "m"
   pedidoMinItems?: string
+  pedidoMinValue?: string
+  pedidoItemId?: string
 }
 
 export function LeadsGeral() {
@@ -168,6 +174,9 @@ export function LeadsGeral() {
   const [filterOrcamentoCustomInput, setFilterOrcamentoCustomInput] = useState("4")
   const [filterOrcamentoItemId, setFilterOrcamentoItemId] = useState<string>("")
   const [filterOrcamentoMinItems, setFilterOrcamentoMinItems] = useState<number | null>(null)
+  const [filterOrcamentoMinItemsInput, setFilterOrcamentoMinItemsInput] = useState("")
+  const [filterOrcamentoMinValue, setFilterOrcamentoMinValue] = useState<number | null>(null)
+  const [filterOrcamentoMinValueInput, setFilterOrcamentoMinValueInput] = useState("")
   const [orcamentoContextMenu, setOrcamentoContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   const [filterPedidoMode, setFilterPedidoMode] = useState<'com' | 'sem' | null>(null)
@@ -176,6 +185,9 @@ export function LeadsGeral() {
   const [filterPedidoCustomInput, setFilterPedidoCustomInput] = useState("4")
   const [filterPedidoItemId, setFilterPedidoItemId] = useState<string>("")
   const [filterPedidoMinItems, setFilterPedidoMinItems] = useState<number | null>(null)
+  const [filterPedidoMinItemsInput, setFilterPedidoMinItemsInput] = useState("")
+  const [filterPedidoMinValue, setFilterPedidoMinValue] = useState<number | null>(null)
+  const [filterPedidoMinValueInput, setFilterPedidoMinValueInput] = useState("")
   const [pedidoContextMenu, setPedidoContextMenu] = useState<{ x: number; y: number } | null>(null)
 
   // Catálogo de itens para filtros
@@ -196,6 +208,7 @@ export function LeadsGeral() {
   const [vendedorAtribuicaoOpen, setVendedorAtribuicaoOpen] = useState(false)
   const [confirmAssignOpen, setConfirmAssignOpen] = useState(false)
   const [assigning, setAssigning] = useState(false)
+  const [campaignOpen, setCampaignOpen] = useState(false)
   const { toast } = useToast()
 
   const generalSearchRef = useRef<HTMLInputElement>(null)
@@ -271,9 +284,11 @@ export function LeadsGeral() {
       if (filterOrcamentoMinItems !== null) {
         filters.orcamentoMinItems = filterOrcamentoMinItems.toString()
       }
+      if (filterOrcamentoMinValue !== null) {
+        filters.orcamentoMinValue = filterOrcamentoMinValue.toString()
+      }
       if (filterOrcamentoItemId && filterOrcamentoItemId !== "all") {
-        // Here we'd need to add filterOrcamentoItemId to FetchFilters if backend supports it
-        // filters.orcamentoItemId = filterOrcamentoItemId
+        filters.orcamentoItemId = filterOrcamentoItemId
       }
     }
 
@@ -288,8 +303,11 @@ export function LeadsGeral() {
       if (filterPedidoMinItems !== null) {
         filters.pedidoMinItems = filterPedidoMinItems.toString()
       }
+      if (filterPedidoMinValue !== null) {
+        filters.pedidoMinValue = filterPedidoMinValue.toString()
+      }
       if (filterPedidoItemId && filterPedidoItemId !== "all") {
-        // filters.pedidoItemId = filterPedidoItemId
+        filters.pedidoItemId = filterPedidoItemId
       }
     }
 
@@ -569,6 +587,10 @@ export function LeadsGeral() {
     () => (selectAll ? Math.max(paginationInfo.total - excludedIds.length, 0) : selectedIds.length),
     [selectAll, paginationInfo.total, excludedIds.length, selectedIds.length],
   )
+
+  const selectedClientPreviews = useMemo(() => {
+    return clientes.filter(l => selectAll ? !excludedIds.includes(l.id) : selectedIds.includes(l.id)).slice(0, 10)
+  }, [clientes, selectAll, excludedIds, selectedIds])
 
   const toggleLead = (id: string) => {
     if (selectAll) {
@@ -1115,6 +1137,57 @@ export function LeadsGeral() {
                             )}
                           </div>
                         </div>
+
+                        {/* Valor mínimo */}
+                        <div>
+                          <p className="text-[10px] text-muted-foreground mb-1">Valor maior que (R$)</p>
+                          <div className="flex gap-1">
+                            <input
+                              type="number" min="0" value={filterOrcamentoMinValueInput}
+                              onChange={(e) => setFilterOrcamentoMinValueInput(e.target.value)}
+                              className="w-14 h-7 rounded border border-border bg-background text-xs px-2 text-foreground"
+                              placeholder="0,00"
+                            />
+                            <Button type="button" size="sm" className="h-7 text-[10px] flex-1" variant="secondary"
+                              onClick={() => {
+                                const v = parseFloat(filterOrcamentoMinValueInput)
+                                setFilterOrcamentoMinValue(v > 0 ? v : null)
+                              }}
+                            >Aplicar</Button>
+                            {filterOrcamentoMinValue !== null && (
+                              <Button type="button" size="sm" className="h-7 text-[10px] px-2" variant="ghost"
+                                onClick={() => { setFilterOrcamentoMinValue(null); setFilterOrcamentoMinValueInput("") }}
+                              >✕</Button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Contém item */}
+                        <div className="pt-1 border-t border-border">
+                          <p className="text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-tight">Contém item específico</p>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                            <input
+                              placeholder="Buscar item..."
+                              className="w-full h-8 pl-7 pr-2 rounded border border-border bg-background text-[11px] focus:border-blue-500 outline-none"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const val = e.currentTarget.value
+                                  if (val) {
+                                    setFilterOrcamentoItemId(val)
+                                    setOrcamentoContextMenu(null)
+                                  }
+                                }
+                              }}
+                            />
+                          </div>
+                          {filterOrcamentoItemId && (
+                             <div className="mt-1 flex items-center justify-between bg-blue-50 px-2 py-1 rounded text-[10px] border border-blue-100">
+                               <span className="text-blue-700 font-bold truncate max-w-[140px]">{filterOrcamentoItemId}</span>
+                               <button onClick={() => setFilterOrcamentoItemId("")} className="text-blue-500 hover:text-blue-700 font-black">✕</button>
+                             </div>
+                          )}
+                        </div>
                       </div>
                     </>
                   )
@@ -1217,6 +1290,58 @@ export function LeadsGeral() {
                               >✕</Button>
                             )}
                           </div>
+                        </div>
+
+                        {/* Valor mínimo */}
+                        <div>
+                          <p className="text-[10px] text-muted-foreground mb-1">Valor maior que (R$)</p>
+                          <div className="flex gap-1">
+                            <input
+                              type="number" min="0" value={filterPedidoMinValueInput}
+                              onChange={(e) => setFilterPedidoMinValueInput(e.target.value)}
+                              className="w-14 h-7 rounded border border-border bg-background text-xs px-2 text-foreground"
+                              placeholder="0,00"
+                            />
+                            <Button type="button" size="sm" className="h-7 text-[10px] flex-1" variant="secondary"
+                              onClick={() => {
+                                const v = parseFloat(filterPedidoMinValueInput)
+                                setFilterPedidoMinValue(v > 0 ? v : null)
+                              }}
+                            >Aplicar</Button>
+                            {filterPedidoMinValue !== null && (
+                              <Button type="button" size="sm" className="h-7 text-[10px] px-2" variant="ghost"
+                                onClick={() => { setFilterPedidoMinValue(null); setFilterPedidoMinValueInput("") }}
+                              >✕</Button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Contém item */}
+                        <div className="pt-1 border-t border-border">
+                          <p className="text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-tight">Contém item específico</p>
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                            <input
+                              placeholder="Buscar item..."
+                              className="w-full h-8 pl-7 pr-2 rounded border border-border bg-background text-[11px] focus:border-blue-500 outline-none"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  // Mock selection
+                                  const val = e.currentTarget.value
+                                  if (val) {
+                                    setFilterPedidoItemId(val)
+                                    setPedidoContextMenu(null)
+                                  }
+                                }
+                              }}
+                            />
+                          </div>
+                          {filterPedidoItemId && (
+                             <div className="mt-1 flex items-center justify-between bg-blue-50 px-2 py-1 rounded text-[10px] border border-blue-100">
+                               <span className="text-blue-700 font-bold truncate max-w-[140px]">{filterPedidoItemId}</span>
+                               <button onClick={() => setFilterPedidoItemId("")} className="text-blue-500 hover:text-blue-700 font-black">✕</button>
+                             </div>
+                          )}
                         </div>
                       </div>
                     </>
@@ -1661,6 +1786,15 @@ export function LeadsGeral() {
             >
               Atribuir Vendedor
             </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2 border-blue-400 text-blue-700 hover:bg-blue-100 hover:border-blue-500 bg-white shadow-sm font-bold"
+              onClick={() => setCampaignOpen(true)}
+            >
+              <Zap className="h-4 w-4 fill-blue-700" />
+              Criar Campanha
+            </Button>
             <Button size="sm" variant="ghost" onClick={resetSelection} className="text-foreground hover:text-foreground hover:bg-muted">
               Cancelar
             </Button>
@@ -1695,6 +1829,14 @@ export function LeadsGeral() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <CampaignDialog
+        open={campaignOpen}
+        onClose={() => setCampaignOpen(false)}
+        selectedCount={totalSelecionados}
+        selectedClients={selectedClientPreviews}
+        vendedores={vendedores}
+      />
     </DashboardLayout>
   )
 }
