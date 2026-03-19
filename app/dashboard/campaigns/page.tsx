@@ -42,16 +42,25 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 // MOCKS SÓBRIOS & AMPLIADOS
 // ============================================================================
 
+const NOMES_CLIENTES = [
+  "Carlos Mendonça", "Fernanda Lima", "Ricardo Alves", "Patrícia Souza", "Eduardo Rocha",
+  "Juliana Costa", "Marcelo Ferreira", "Amanda Pereira", "Bruno Teixeira", "Larissa Nunes",
+  "Rafael Cardoso", "Camila Martins", "Gustavo Barbosa", "Renata Carvalho", "Felipe Araújo",
+  "Mônica Pinto", "Thiago Gomes", "Vanessa Oliveira", "Leandro Santos", "Tatiana Correia",
+  "Rodrigo Melo", "Priscila Ribeiro", "Fábio Nascimento", "Sandra Moreira", "André Sousa",
+  "Cristiane Freitas", "Diego Monteiro", "Jéssica Lima", "Paulo Marques", "Aline Fonseca",
+]
+
 const GEN_200_RECIPIENTS = () => {
   return Array.from({ length: 200 }, (_, i) => ({
     id: String(i + 1),
-    name: `Síndico Exemplo ${i + 1}`,
-    phone: `(11) 9${Math.floor(Math.random() * 90000000 + 10000000)}`,
-    status: ["replied", "read", "sent", "failed"][Math.floor(Math.random() * 4)],
-    ai_status: ["active", "handoff", "concluded", "none"][Math.floor(Math.random() * 4)],
-    vendor: ["Rodrigo Silva", "Ana Beatriz", "Marcos Oliveira"][Math.floor(Math.random() * 3)],
-    followups: Math.floor(Math.random() * 3),
-    engagement: ["interested", "ignored", "none"][Math.floor(Math.random() * 3)]
+    name: NOMES_CLIENTES[i % NOMES_CLIENTES.length] + (i >= NOMES_CLIENTES.length ? ` ${Math.floor(i / NOMES_CLIENTES.length) + 1}` : ""),
+    phone: `(11) 9${(10000000 + (i * 31337) % 90000000).toString().padStart(8, '0')}`,
+    status: ["replied", "read", "sent", "failed"][i % 4],
+    ai_status: ["active", "handoff", "concluded", "none"][i % 4],
+    vendor: ["Rodrigo Silva", "Ana Beatriz", "Marcos Oliveira"][i % 3],
+    followups: i % 3,
+    engagement: ["interested", "ignored", "none"][i % 3]
   }))
 }
 
@@ -294,9 +303,9 @@ export default function CampaignsPage() {
   ]
 
   const mockSelectedClients = [
-    { id: "1", nomeSindico: "Síndico Eduardo", telefoneSindico: "(11) 98877-6655" },
-    { id: "2", nomeSindico: "Síndico Fabiana", telefoneSindico: "(11) 97766-5544" },
-    { id: "3", nomeSindico: "Síndico Roberto", telefoneSindico: "(11) 96655-4433" },
+    { id: "1", nomeSindico: "Eduardo Carvalho", telefoneSindico: "(11) 98877-6655" },
+    { id: "2", nomeSindico: "Fabiana Monteiro", telefoneSindico: "(11) 97766-5544" },
+    { id: "3", nomeSindico: "Roberto Alves", telefoneSindico: "(11) 96655-4433" },
   ]
 
   return (
