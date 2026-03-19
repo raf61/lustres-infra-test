@@ -945,12 +945,12 @@ export function MessageList() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-background">
         <div className="h-20 w-20 bg-card rounded-2xl flex items-center justify-center mb-6 shadow-2xl border border-border/50 group hover:scale-110 transition-all duration-500">
-          <MessageSquare className="h-10 w-10 text-primary/40 group-hover:text-primary transition-colors" />
+          <MessageSquare className="h-10 w-10 text-primary/60 group-hover:text-primary transition-colors" />
         </div>
         <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-widest mb-2">
           Selecione uma conversa
         </h3>
-        <p className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest max-w-xs leading-relaxed">
+        <p className="text-muted-foreground text-xs font-medium max-w-xs leading-relaxed">
           Escolha uma conversa na lista ao lado para começar a conversar com seus clientes
         </p>
       </div>
