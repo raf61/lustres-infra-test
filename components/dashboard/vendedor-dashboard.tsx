@@ -310,11 +310,14 @@ type CrmColumnId =
   | "livres-2"
   | "livres-3"
   | "livres-4"
+  | "livres-5"
+  | "livres-6"
+  | "livres-7"
+  | "livres-8"
   | "orcados"
   | "renovacoes"
-  // mantido para compatibilidade interna (não usado no board)
+  // mantido para compatibilidade interna
   | "livres"
-  | "livres-5"
   | "renovados"
 
 type CrmColumn = {
@@ -384,6 +387,30 @@ const CRM_COLUMNS: CrmColumn[] = [
     badgeTextColor: "text-white",
     dotColor: "bg-red-400",
   },
+  {
+    id: "livres-5",
+    title: "Interessado",
+    headerBgColor: "border-purple-500",
+    badgeBgColor: "bg-purple-600",
+    badgeTextColor: "text-white",
+    dotColor: "bg-purple-400",
+  },
+  {
+    id: "livres-7",
+    title: "Venda Realizada",
+    headerBgColor: "border-emerald-500",
+    badgeBgColor: "bg-emerald-700",
+    badgeTextColor: "text-white",
+    dotColor: "bg-emerald-400",
+  },
+  {
+    id: "livres-8",
+    title: "Perdido",
+    headerBgColor: "border-rose-600",
+    badgeBgColor: "bg-rose-700",
+    badgeTextColor: "text-white",
+    dotColor: "bg-rose-400",
+  },
 ]
 
 // Mapeamento de cor de borda para cada coluna
@@ -397,15 +424,22 @@ const COLUMN_BORDER_COLORS: Record<CrmColumnId, string> = {
   "livres-2": "border-amber-400",
   "livres-3": "border-orange-400",
   "livres-4": "border-red-400",
-  "livres-5": "border-slate-400",
+  "livres-5": "border-purple-400",
+  "livres-6": "border-sky-400",
+  "livres-7": "border-emerald-400",
+  "livres-8": "border-rose-500",
 }
 
 const KANBAN_STAGES = [
-  { code: 0, title: "A fazer contato", dotColor: "bg-slate-400", containerClass: "bg-slate-800/40 text-slate-100" },
-  { code: 1, title: "Contato feito", dotColor: "bg-blue-500", containerClass: "bg-blue-800/40 text-blue-100" },
-  { code: 2, title: "Follow-up 1", dotColor: "bg-amber-500", containerClass: "bg-amber-800/40 text-amber-100" },
-  { code: 3, title: "Follow-up 2", dotColor: "bg-orange-500", containerClass: "bg-orange-800/40 text-orange-100" },
-  { code: 4, title: "Perda", dotColor: "bg-red-500", containerClass: "bg-red-800/40 text-red-100" },
+  { code: 0, title: "A fazer contato",  dotColor: "bg-slate-400",   containerClass: "bg-slate-800/40 text-slate-100" },
+  { code: 1, title: "Contato feito",    dotColor: "bg-blue-500",    containerClass: "bg-blue-800/40 text-blue-100" },
+  { code: 2, title: "Follow-up 1",      dotColor: "bg-amber-500",   containerClass: "bg-amber-800/40 text-amber-100" },
+  { code: 3, title: "Follow-up 2",      dotColor: "bg-orange-500",  containerClass: "bg-orange-800/40 text-orange-100" },
+  { code: 4, title: "Perda",            dotColor: "bg-red-500",     containerClass: "bg-red-800/40 text-red-100" },
+  { code: 5, title: "Interessado",      dotColor: "bg-purple-500",  containerClass: "bg-purple-800/40 text-purple-100" },
+  { code: 6, title: "Negociando",       dotColor: "bg-sky-500",     containerClass: "bg-sky-800/40 text-sky-100" },
+  { code: 7, title: "Venda Realizada",  dotColor: "bg-emerald-500", containerClass: "bg-emerald-800/40 text-emerald-100" },
+  { code: 8, title: "Perdido",          dotColor: "bg-rose-600",    containerClass: "bg-rose-800/40 text-rose-100" },
 ]
 
 
@@ -439,6 +473,9 @@ const distributeClientsToNewColumns = (
     "livres-3": [],
     "livres-4": [],
     "livres-5": [],
+    "livres-6": [],
+    "livres-7": [],
+    "livres-8": [],
   }
 
   clientes.forEach((client) => {
@@ -1241,9 +1278,17 @@ export function VendedorDashboard() {
 
     const livresFiltered = applyFilters(crmColumns.livres)
 
+    // Clientes com kanbanCode 6 (Negociando) aparecem também na coluna orcados
+    const orcadosBase = applyFilters(crmColumns.orcados)
+    const negociandoByCode = livresFiltered.filter(c => (c.kanbanCode ?? 0) === 6)
+    const orcadosMerged = [
+      ...orcadosBase,
+      ...negociandoByCode.filter(c => !orcadosBase.some(o => o.id === c.id)),
+    ]
+
     return {
       livres: livresFiltered,
-      orcados: applyFilters(crmColumns.orcados),
+      orcados: orcadosMerged,
       renovacoes: applyFilters(crmColumns.renovacoes),
       renovados: applyFilters(crmColumns.renovados),
       "livres-0": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 0),
@@ -1251,7 +1296,10 @@ export function VendedorDashboard() {
       "livres-2": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 2),
       "livres-3": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 3),
       "livres-4": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 4),
-      "livres-5": [],
+      "livres-5": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 5),
+      "livres-6": negociandoByCode,
+      "livres-7": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 7),
+      "livres-8": livresFiltered.filter(c => (c.kanbanCode ?? 0) === 8),
     } as Record<CrmColumnId, VendorClientRow[]>
   }, [crmColumns, localSearchTerm, filterClientLocally, shouldIncludeByRecentContact, shouldIncludeByOrcamentoFilter, shouldIncludeBySpecialFilter])
 
@@ -1294,7 +1342,10 @@ export function VendedorDashboard() {
       "livres-2": sortByNotification(filteredCrmColumns["livres-2"]),
       "livres-3": sortByNotification(filteredCrmColumns["livres-3"]),
       "livres-4": sortByNotification(filteredCrmColumns["livres-4"]),
-      "livres-5": [],
+      "livres-5": sortByNotification(filteredCrmColumns["livres-5"]),
+      "livres-6": sortByNotification(filteredCrmColumns["livres-6"]),
+      "livres-7": sortByNotification(filteredCrmColumns["livres-7"]),
+      "livres-8": sortByNotification(filteredCrmColumns["livres-8"]),
     } as Record<CrmColumnId, VendorClientRow[]>;
   // NÃO depende de clientChatSummaries — usa ref. Só recalcula quando clientes mudam.
   }, [filteredCrmColumns]);
