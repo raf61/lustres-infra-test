@@ -25,7 +25,7 @@ COPY --chown=node:node package.json ./
 
 USER node
 
-EXPOSE 3010
+EXPOSE 4010
 CMD ["node", "-r", "dotenv/config", "dist/webhook.js"]
 
 
