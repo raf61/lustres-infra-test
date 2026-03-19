@@ -25,5 +25,5 @@ COPY --chown=node:node package.json ./
 
 USER node
 
-EXPOSE 4002
+EXPOSE 4012
 CMD ["node", "-r", "dotenv/config", "dist/nfe-webhook.js"]

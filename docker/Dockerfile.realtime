@@ -25,7 +25,7 @@ COPY --chown=node:node package.json ./
 
 USER node
 
-EXPOSE 3001
+EXPOSE 3011
 CMD ["node", "-r", "dotenv/config", "dist/realtime.js"]
 
 
