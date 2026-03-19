@@ -24,21 +24,21 @@ function getInitials(name: string) {
 
 const CRM_STAGES: Record<number, { label: string, color: string }> = {
   0: { label: "A fazer contato", color: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
-  1: { label: "Contato feito",   color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  2: { label: "Follow-up 1",    color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  3: { label: "Follow-up 2",    color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  4: { label: "Ignorado",       color: "bg-red-500/20 text-red-500 border-red-500/30" },
-  5: { label: "Interessado",    color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  6: { label: "Negociando",     color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-  7: { label: "Venda Feita",    color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  8: { label: "Perdido",        color: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
+  1: { label: "Contato feito", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  2: { label: "Follow-up 1", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+  3: { label: "Follow-up 2", color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
+  4: { label: "Ignorado", color: "bg-red-500/20 text-red-500 border-red-500/30" },
+  5: { label: "Interessado", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  6: { label: "Negociando", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
+  7: { label: "Venda Feita", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  8: { label: "Perdido", color: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
 };
 
 function getCrmStage(conversation: Conversation) {
   // Tentar pegar do primeiro cliente vinculado ao contato
   const client = conversation.contact?.clients?.[0];
   const code = (client as any)?.kanbanEstado?.code ?? 0;
-  
+
   return CRM_STAGES[code] || CRM_STAGES[0];
 }
 
@@ -139,7 +139,7 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
             </span>
           </div>
 
-          <p className="text-xs text-muted-foreground/70 truncate leading-snug mb-1.5">
+          <p className="text-xs text-muted-foreground truncate leading-snug mb-1.5">
             {lastMessagePreview}
           </p>
 
