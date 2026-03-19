@@ -211,7 +211,7 @@ export function startWebhookServer() {
     }
   }));
 
-  const port = Number(4000);
+  const port = Number(process.env.WEBHOOK_PORT ?? 4010);
 
   // GET: Handshake de verificação da Meta
   app.get('/', (req: any, res: any) => {

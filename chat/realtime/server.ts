@@ -9,7 +9,7 @@ import { ServerToClientEvents, ClientToServerEvents, SocketData } from './types'
 // CONFIGURAÇÃO
 // ════════════════════════════════════════════════════════════════════════════
 
-const PORT = 3001;
+const PORT = Number(process.env.REALTIME_PORT ?? 3011);
 
 const httpServer = createServer();
 
