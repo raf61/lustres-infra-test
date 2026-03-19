@@ -1829,7 +1829,7 @@ export function ClienteDetailDialog({
                                         </Button>
                                       </td>
                                       <td className="border border-border px-2 py-1.5 font-medium">#{orcamento.id}</td>
-                                      <td className="border border-border px-2 py-1.5">{orcamento.empresaId ? `Unidade ${orcamento.empresaId}` : (orcamento.empresa || "—")}</td>
+                                      <td className="border border-border px-2 py-1.5">{orcamento.empresaId ? `Unidade ${orcamento.empresaId}` : "—"}</td>
                                       <td className="border border-border px-2 py-1.5">{formatDate(orcamento.createdAt ?? undefined)}</td>
                                       <td className="border border-border px-2 py-1.5">{orcamento.vendedor || "—"}</td>
                                       <td className="border border-border px-2 py-1.5">

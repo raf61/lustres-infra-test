@@ -191,7 +191,7 @@ function CampaignDetailsDialog({ campaign }: { campaign: typeof CAMPAIGNS_MOCK[0
              { label: "Interessados", val: campaign.interested, sub: `${Math.round((campaign.interested / campaign.sent) * 100)}% taxa`, color: "text-emerald-600", icon: UserCheck },
              { label: "Ignorados", val: campaign.ignored, sub: `${Math.round((campaign.ignored / campaign.sent) * 100)}% taxa`, color: "text-red-500", icon: UserMinus },
              { label: "Recup. FUP", val: campaign.recoveryRate, sub: `${campaign.followups} FUPs`, color: "text-amber-600", icon: RefreshCcw },
-             { label: "Vendas OK", val: `${Math.round((campaign.salesRate).replace('%',''))}%`, sub: "Conversão", color: "text-blue-700", icon: ShoppingCart },
+             { label: "Vendas OK", val: `${Math.round(parseFloat(campaign.salesRate))}%`, sub: "Conversão", color: "text-blue-700", icon: ShoppingCart },
              { label: "Resultado", val: campaign.revenue, sub: "Vendas", color: "text-emerald-700", icon: DollarSign },
            ].map((s, i) => (
              <div key={i} className="bg-muted/10 border border-border p-3.5 rounded-xl flex flex-col justify-between">
@@ -359,7 +359,7 @@ export default function CampaignsPage() {
                     onClick={() => setFilterPeriod(t.toLowerCase())}
                     className={cn(
                       "px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-md transition-all",
-                      filterPeriod === t.toLowerCase() ? "bg-white text-foreground shadow-sm border border-border/50" : "text-muted-foreground hover:text-foreground"
+                      filterPeriod === t.toLowerCase() ? "bg-background text-foreground shadow-sm border border-border" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     {t}
