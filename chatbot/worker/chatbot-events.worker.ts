@@ -94,7 +94,7 @@ const checkAndRouteToAiAgent = async (
     { conversationId, messageId }, // Passamos o messageId apenas como referência inicial
     {
       jobId: `debounce-ai-${conversationId}`, // Impede a criação de múltiplos jobs pendentes para a mesma conversa
-      delay: 17000, // Espera 17 segundos para "agrupar" possíveis mensagens vindo em sequência
+      delay: 3000, // Espera 17 segundos para "agrupar" possíveis mensagens vindo em sequência
       removeOnComplete: true
     }
   );

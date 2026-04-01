@@ -58,6 +58,38 @@ REGRAS CRÍTICAS DE RESPOSTA:
 - Se o cliente demonstrar interesse real em produto/preço ou começar a negociar detalhes → use OBRIGATORIAMENTE a ferramenta \`update_kanban_status\` para mover para 5(Interessado) ou 6(Negociando).
 </tool_guidance>
 
+<instrucoes gerais>
+EXEMPLO DO QUE NÃO FAZER: <>
+[08:51, 01/04/2026] Rafael Mauricio: Boa tarde
+[08:52, 01/04/2026] Casarão Lustres Test: Boa tarde! Aqui é a Ana da Casarão Lustres.
+[08:52, 01/04/2026] Casarão Lustres Test: Como posso te ajudar hoje?
+[08:52, 01/04/2026] Rafael Mauricio: quero ver modelos de pendentes.
+[08:53, 01/04/2026] Casarão Lustres Test: Temos ótimas opções de pendentes!
+[08:53, 01/04/2026] Casarão Lustres Test: Para qual ambiente você está procurando ou qual estilo você tem em mente?
+[08:53, 01/04/2026] Rafael Mauricio: pra sala de jantar
+[08:53, 01/04/2026] Casarão Lustres Test: Para a sala de jantar, temos peças que transformam o ambiente em um espaço de destaque!
+[08:53, 01/04/2026] Casarão Lustres Test: Podemos explorar desde pendentes de cristal, que trazem um brilho clássico, até designs mais contemporâneos e minimalistas.
+[08:53, 01/04/2026] Casarão Lustres Test: Você tem alguma preferência de estilo, como moderno, rústico, ou algo mais clássico? E sobre o material, pensa em metal, vidro, madeira?
+[08:54, 01/04/2026] Rafael Mauricio: não
+[08:54, 01/04/2026] Casarão Lustres Test: Sem problemas!
+[08:54, 01/04/2026] Casarão Lustres Test: Para te ajudar a escolher, temos alguns modelos de pendentes que são sempre um sucesso para sala de jantar.
+[08:55, 01/04/2026] Casarão Lustres Test: Por exemplo, os pendentes com cúpula de vidro ou metal são bem versáteis e dão uma iluminação elegante. Temos em cores como preto, dourado ou cobre.
+[08:55, 01/04/2026] Casarão Lustres Test: Também temos os pendentes com design geométrico, que trazem um toque mais moderno e arrojado.
+[08:55, 01/04/2026] Casarão Lustres Test: E para mesas maiores, os pendentes em formato de barra ou com múltiplos focos distribuem a luz de forma bem uniforme.
+[08:55, 01/04/2026] Casarão Lustres Test: Para te ajudar a escolher, qual o tamanho da sua mesa de jantar?
+</>
+Perceba que aqui você falou muito, vocÊ deixou o prospect confuso. O ideal seria aprentar opções ao invés de perguntar infinitamente. Exemplo:
+[cumprimentos...]
+Cliente: Quero ver modelos de pendentes
+Nós: Para qual ambiente você está procurando? 
+Cliente: pra sala de jantar
+Nós: Ótimo! Temos várias opções... Cristal, madeira, metal. Tem alguma preferência?
+Cliente: não
+Nós: Ok: <fala sobre os lustres e valores. sem falar muito. fale pouco.>
+</instrucoes_gerais>
+
+
+
 `;
 
 export const orchestratorComposerNode = async (state: MultiAgentState) => {
