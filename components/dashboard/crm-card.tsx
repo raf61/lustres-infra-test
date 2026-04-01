@@ -171,9 +171,9 @@ export const CrmCard = memo(function CrmCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 p-0 hover:bg-slate-700"
+                    className="h-5 w-5 p-0 hover:bg-muted"
                   >
-                    <MoreHorizontal className="h-3 w-3 text-slate-400" />
+                    <MoreHorizontal className="h-3 w-3 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[180px]">
@@ -202,14 +202,14 @@ export const CrmCard = memo(function CrmCard({
       </div>
 
       {/* Telefone */}
-      <div className="text-[10px] text-slate-300 leading-tight flex items-center gap-1 mt-0.5">
+      <div className="text-[10px] text-muted-foreground leading-tight flex items-center gap-1 mt-0.5">
         <span>{client.telefoneSindico ? formatPhone(client.telefoneSindico) : "Sem telefone"}</span>
       </div>
 
       {/* Próximo contato */}
       {client.dataContatoAgendado && (
-        <div className="flex items-center gap-1.5 text-[10px] font-medium text-sky-300 bg-blue-900/40 rounded px-2 py-1">
-          <CalendarDays className="h-3 w-3 shrink-0" />
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-sky-700 bg-sky-50 border border-sky-200 rounded px-2 py-1">
+          <CalendarDays className="h-3 w-3 shrink-0 text-sky-500" />
           <span>Próximo: {formatDisplayDateTime(client.dataContatoAgendado)}</span>
         </div>
       )}
@@ -232,8 +232,8 @@ export const CrmCard = memo(function CrmCard({
                 chatSummary.lastMessageStatus === "failed"
                   ? "text-destructive"
                   : chatSummary.lastMessageType === "incoming"
-                    ? "text-sky-300"
-                    : "text-slate-300"
+                    ? "text-sky-700"
+                    : "text-muted-foreground"
               )}
               title={chatSummary.lastMessage || undefined}
             >
@@ -250,8 +250,8 @@ export const CrmCard = memo(function CrmCard({
                   chatSummary.lastMessageStatus === "failed"
                     ? "text-destructive"
                     : chatSummary.lastMessageType === "incoming"
-                      ? "text-sky-300"
-                      : "text-slate-400"
+                      ? "text-sky-600"
+                      : "text-muted-foreground"
                 )}
               >
                 • {formatDisplayDateTime(chatSummary.lastActivityAt)}
@@ -272,7 +272,7 @@ export const CrmCard = memo(function CrmCard({
       )}
 
       {/* Botões de ação */}
-      <div className="flex items-center justify-between gap-1 text-[10px] text-slate-500">
+      <div className="flex items-center justify-between gap-1 text-[10px] text-muted-foreground">
         <div
           className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity"
           onClick={(e) => e.stopPropagation()}
@@ -280,7 +280,7 @@ export const CrmCard = memo(function CrmCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-5 w-5 p-0 hover:bg-slate-700"
+            className="h-5 w-5 p-0 hover:bg-muted"
             onClick={handleChatClick}
             onContextMenu={handleChatCtxMenu}
             title="Abrir conversa"

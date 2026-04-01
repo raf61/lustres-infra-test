@@ -9,11 +9,22 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { MessageSquare, Bot, User } from "lucide-react";
+import { MessageSquare, Bot } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════════════
 // Helpers
 // ════════════════════════════════════════════════════════════════════════════
+
+const ASSIGNEE_DOT_COLORS = [
+  "bg-blue-500", "bg-violet-500", "bg-emerald-500", "bg-amber-500",
+  "bg-pink-500", "bg-sky-500", "bg-orange-400", "bg-teal-500",
+  "bg-rose-500", "bg-indigo-500",
+];
+
+function getAssigneeDotColor(name: string): string {
+  const hash = name.split("").reduce((a, c) => a * 31 + c.charCodeAt(0), 7);
+  return ASSIGNEE_DOT_COLORS[Math.abs(hash) % ASSIGNEE_DOT_COLORS.length];
+}
 
 function getInitials(name: string) {
   const cleaned = name.trim();
@@ -23,15 +34,15 @@ function getInitials(name: string) {
 }
 
 const CRM_STAGES: Record<number, { label: string, color: string }> = {
-  0: { label: "A fazer contato", color: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
-  1: { label: "Contato feito", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  2: { label: "Follow-up 1", color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  3: { label: "Follow-up 2", color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  4: { label: "Ignorado", color: "bg-red-500/20 text-red-500 border-red-500/30" },
-  5: { label: "Interessado", color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  6: { label: "Negociando", color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-  7: { label: "Venda Feita", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  8: { label: "Perdido", color: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
+  0: { label: "A fazer contato", color: "bg-slate-100 text-slate-600 border-slate-200" },
+  1: { label: "Contato feito", color: "bg-blue-100 text-blue-700 border-blue-200" },
+  2: { label: "Follow-up 1", color: "bg-amber-100 text-amber-700 border-amber-200" },
+  3: { label: "Follow-up 2", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  4: { label: "Ignorado", color: "bg-red-100 text-red-700 border-red-200" },
+  5: { label: "Interessado", color: "bg-purple-100 text-purple-700 border-purple-200" },
+  6: { label: "Negociando", color: "bg-sky-100 text-sky-700 border-sky-200" },
+  7: { label: "Venda Feita", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+  8: { label: "Perdido", color: "bg-rose-100 text-rose-700 border-rose-200" },
 };
 
 function getCrmStage(conversation: Conversation) {
@@ -68,13 +79,13 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
     if (!msg) return "Sem mensagens";
     if (msg.contentType === "text") return msg.content || "Mensagem";
     if (msg.contentType === "template") return msg.content || "[Mensagem enviada]";
-    if (msg.contentType === "image") return "[Imagem]";
-    if (msg.contentType === "audio") return "[Áudio]";
-    if (msg.contentType === "video") return "[Vídeo]";
-    if (msg.contentType === "contact") return "[Contato]";
-    if (msg.contentType === "location") return "[Localização]";
-    if (msg.contentType === "document" || msg.contentType === "file") return "[Arquivo]";
-    if (msg.contentType === "sticker") return "[Figurinha]";
+    if (msg.contentType === "image") return "🖼️ Imagem";
+    if (msg.contentType === "audio") return "🎵 Áudio";
+    if (msg.contentType === "video") return "🎬 Vídeo";
+    if (msg.contentType === "contact") return "👤 Contato";
+    if (msg.contentType === "location") return "📍 Localização";
+    if (msg.contentType === "document" || msg.contentType === "file") return "📄 Documento";
+    if (msg.contentType === "sticker") return "😄 Figurinha";
     return msg.content || `[${msg.contentType}]`;
   }, [conversation.lastMessage]);
 
@@ -96,78 +107,86 @@ function ConversationItem({ conversation, isActive, onClick, showAiOnly }: Conve
     <button
       onClick={onClick}
       className={cn(
-        "w-full px-3 py-2 border-b border-border/40 transition-all text-left",
-        "hover:bg-primary/5",
+        "w-full px-3 py-3 transition-colors text-left relative border-b border-border/50",
         isActive
-          ? "bg-primary/10 border-l-2 border-l-primary"
-          : "border-l-2 border-l-transparent"
+          ? "bg-primary/8"
+          : "hover:bg-muted/50"
       )}
     >
-      <div className="flex items-center gap-2.5">
+      {/* Active indicator */}
+      {isActive && (
+        <div className="absolute left-0 top-3 bottom-3 w-0.5 bg-primary rounded-r-full" />
+      )}
+
+      <div className="flex items-center gap-3">
         {/* Avatar */}
         <div className="relative flex-shrink-0">
-          <Avatar className={cn(
-            "h-9 w-9 rounded-xl shadow ring-1 transition-all",
-            isActive ? "ring-primary" : hasAi ? "ring-orange-500/50" : "ring-border/60"
-          )}>
+          <Avatar className="h-10 w-10 rounded-full">
             <AvatarFallback className={cn(
-              "font-semibold text-[10px]",
-              isActive ? "bg-primary text-white" : "bg-card text-foreground"
+              "text-[11px] font-semibold",
+              isActive ? "bg-primary/15 text-primary" : "bg-blue-600 text-white"
             )}>
               {initials}
             </AvatarFallback>
           </Avatar>
-
           {hasAi && (
-            <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-orange-500 rounded-md flex items-center justify-center shadow border border-background">
-              <Bot className="h-2 w-2 text-white" />
+            <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-orange-500 rounded-full border-2 border-white" />
+          )}
+          {unreadCount > 0 && (
+            <div className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white border-2 border-white">
+              {unreadCount > 99 ? "99+" : unreadCount}
             </div>
           )}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-1 mb-0.5">
+          <div className="flex items-baseline justify-between gap-2 mb-0.5">
             <h3 className={cn(
-              "text-xs font-semibold truncate",
+              "text-[13px] font-semibold truncate leading-none",
               isActive ? "text-primary" : "text-foreground"
             )}>
               {contactName}
             </h3>
-            <span className="text-[9px] text-muted-foreground/50 shrink-0 whitespace-nowrap">
-              {timeDisplay}
-            </span>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {assigneeName && (
+                <span
+                  title={assigneeName}
+                  className={cn(
+                    "h-4 w-4 rounded-full shrink-0 cursor-default flex items-center justify-center text-[8px] font-bold text-white leading-none",
+                    getAssigneeDotColor(assigneeName)
+                  )}
+                >
+                  {getInitials(assigneeName)}
+                </span>
+              )}
+              <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                {timeDisplay}
+              </span>
+            </div>
           </div>
 
-          <p className="text-xs text-muted-foreground truncate leading-snug mb-1.5">
+          <p className="text-[12px] text-muted-foreground truncate leading-normal mb-1">
             {lastMessagePreview}
           </p>
 
-          {/* Badges */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 flex-wrap min-w-0">
-              {assigneeName && (
-                <Badge variant="outline" className="h-4 px-1.5 text-[8px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shrink-0">
-                  <User className="h-1.5 w-1.5 mr-0.5" />
-                  {assigneeName.split(" ")[0]}
-                </Badge>
-              )}
-              {hasAi && (
-                <Badge variant="outline" className="h-4 px-1.5 text-[8px] font-bold uppercase tracking-widest bg-orange-500/10 text-orange-400 border-orange-500/20 shrink-0 flex items-center gap-0.5">
-                  <Bot className="h-2.5 w-2.5" />
-                  IA
-                </Badge>
-              )}
-              <Badge variant="outline" className={cn("h-4 px-1.5 text-[8px] font-bold uppercase tracking-widest border shrink-0 whitespace-nowrap", crmStage.color)}>
-                {crmStage.label}
-              </Badge>
-            </div>
-
-            {unreadCount > 0 && (
-              <div className="h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-primary text-[8px] font-black text-white shadow shrink-0 ml-1">
-                {unreadCount}
-              </div>
+          {/* Metadata row */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {hasAi && (
+              <span className="text-[11px] text-orange-500 font-medium flex items-center gap-0.5">
+                <Bot className="h-2.5 w-2.5" />
+                IA
+              </span>
             )}
+            {hasAi && (
+              <span className="text-muted-foreground/30 text-[10px]">·</span>
+            )}
+            <span className={cn(
+              "inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border",
+              crmStage.color
+            )}>
+              {crmStage.label}
+            </span>
           </div>
         </div>
       </div>
@@ -224,13 +243,13 @@ export function ConversationList({ showAiOnly = false }: { showAiOnly?: boolean 
 
   if (conversations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 p-8 space-y-4">
-        <div className="h-14 w-14 rounded-2xl bg-muted/20 flex items-center justify-center">
-          <MessageSquare className="h-7 w-7 text-muted-foreground/30" />
+      <div className="flex flex-col items-center justify-center h-64 p-8 gap-3">
+        <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center">
+          <MessageSquare className="h-6 w-6 text-muted-foreground/40" />
         </div>
         <div className="text-center">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Fila vazia</p>
-          <p className="text-[9px] text-muted-foreground/40 uppercase tracking-tight mt-1">As conversas aparecerão aqui.</p>
+          <p className="text-sm font-medium text-muted-foreground">Nenhuma conversa</p>
+          <p className="text-xs text-muted-foreground/60 mt-0.5">As conversas aparecerão aqui.</p>
         </div>
       </div>
     );

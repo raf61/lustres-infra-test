@@ -91,7 +91,7 @@ export function ChatHeader() {
     return selected?.phoneNumber ?? activeConversation?.inbox?.phoneNumber ?? null;
   }, [state.filters.inboxId, state.inboxes, activeConversation?.inboxId, activeConversation?.inbox?.phoneNumber]);
 
-  if (!activeConversation) return <div className="h-24 border-b border-border bg-card/50" />;
+  if (!activeConversation) return <div className="h-16 border-b border-border bg-white" />;
 
   const conversation = activeConversation;
 
@@ -181,36 +181,33 @@ export function ChatHeader() {
   };
 
   return (
-    <div className="h-20 py-3 px-6 border-b border-border bg-card/30 backdrop-blur-md flex items-center justify-between flex-shrink-0">
+    <div className="h-16 py-3 px-6 border-b border-border bg-white flex items-center justify-between flex-shrink-0 shadow-sm">
       <div className="flex items-center gap-3">
-        <Avatar className="h-10 w-10 rounded-xl shadow-lg ring-1 ring-primary/20">
-          <AvatarFallback className="bg-primary text-white font-bold text-xs uppercase tracking-widest">
+        <Avatar className="h-9 w-9 rounded-full">
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
             {initials}
           </AvatarFallback>
         </Avatar>
 
-        <div className="space-y-1">
+        <div>
           <div className="flex items-center gap-2">
-            <h2 className="font-display text-sm font-bold text-foreground uppercase tracking-widest leading-none">
+            <h2 className="text-[15px] font-semibold text-foreground leading-none">
               {contactName}
             </h2>
             {conversation.chatbotStatus === "ACTIVE" && (
-              <div className="flex items-center gap-1.5 text-orange-500">
-                <Bot className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">IA Ativa</span>
-              </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-orange-500">
+                <Bot className="h-3 w-3" />
+                IA ativa
+              </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 mt-0.5 text-[12px] text-muted-foreground">
             {contact?.phoneNumber && (
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="h-2.5 w-2.5 text-primary" />
-                {formatWhatsAppNumber(contact.phoneNumber)}
-              </span>
+              <span>{formatWhatsAppNumber(contact.phoneNumber)}</span>
             )}
-            <span>•</span>
-            <span className="text-primary/80">{conversation.inbox?.name || "WhatsApp Business"}</span>
+            <span className="text-muted-foreground/40">·</span>
+            <span>{conversation.inbox?.name || "WhatsApp Business"}</span>
           </div>
         </div>
       </div>
@@ -222,14 +219,13 @@ export function ChatHeader() {
             size="sm"
             onClick={handleResolve}
             disabled={isResolving}
-            className="h-9 px-4 text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400 border border-emerald-500/20 rounded-xl"
+            className="h-8 px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg"
           >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            {isResolving ? "..." : "Resolver"}
+            <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+            {isResolving ? "Resolvendo..." : "Resolver"}
           </Button>
         )}
 
-        {/* Botão de detalhes do cliente */}
         <Button
           variant="ghost"
           size="icon"
@@ -238,7 +234,6 @@ export function ChatHeader() {
             if (firstClient) {
               handleOpenClientDetails(firstClient.id);
             } else {
-              // fallback: toggle sidebar de contexto
               const sidebar = document.getElementById('chat-crm-sidebar');
               if (sidebar) {
                 sidebar.classList.toggle('hidden');
@@ -247,53 +242,52 @@ export function ChatHeader() {
             }
           }}
           className={cn(
-            "h-9 w-9 rounded-xl border border-border bg-card hover:bg-primary/10 transition-all",
-            conversationClients.length > 0 && "border-primary/30 text-primary"
+            "h-8 w-8 rounded-lg hover:bg-muted transition-all",
+            conversationClients.length > 0 ? "text-primary" : "text-muted-foreground"
           )}
           title={conversationClients.length > 0 ? `Ver: ${conversationClients[0].razaoSocial}` : "Dados do Contato"}
         >
-          <User className="h-5 w-5 text-primary" />
+          <User className="h-4 w-4" />
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl border border-border bg-card">
-              <MoreVertical className="h-5 w-5 text-muted-foreground" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted text-muted-foreground">
+              <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-card border-border shadow-2xl rounded-2xl p-2">
-            <DropdownMenuItem onSelect={() => setAssociateDialogOpen(true)} className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3">
-              <UserPlus className="h-4 w-4 mr-3 text-primary" />
+          <DropdownMenuContent align="end" className="w-52 bg-card border-border shadow-lg rounded-xl p-1">
+            <DropdownMenuItem onSelect={() => setAssociateDialogOpen(true)} className="rounded-lg text-sm p-2.5">
+              <UserPlus className="h-4 w-4 mr-2.5 text-primary" />
               Vincular CNPJ
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-border/50" />
+            <DropdownMenuSeparator className="bg-border/50 my-1" />
             {conversation.assigneeId ? (
-              <DropdownMenuItem onClick={handleUnassign} className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3">
-                <UserMinus className="h-4 w-4 mr-3 text-red-500" />
+              <DropdownMenuItem onClick={handleUnassign} className="rounded-lg text-sm p-2.5">
+                <UserMinus className="h-4 w-4 mr-2.5 text-red-500" />
                 Remover Atendente
               </DropdownMenuItem>
             ) : null}
-            <DropdownMenuItem onClick={() => setChatbotDialogOpen(true)} className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3">
-              <Bot className="h-4 w-4 mr-3 text-primary" />
+            <DropdownMenuItem onClick={() => setChatbotDialogOpen(true)} className="rounded-lg text-sm p-2.5">
+              <Bot className="h-4 w-4 mr-2.5 text-primary" />
               Configurar Bot
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-border/50" />
+            <DropdownMenuSeparator className="bg-border/50 my-1" />
             <DropdownMenuItem
               onClick={handleClearMessages}
               disabled={isClearing}
-              className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3 text-amber-500 focus:text-amber-500 focus:bg-amber-500/10"
+              className="rounded-lg text-sm p-2.5 text-amber-600 focus:text-amber-600 focus:bg-amber-50"
             >
-              <Trash2 className="h-4 w-4 mr-3" />
-              {isClearing ? "Limpando..." : "Limpar Mensagens"}
+              <Trash2 className="h-4 w-4 mr-2.5" />
+              {isClearing ? "Limpando..." : "Limpar mensagens"}
             </DropdownMenuItem>
-
             <DropdownMenuItem
               onClick={handleDeleteContact}
               disabled={isDeletingContact}
-              className="rounded-xl text-[10px] font-bold uppercase tracking-widest p-3 text-red-500 focus:text-red-500 focus:bg-red-500/10"
+              className="rounded-lg text-sm p-2.5 text-red-500 focus:text-red-500 focus:bg-red-50"
             >
-              <Trash2 className="h-4 w-4 mr-3" />
-              {isDeletingContact ? "Deletando..." : "DELETAR CONTATO TOTAL"}
+              <Trash2 className="h-4 w-4 mr-2.5" />
+              {isDeletingContact ? "Deletando..." : "Deletar contato"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -129,62 +129,67 @@ export function NewConversationDialog({
       >
         Nova conversa
       </Button>
-      <DialogContent className="sm:max-w-md bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <DialogContent className="sm:max-w-md bg-card border border-border shadow-2xl rounded-2xl">
         <DialogHeader>
-          <DialogTitle>Nova conversa</DialogTitle>
-          <DialogDescription>
-            Cria contato (se não existir), vincula à inbox atual e abre uma nova conversa.
-            Se o número já existir nesta inbox, você pode abrir a conversa existente.
+          <DialogTitle className="font-display text-base font-bold uppercase tracking-widest">Nova Conversa</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Cria contato (se não existir) e abre uma nova conversa.
+            Se o número já existir, você pode abrir a conversa existente.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-3 space-y-2">
+        <div className="space-y-3 py-2">
+          <div className="rounded-xl border border-border bg-background p-3 space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-slate-600">Número</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Número</label>
               {existingConversationId && (
                 <button
                   type="button"
                   onClick={handleOpenExisting}
                   disabled={isOpening}
-                  className="text-xs text-blue-600 hover:text-blue-700 disabled:text-slate-400"
+                  className="text-[10px] font-bold text-primary hover:text-primary/80 disabled:text-muted-foreground uppercase tracking-widest"
                 >
-                  {isOpening ? "Abrindo..." : "Abrir conversa"}
+                  {isOpening ? "Abrindo..." : "→ Abrir existente"}
                 </button>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-9 px-3 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-sm text-slate-600 flex items-center">
-                55
+              <div className="h-9 px-3 rounded-xl border border-border bg-muted text-sm text-muted-foreground flex items-center font-bold">
+                +55
               </div>
               <Input
                 value={formatPhoneMask(phoneNumberDigits)}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="(11) 99999-9999"
+                className="rounded-xl border-border bg-card"
               />
             </div>
             {existingConversationId && (
-              <p className="text-[11px] text-amber-600">
+              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">
                 Número já existe nesta inbox.
               </p>
             )}
           </div>
-          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-3">
-            <label className="text-xs font-medium text-slate-600">Nome (opcional)</label>
+          <div className="rounded-xl border border-border bg-background p-3 space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome (opcional)</label>
             <Input
               value={contactName}
               onChange={(e) => setContactName(e.target.value)}
               placeholder="Nome do contato"
-              className="mt-2"
+              className="rounded-xl border-border bg-card"
             />
           </div>
           {formError && (
-            <p className="text-xs text-red-500">{formError}</p>
+            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{formError}</p>
           )}
         </div>
-        <DialogFooter className="gap-2">
+        <DialogFooter className="gap-2 pt-2">
+          <Button variant="ghost" onClick={() => setIsOpen(false)} className="text-[10px] font-bold uppercase tracking-widest rounded-xl">
+            Cancelar
+          </Button>
           <Button
             onClick={handleCreateConversation}
             disabled={isCreating || isOpening}
+            className="bg-primary text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-lg kpi-glow"
           >
             {isCreating ? "Criando..." : "Criar conversa"}
           </Button>

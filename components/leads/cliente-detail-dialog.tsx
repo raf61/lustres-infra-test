@@ -1322,7 +1322,7 @@ export function ClienteDetailDialog({
 
     return (
       <div>
-        <label className="text-[11px] font-bold text-white mb-0.5 block uppercase tracking-wide">{label}</label>
+        <label className="text-[11px] font-medium text-muted-foreground mb-0.5 block">{label}</label>
         <input
           type={type === "date" || type === "number" ? type : "text"}
           data-slot="input"
@@ -1334,7 +1334,7 @@ export function ClienteDetailDialog({
           className={cn(
             "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input w-full min-w-0 rounded-md border bg-transparent px-2 py-1 shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
             "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-[13px] bg-slate-900/50 border-border focus:border-blue-500 text-white font-medium",
+            "aria-invalid:ring-destructive/20 aria-invalid:border-destructive text-[13px] bg-background border-border focus:border-primary text-foreground",
           )}
         />
       </div>
@@ -1364,7 +1364,7 @@ export function ClienteDetailDialog({
         <DialogContent className={cn(
           "bg-card border-border text-[12px] sm:text-sm",
           "w-full max-w-full md:max-w-6xl h-[100dvh] md:h-[55vh] max-h-[100dvh] md:max-h-[calc(100vh-24px)] overflow-hidden",
-          "rounded-none md:rounded-xl p-3 sm:py-2"
+          "rounded-none md:rounded-xl p-4 sm:p-5"
         )}>
           <DialogHeader className="sr-only">
             <DialogTitle>Detalhes do cliente</DialogTitle>
@@ -1488,10 +1488,7 @@ export function ClienteDetailDialog({
                           <div className="text-sm text-muted-foreground space-y-3">
                             <div className="grid gap-2 grid-cols-1">
                               <div>
-                                <label className="text-[11px] font-bold text-white mb-0.5 block uppercase tracking-wide">ÚLTIMA COMPRA CONOSCO</label>
-                                <div className="p-2 bg-slate-900/50 border border-border rounded-md text-[13px] text-white font-medium">
-                                  {formatLocalDate(cliente?.ultimoPedido) || "Nenhuma compra"}
-                                </div>
+                                <span className="text-[10px] text-muted-foreground">Última compra: <span className="font-medium text-foreground">{formatLocalDate(cliente?.ultimoPedido) || "Nenhuma"}</span></span>
                               </div>
                             </div>
                           </div>
@@ -1623,14 +1620,14 @@ export function ClienteDetailDialog({
                           </Button>
                         </div>
                         <div className="w-full sm:max-w-[240px]">
-                          <label className="mb-0.5 block text-[11px] font-bold uppercase tracking-wide text-white">
+                          <label className="mb-0.5 block text-[11px] font-medium text-muted-foreground">
                             Próximo contato
                           </label>
                           <Input
                             type="datetime-local"
                             value={rawProximoContato}
                             onChange={(event) => updateEditingField("dataContatoAgendado", event.target.value || null)}
-                            className="h-8 border border-blue-400 bg-slate-900/50 text-[13px] font-medium text-white focus:border-blue-600 focus:ring-1 focus:ring-blue-200"
+                            className="h-8 border border-border bg-background text-[13px] text-foreground focus:border-primary"
                           />
                         </div>
                       </div>
@@ -1679,7 +1676,7 @@ export function ClienteDetailDialog({
                           {/* Dados do Cliente */}
                           <div className="py-1.5">
                             <div className="flex items-center justify-between mb-1">
-                              <h4 className="text-[11px] font-bold uppercase text-white flex items-center gap-1">
+                              <h4 className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
                                 <User className="h-3 w-3" /> Dados do Cliente
                               </h4>
                               <Button
@@ -1708,7 +1705,7 @@ export function ClienteDetailDialog({
                           {/* Observações */}
                           {cliente.observacao && (
                             <div className="py-1.5">
-                              <h4 className="text-[11px] font-bold uppercase text-white mb-1 flex items-center gap-1">
+                              <h4 className="text-[11px] font-semibold text-muted-foreground mb-1 flex items-center gap-1">
                                 <FileText className="h-3 w-3" /> Observações
                               </h4>
                               <p className="text-[13px] text-foreground whitespace-pre-wrap">{cliente.observacao}</p>
@@ -1722,7 +1719,7 @@ export function ClienteDetailDialog({
                           {/* Dados do Cliente */}
                           <div className="border border-border rounded-md p-2">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-[11px] font-bold uppercase text-white flex items-center gap-1">
+                              <h4 className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1">
                                 <User className="h-3 w-3" /> Dados do Cliente
                               </h4>
                               <Button
@@ -1755,7 +1752,7 @@ export function ClienteDetailDialog({
 
                           {/* Observações */}
                           <div className="border border-border rounded-md p-2">
-                            <h4 className="text-[11px] font-bold uppercase text-white mb-2 flex items-center gap-1">
+                            <h4 className="text-[11px] font-semibold text-muted-foreground mb-2 flex items-center gap-1">
                               <FileText className="h-3 w-3" /> Observações
                             </h4>
                             {renderField("Observações", "observacao", cliente.observacao, "textarea")}

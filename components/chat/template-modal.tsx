@@ -770,8 +770,8 @@ function TemplatePreview({
 
                       {/* Estado: Upload concluído */}
                       {mediaFile && mediaUrl && !isUploading && (
-                        <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
-                          <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <Check className="h-5 w-5 text-green-600" />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{mediaFile.name}</p>
                             <p className="text-xs text-muted-foreground">Upload concluído</p>
@@ -790,7 +790,7 @@ function TemplatePreview({
 
                       {/* Erro de upload */}
                       {uploadError && (
-                        <div className="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-950/30 rounded text-red-600 dark:text-red-400 text-sm">
+                        <div className="flex items-center gap-2 p-2 bg-red-50 rounded text-red-600 text-sm">
                           <AlertCircle className="h-4 w-4 flex-shrink-0" />
                           {uploadError}
                         </div>
@@ -1205,7 +1205,7 @@ export function TemplateModal({
 
           {/* Erro */}
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 rounded-lg text-red-700 dark:text-red-300 text-sm">
+            <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg text-red-700 text-sm">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               {error}
             </div>

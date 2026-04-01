@@ -130,7 +130,7 @@ export function ChatbotDialog({
 
           <div className="space-y-2">
             <div className="text-xs font-medium text-muted-foreground">Fluxo vinculado</div>
-            <div className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-600">
+            <div className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm text-foreground font-medium">
               {session?.flow?.name ?? "Nenhum fluxo vinculado"}
             </div>
             <div className="flex gap-2">

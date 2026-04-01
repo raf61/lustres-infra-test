@@ -10,25 +10,25 @@ const units = [
 
 export function UnidadesComparison() {
     return (
-        <div className="space-y-4 pt-2">
+        <div className="grid grid-cols-3 gap-3">
             {units.map((unit) => (
-                <div key={unit.name} className="p-4 rounded-2xl border border-border/50 bg-background/50 shadow-2xl space-y-4 hover:border-primary/30 transition-all group">
+                <div key={unit.name} className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
                     <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black text-foreground uppercase tracking-widest group-hover:text-primary transition-colors">{unit.name}</span>
-                        <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shadow-lg kpi-glow">{unit.faturamento}</span>
+                        <span className="text-sm font-semibold text-foreground">{unit.name}</span>
+                        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">{unit.faturamento}</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="text-center p-3 rounded-xl bg-card border border-border/50 shadow-xl group-hover:bg-background transition-colors">
-                            <span className="block text-[8px] font-black text-muted-foreground uppercase mb-1.5 tracking-widest">Leads</span>
-                            <span className="text-sm font-black text-foreground leading-none">{unit.leads}</span>
+                    <div className="grid grid-cols-3 gap-2">
+                        <div className="text-center">
+                            <span className="block text-[10px] text-muted-foreground mb-0.5">Leads</span>
+                            <span className="text-sm font-bold text-foreground">{unit.leads}</span>
                         </div>
-                        <div className="text-center p-3 rounded-xl bg-card border border-border/50 shadow-xl group-hover:bg-background transition-colors">
-                            <span className="block text-[8px] font-black text-muted-foreground uppercase mb-1.5 tracking-widest">Ganhos</span>
-                            <span className="text-sm font-black text-emerald-500 leading-none">{unit.fechados}</span>
+                        <div className="text-center">
+                            <span className="block text-[10px] text-muted-foreground mb-0.5">Ganhos</span>
+                            <span className="text-sm font-bold text-emerald-700">{unit.fechados}</span>
                         </div>
-                        <div className="text-center p-3 rounded-xl bg-card border border-border/50 shadow-xl group-hover:bg-background transition-colors">
-                            <span className="block text-[8px] font-black text-muted-foreground uppercase mb-1.5 tracking-widest">Taxa</span>
-                            <span className="text-sm font-black text-primary leading-none">{unit.conv}</span>
+                        <div className="text-center">
+                            <span className="block text-[10px] text-muted-foreground mb-0.5">Taxa</span>
+                            <span className="text-sm font-bold text-primary">{unit.conv}</span>
                         </div>
                     </div>
                 </div>

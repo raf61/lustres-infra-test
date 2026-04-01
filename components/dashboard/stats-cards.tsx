@@ -136,29 +136,23 @@ export function StatsCards({ timeRange = "Mês" }: { timeRange?: string }) {
   return (
     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
       {stats.map((stat) => (
-        <Card key={stat.name} className={cn(
-          "relative overflow-hidden border-border/50 bg-card shadow-2xl transition-all duration-300 group glass-card",
-        )}>
-          {/* Subtle line indicator */}
-          <div className={cn("absolute left-0 top-0 bottom-0 w-1 opacity-80", stat.color, "bg-current")} />
+        <Card key={stat.name} className="relative overflow-hidden border-border bg-card transition-all duration-200">
+          {/* Left accent bar */}
+          <div className={cn("absolute left-0 top-0 bottom-0 w-[3px]", stat.color, "bg-current")} />
 
-          <CardContent className="p-3 relative z-10">
+          <CardContent className="p-3 pl-4 relative z-10">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest leading-none mt-1">{stat.name}</p>
-              <div className={cn("p-1.5 rounded-lg bg-background/50 text-foreground shadow-inner kpi-glow")}>
-                <stat.icon className={cn("h-3 w-3", stat.iconColor)} />
-              </div>
+              <p className="text-[10px] font-medium text-muted-foreground leading-none mt-0.5">{stat.name}</p>
+              <stat.icon className={cn("h-3.5 w-3.5 shrink-0", stat.iconColor)} />
             </div>
-            <div className="space-y-0.5">
-              <h3 className="text-xl font-bold tracking-tighter text-foreground font-display leading-tight">{stat.value}</h3>
-              <div className="flex items-center gap-1.5">
-                <span className={cn(
-                  "text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md border",
-                  stat.change.includes("+") ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-muted text-muted-foreground border-border"
-                )}>
-                  {stat.change}
-                </span>
-              </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-foreground leading-none">{stat.value}</h3>
+              <span className={cn(
+                "text-[9px] font-medium px-1.5 py-0.5 rounded border inline-block",
+                stat.change.includes("+") ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-muted text-muted-foreground border-border"
+              )}>
+                {stat.change}
+              </span>
             </div>
           </CardContent>
         </Card>

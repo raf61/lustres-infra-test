@@ -91,30 +91,30 @@ export function VendedoresRanking() {
 
     return (
         <div className="space-y-0">
-            <div className="flex items-center gap-1 px-6 py-4 bg-background/50 border-b border-border/50">
+            <div className="flex items-center gap-1 px-4 py-2.5 border-b border-border/50">
                 <Button
                     variant={modo === "vendas" ? "default" : "ghost"}
                     size="sm"
                     className={cn(
-                        "h-8 text-[10px] font-bold uppercase tracking-widest px-4 rounded-lg",
-                        modo === "vendas" ? "bg-primary shadow-lg text-white kpi-glow" : "text-muted-foreground hover:text-foreground"
+                        "h-7 text-xs font-medium px-3 rounded-lg",
+                        modo === "vendas" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                     )}
                     onClick={() => setModo("vendas")}
                 >
-                    <ShoppingBag className="h-3 w-3 mr-2" />
-                    Ranking de Vendas
+                    <ShoppingBag className="h-3 w-3 mr-1.5" />
+                    Vendas
                 </Button>
                 <Button
                     variant={modo === "carteira" ? "default" : "ghost"}
                     size="sm"
                     className={cn(
-                        "h-8 text-[10px] font-bold uppercase tracking-widest px-4 rounded-lg",
-                        modo === "carteira" ? "bg-primary shadow-lg text-white kpi-glow" : "text-muted-foreground hover:text-foreground"
+                        "h-7 text-xs font-medium px-3 rounded-lg",
+                        modo === "carteira" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"
                     )}
                     onClick={() => setModo("carteira")}
                 >
-                    <Wallet className="h-3 w-3 mr-2" />
-                    Carteira de Clientes
+                    <Wallet className="h-3 w-3 mr-1.5" />
+                    Carteira
                 </Button>
             </div>
 
@@ -127,21 +127,21 @@ export function VendedoresRanking() {
                 ) : (
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-background/20 border-b border-border/50">
-                                <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">#</th>
-                                <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Vendedor</th>
+                            <tr className="border-b border-border/50 bg-muted/30">
+                                <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground">#</th>
+                                <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground">Vendedor</th>
                                 {modo === "vendas" ? (
                                     <>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">Pedidos</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Total Vendas</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Taxa de Conversão</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Qtd Leads</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-center">Pedidos</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-right">Total Vendas</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-right">Conversão</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-right">Leads</th>
                                     </>
                                 ) : (
                                     <>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">Total Carteira</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">Pendentes</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-right">Potencial</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-center">Carteira</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-center">Pendentes</th>
+                                        <th className="px-4 py-2.5 text-xs font-medium text-muted-foreground text-right">Potencial</th>
                                     </>
                                 )}
                             </tr>
@@ -153,36 +153,36 @@ export function VendedoresRanking() {
                                     onClick={() => handleVendedorClick(v.id)}
                                     className="hover:bg-primary/5 transition-colors cursor-pointer group"
                                 >
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors">
+                                    <td className="px-4 py-2.5 text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
                                         {String(idx + 1).padStart(2, '0')}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
+                                    <td className="px-4 py-2.5">
+                                        <div className="flex items-center gap-2.5">
                                             <div className={cn(
-                                                "h-9 w-9 rounded-xl flex items-center justify-center text-[10px] font-bold text-white shadow-lg kpi-glow",
+                                                "h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-bold text-white",
                                                 idx === 0 ? "bg-primary" :
                                                     idx === 1 ? "bg-indigo-600" :
                                                         idx === 2 ? "bg-slate-700" : "bg-muted text-muted-foreground border border-border"
                                             )}>
                                                 {v.nome.substring(0, 2).toUpperCase()}
                                             </div>
-                                            <span className="text-sm font-semibold text-foreground group-hover:translate-x-1 transition-transform">{v.nome}</span>
+                                            <span className="text-sm font-medium text-foreground">{v.nome}</span>
                                         </div>
                                     </td>
                                     {modo === "vendas" ? (
                                         <>
-                                            <td className="px-6 py-4 text-center">
-                                                <span className="text-[10px] font-bold text-foreground bg-muted px-2 py-1 rounded-md border border-border">{v.totalPedidos} UN</span>
+                                            <td className="px-4 py-2.5 text-center">
+                                                <span className="text-xs font-medium text-muted-foreground">{v.totalPedidos}</span>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="text-sm font-bold text-foreground tracking-tighter">{formatCurrency(v.totalVendas)}</span>
+                                            <td className="px-4 py-2.5 text-right">
+                                                <span className="text-sm font-semibold text-foreground">{formatCurrency(v.totalVendas)}</span>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
+                                            <td className="px-4 py-2.5 text-right">
                                                 {(() => {
                                                   const seed = v.id.charCodeAt(0) + v.id.charCodeAt(v.id.length - 1)
                                                   const taxa = (45 + (seed % 35)).toFixed(1)
                                                   return (
-                                                    <span className="text-xs font-bold text-emerald-500">{taxa}%</span>
+                                                    <span className="text-xs font-medium text-emerald-700">{taxa}%</span>
                                                   )
                                                 })()}
                                             </td>
@@ -191,17 +191,17 @@ export function VendedoresRanking() {
                                                   const seed = v.id.charCodeAt(1) + (v.id.charCodeAt(2) || 5)
                                                   const leads = 40 + (seed % 40)
                                                   return (
-                                                    <span className="text-xs font-bold text-foreground">{leads}</span>
+                                                    <span className="text-xs font-medium text-foreground">{leads}</span>
                                                   )
                                                 })()}
                                             </td>
                                         </>
                                     ) : (
                                         <>
-                                            <td className="px-6 py-4 text-center">
-                                                <span className="text-xs font-bold text-foreground">{v.totalClientes}</span>
+                                            <td className="px-4 py-2.5 text-center">
+                                                <span className="text-xs font-medium text-foreground">{v.totalClientes}</span>
                                             </td>
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-4 py-2.5 text-center">
                                                 <span className={cn(
                                                     "text-[10px] font-bold px-2 py-1 rounded-md border",
                                                     (v.clientesVencidos ?? 0) > 0 ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
@@ -209,8 +209,8 @@ export function VendedoresRanking() {
                                                     {v.clientesVencidos} PD
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="text-sm font-bold text-foreground tracking-tighter">
+                                            <td className="px-4 py-2.5 text-right">
+                                                <span className="text-sm font-semibold text-foreground">
                                                     {formatCurrency((v.totalClientes ?? 0) * 1250)}
                                                 </span>
                                             </td>

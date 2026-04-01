@@ -116,7 +116,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 text-foreground bg-card transform transition-all duration-300 ease-in-out lg:translate-x-0 border-r border-border shadow-2xl shadow-blue-900/10 font-sans",
+          "fixed inset-y-0 left-0 z-50 text-sidebar-foreground bg-sidebar transform transition-all duration-300 ease-in-out lg:translate-x-0 border-r border-sidebar-border shadow-2xl shadow-blue-900/20 font-sans",
           sidebarCollapsed ? "lg:w-20" : "lg:w-64",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
@@ -125,7 +125,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
           {/* Logo */}
           <div
             className={cn(
-              "flex h-20 items-center justify-between px-6 border-b border-border flex-shrink-0 bg-background/50 backdrop-blur-md",
+              "flex h-16 items-center justify-between px-5 border-b border-sidebar-border flex-shrink-0 bg-sidebar-accent",
               sidebarCollapsed && "lg:px-0 lg:justify-center",
             )}
           >
@@ -134,24 +134,24 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
                 <Building2 className="w-5 h-5 text-white" />
               </div>
               <div className={cn("flex flex-col", sidebarCollapsed && "lg:hidden")}>
-                <span className="font-black text-sm tracking-tight text-foreground leading-none">Casarão Lustres</span>
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-0.5">Infraestrutura IA</span>
+                <span className="font-semibold text-[14px] text-sidebar-foreground leading-none tracking-tight">Casarão Lustres</span>
+                <span className="text-[10px] text-sidebar-foreground/45 font-medium mt-0.5">Infraestrutura IA</span>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="lg:hidden text-foreground hover:bg-white/10" onClick={() => setSidebarOpen(false)}>
+            <Button variant="ghost" size="icon" className="lg:hidden text-sidebar-foreground hover:bg-sidebar-accent" onClick={() => setSidebarOpen(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
 
           <div className="px-4 py-4">
             <Select defaultValue="global">
-              <SelectTrigger className="w-full bg-background/50 border-border/50 text-foreground text-[10px] font-black uppercase tracking-widest h-10 focus:ring-0 rounded-xl">
+              <SelectTrigger className="w-full bg-sidebar-accent border-sidebar-border text-sidebar-foreground text-[10px] font-black uppercase tracking-widest h-10 focus:ring-0 rounded-xl">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-sidebar-primary animate-pulse" />
                   <SelectValue placeholder="Selecionar Unidade" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-card border-border text-foreground">
+              <SelectContent className="bg-sidebar border-sidebar-border text-sidebar-foreground">
                 <SelectItem value="global" className="text-[10px] font-bold uppercase focus:bg-primary focus:text-white">Visão Global</SelectItem>
                 <SelectItem value="u1" className="text-[10px] font-bold uppercase focus:bg-primary focus:text-white">Unidade 1</SelectItem>
                 <SelectItem value="u2" className="text-[10px] font-bold uppercase focus:bg-primary focus:text-white">Unidade 2</SelectItem>
@@ -179,25 +179,25 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
                           "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-left group",
                           sidebarCollapsed && "lg:justify-center lg:px-0",
                           isActive
-                            ? "bg-primary/15 text-primary font-bold"
-                            : "text-muted-foreground hover:text-foreground hover:bg-white/5",
+                            ? "bg-sidebar-primary/15 text-sidebar-primary font-semibold"
+                            : "text-sidebar-foreground/55 hover:text-sidebar-foreground hover:bg-sidebar-accent",
                         )}
                       >
                         <item.icon
                           className={cn(
                             "h-[18px] w-[18px] shrink-0 transition-colors",
-                            isActive ? "text-primary" : "text-slate-500 group-hover:text-slate-300"
+                            isActive ? "text-sidebar-primary" : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/80"
                           )}
                         />
                         <span className={cn(
-                          "text-[15px] font-semibold truncate",
+                          "text-[13px] font-medium truncate",
                           sidebarCollapsed && "lg:hidden"
                         )}>
                           {item.name}
                         </span>
                         {isActive && (
                           <span className={cn(
-                            "ml-auto h-1.5 w-1.5 rounded-full bg-primary shrink-0",
+                            "ml-auto h-1.5 w-1.5 rounded-full bg-sidebar-primary shrink-0",
                             sidebarCollapsed && "lg:hidden"
                           )} />
                         )}
@@ -210,7 +210,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
           </div>
 
           {/* Rodapé fixo */}
-          <div className="border-t border-white/5 p-3 flex-shrink-0">
+          <div className="border-t border-sidebar-border p-3 flex-shrink-0">
 
           </div>
         </div>
@@ -220,14 +220,14 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
       <div className={cn("lg:pl-64 transition-[padding] duration-300 min-h-screen flex flex-col", sidebarCollapsed && "lg:pl-20")}>
         {/* Top bar */}
         {!hideHeader && (
-          <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b border-border bg-background/50 backdrop-blur-xl px-8 text-foreground flex-shrink-0">
-            <Button variant="ghost" size="icon" className="lg:hidden text-foreground hover:bg-white/10" onClick={() => setSidebarOpen(true)}>
+          <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-white px-8 text-foreground flex-shrink-0 shadow-sm">
+            <Button variant="ghost" size="icon" className="lg:hidden text-foreground hover:bg-muted" onClick={() => setSidebarOpen(true)}>
               <Menu className="h-5 w-5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="hidden lg:inline-flex text-foreground hover:bg-white/10"
+              className="hidden lg:inline-flex text-foreground hover:bg-muted"
               onClick={toggleSidebarCollapsed}
             >
               <PanelLeft className="h-5 w-5" />
@@ -303,7 +303,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-3 text-foreground hover:bg-white/10 px-4 h-11 rounded-xl">
+                <Button variant="ghost" className="gap-3 text-foreground hover:bg-muted px-4 h-11 rounded-xl">
                   <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                     <AvatarFallback className="bg-primary/20 text-primary font-black uppercase">
                       {session?.user?.name?.[0]?.toUpperCase() || "U"}
@@ -335,7 +335,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
         {/* Page content */}
         <main className={cn(
           "bg-background flex-1",
-          hideHeader ? "p-0 overflow-hidden" : "p-8 min-h-[calc(100vh-80px)]"
+          hideHeader ? "p-0 overflow-hidden" : "p-8 min-h-[calc(100vh-64px)]"
         )}>{children}</main>
       </div>
     </div>

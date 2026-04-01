@@ -88,46 +88,47 @@ export function MessageInput() {
   if (!activeConversation) return null;
 
   return (
-    <div className="p-3 border-t border-border bg-card/50 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto space-y-3">
+    <div className="px-4 py-3 border-t border-border bg-white">
+      <div className="max-w-6xl mx-auto space-y-2">
 
         {/* Quick Actions / Templates */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-          {isWhatsApp && QUICK_TEMPLATES.map((tmpl) => (
-            <Button
-              key={tmpl.templateName}
-              variant="outline"
-              size="sm"
-              className="h-7 text-[9px] font-bold uppercase tracking-widest px-3 rounded-xl border-border bg-background/50 hover:bg-primary/10 hover:border-primary/30 transition-all whitespace-nowrap"
-              onClick={() => {
-                setQuickTemplate({ name: tmpl.templateName, language: tmpl.languageCode });
-                setShowTemplateModal(true);
-              }}
-            >
-              {tmpl.label}
-            </Button>
-          ))}
-        </div>
+        {isWhatsApp && QUICK_TEMPLATES.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+            {QUICK_TEMPLATES.map((tmpl) => (
+              <Button
+                key={tmpl.templateName}
+                variant="outline"
+                size="sm"
+                className="h-6 text-[10px] font-medium px-2.5 rounded-lg border-border/60 bg-muted/40 hover:bg-primary/8 hover:border-primary/30 hover:text-primary transition-all whitespace-nowrap shrink-0"
+                onClick={() => {
+                  setQuickTemplate({ name: tmpl.templateName, language: tmpl.languageCode });
+                  setShowTemplateModal(true);
+                }}
+              >
+                {tmpl.label}
+              </Button>
+            ))}
+          </div>
+        )}
 
         {/* Input area */}
         <div className="relative group">
           {replyToMessageId && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 p-3 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-between backdrop-blur-xl animate-in slide-in-from-bottom-2 duration-300">
-              <div className="flex items-center gap-3">
-                <Reply className="h-4 w-4 text-primary" />
+            <div className="absolute bottom-full left-0 right-0 mb-1.5 px-3 py-2 bg-blue-50 border border-primary/20 rounded-xl flex items-center justify-between animate-in slide-in-from-bottom-2 duration-200">
+              <div className="flex items-center gap-2">
+                <Reply className="h-3.5 w-3.5 text-primary shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Respondendo a</p>
-                  <p className="text-xs font-semibold text-foreground truncate max-w-md">Mensagem selecionada</p>
+                  <p className="text-xs font-medium text-primary">Respondendo a mensagem</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-primary/20" onClick={clearReplyToMessage}>
-                <X className="h-4 w-4 text-primary" />
+              <Button variant="ghost" size="icon" className="h-6 w-6 rounded-lg hover:bg-primary/10" onClick={clearReplyToMessage}>
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
               </Button>
             </div>
           )}
 
           <div className={cn(
-            "bg-background/80 border border-border rounded-2xl p-2 transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary shadow-2xl",
+            "bg-white border border-border/70 rounded-2xl p-2 transition-all duration-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary shadow-sm",
             isRecordingAudio ? "ring-2 ring-red-500/50 border-red-500/50" : ""
           )}>
             <textarea
@@ -135,21 +136,21 @@ export function MessageInput() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isRecordingAudio ? "Gravando áudio..." : "Digite sua mensagem aqui..."}
-              className="w-full bg-transparent border-none focus:ring-0 text-sm font-medium text-foreground placeholder:text-muted-foreground/50 resize-none py-3 px-4 min-h-[52px] max-h-32 scrollbar-thin"
+              placeholder={isRecordingAudio ? "Gravando áudio..." : "Escreva uma mensagem..."}
+              className="w-full bg-transparent border-none focus:ring-0 text-[14px] text-foreground placeholder:text-muted-foreground/60 resize-none pt-2.5 pb-1 px-3 min-h-[44px] max-h-32"
               rows={1}
             />
 
-            <div className="flex items-center justify-between px-2 pb-1">
-              <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group">
-                  <Paperclip className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+            <div className="flex items-center justify-between px-1.5 pb-1.5">
+              <div className="flex items-center gap-0.5">
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors">
+                  <Paperclip className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group" onClick={() => setShowTemplateModal(true)}>
-                  <FileText className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors" onClick={() => setShowTemplateModal(true)}>
+                  <FileText className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all group">
-                  <Smile className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors">
+                  <Smile className="h-4 w-4" />
                 </Button>
               </div>
 
@@ -157,22 +158,22 @@ export function MessageInput() {
                 {content.trim() ? (
                   <Button
                     onClick={handleSend}
-                    className="h-10 px-6 rounded-xl bg-primary text-white font-bold text-[10px] uppercase tracking-widest kpi-glow hover:bg-primary/90 transition-all"
+                    className="h-8 px-4 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors"
                   >
-                    Enviar <Send className="h-3.5 w-3.5 ml-2" />
+                    Enviar <Send className="h-3 w-3 ml-1.5" />
                   </Button>
                 ) : (
                   <Button
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "h-10 w-10 rounded-xl transition-all",
-                      isRecordingAudio ? "bg-red-500 text-white animate-pulse" : "hover:bg-primary/10 text-muted-foreground hover:text-primary"
+                      "h-8 w-8 rounded-lg transition-all",
+                      isRecordingAudio ? "bg-red-500 text-white animate-pulse" : "text-muted-foreground hover:text-primary hover:bg-primary/8"
                     )}
                     onMouseDown={() => setIsRecordingAudio(true)}
                     onMouseUp={() => setIsRecordingAudio(false)}
                   >
-                    <Mic className="h-5 w-5" />
+                    <Mic className="h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -180,17 +181,6 @@ export function MessageInput() {
           </div>
         </div>
 
-        {/* Info badges */}
-        <div className="flex items-center justify-center gap-4 py-2 border-t border-border/30">
-          <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-            <Bot className="h-3 w-3 text-primary" />
-            IA Central Ativa
-          </div>
-          <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-            <ShieldCheck className="h-3 w-3 text-emerald-500" />
-            Conexão Segura
-          </div>
-        </div>
 
       </div>
 

@@ -66,154 +66,151 @@ export function ChatSidebar() {
     const client = contact?.clients?.[0];
     const code = (client as any)?.kanbanEstado?.code ?? 0;
     const stages: Record<number, { label: string, color: string }> = {
-      0: { label: "A fazer contato", color: "bg-slate-500/20 text-slate-400 border-slate-500/30" },
-      1: { label: "Contato feito",   color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-      2: { label: "Follow-up 1",    color: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-      3: { label: "Follow-up 2",    color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-      4: { label: "Ignorado",       color: "bg-red-500/20 text-red-500 border-red-500/30" },
-      5: { label: "Interessado",    color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-      6: { label: "Negociando",     color: "bg-sky-500/20 text-sky-400 border-sky-500/30" },
-      7: { label: "Venda Feita",    color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-      8: { label: "Perdido",        color: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
+      0: { label: "A fazer contato", color: "bg-slate-100 text-slate-600 border-slate-200" },
+      1: { label: "Contato feito",   color: "bg-blue-100 text-blue-700 border-blue-200" },
+      2: { label: "Follow-up 1",    color: "bg-amber-100 text-amber-700 border-amber-200" },
+      3: { label: "Follow-up 2",    color: "bg-orange-100 text-orange-700 border-orange-200" },
+      4: { label: "Ignorado",       color: "bg-red-100 text-red-700 border-red-200" },
+      5: { label: "Interessado",    color: "bg-purple-100 text-purple-700 border-purple-200" },
+      6: { label: "Negociando",     color: "bg-sky-100 text-sky-700 border-sky-200" },
+      7: { label: "Venda Feita",    color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+      8: { label: "Perdido",        color: "bg-rose-100 text-rose-700 border-rose-200" },
     };
     return stages[code] || stages[0];
   })();
 
   return (
-    <div className="w-64 border-l border-border flex flex-col h-full bg-card overflow-hidden">
+    <div className="w-64 border-l border-border flex flex-col h-full bg-white overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border bg-background/50 shrink-0">
+      <div className="px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center justify-between">
-          <h3 className="text-[11px] font-bold text-foreground uppercase tracking-widest">
-            Dados do Contato
-          </h3>
-          <div className="flex items-center gap-1">
+          <h3 className="text-[13px] font-semibold text-foreground">Detalhes</h3>
+          <div className="flex items-center gap-1.5">
             {isBotActive && (
-              <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-500">
-                <Bot className="h-2.5 w-2.5" />
-                <span className="text-[8px] font-bold uppercase tracking-widest">IA</span>
-              </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-orange-500">
+                <Bot className="h-3 w-3" />
+                IA
+              </span>
             )}
-            <Badge variant="outline" className={cn("px-1.5 py-0 text-[8px] font-bold uppercase tracking-widest border shrink-0", crmStatus.color)}>
-               {crmStatus.label}
-            </Badge>
+            <span className={cn("text-[11px] font-medium px-1.5 py-0.5 rounded border", crmStatus.color)}>
+              {crmStatus.label}
+            </span>
           </div>
         </div>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-5">
+        <div className="p-4 space-y-4">
 
           {/* Nome */}
-          <div className="space-y-1">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Nome</p>
-            <p className="text-sm font-semibold text-foreground">{contactName}</p>
+          <div>
+            <p className="text-[11px] font-medium text-muted-foreground mb-0.5">Nome</p>
+            <p className="text-[13px] font-semibold text-foreground">{contactName}</p>
           </div>
 
           {/* Telefone */}
           {contact?.phoneNumber && (
-            <div className="flex items-center gap-2.5">
-              <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                <Phone className="h-3.5 w-3.5" />
+            <div>
+              <p className="text-[11px] font-medium text-muted-foreground mb-0.5">Telefone</p>
+              <div className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="text-[13px] text-foreground">{contact.phoneNumber}</span>
               </div>
-              <span className="text-xs font-medium text-foreground">{contact.phoneNumber}</span>
             </div>
           )}
 
           {/* Responsável */}
-          <div className="pt-1 border-t border-border/60 space-y-2">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Responsável</p>
+          <div className="pt-3 border-t border-border/50">
+            <p className="text-[11px] font-medium text-muted-foreground mb-1.5">Responsável</p>
             {assignee ? (
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                  <User className="h-3 w-3" />
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <User className="h-3 w-3 text-primary" />
                 </div>
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-xs font-semibold text-foreground truncate">{assignee.name || assignee.email}</span>
-                  {isBotActive && (
-                    <Bot className="h-3 w-3 text-orange-500" />
-                  )}
+                  <span className="text-[13px] font-medium text-foreground truncate">{assignee.name || assignee.email}</span>
+                  {isBotActive && <Bot className="h-3 w-3 text-orange-500" />}
                 </div>
               </div>
             ) : isBotActive ? (
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                <div className="h-6 w-6 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
                   <Bot className="h-3 w-3 text-orange-500" />
                 </div>
-                <span className="text-xs font-semibold text-orange-500">I.A. Ativa</span>
+                <span className="text-[13px] font-medium text-orange-500">I.A. Ativa</span>
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground/50 italic">Sem responsável</p>
+              <p className="text-[13px] text-muted-foreground/60 italic">Sem responsável</p>
             )}
           </div>
 
-          {/* Histórico de Orçamentos — mock */}
-          <div className="pt-1 border-t border-border/60 space-y-2">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-              <FileText className="h-3 w-3" /> Orçamentos
+          {/* Orçamentos */}
+          <div className="pt-3 border-t border-border/50 space-y-2">
+            <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5" /> Orçamentos
             </p>
             <div className="space-y-1.5">
               {[
                 { id: "ORC #312", valor: "R$ 8.750,00", data: "Fev 2025" },
                 { id: "ORC #287", valor: "R$ 3.200,00", data: "Nov 2024" },
               ].map((orc) => (
-                <div key={orc.id} className="flex items-center justify-between bg-background/40 rounded-lg px-2.5 py-1.5 border border-border/50">
-                  <span className="text-[10px] font-bold text-muted-foreground">{orc.id}</span>
+                <div key={orc.id} className="flex items-center justify-between bg-muted/40 rounded-lg px-3 py-2">
+                  <span className="text-[12px] text-foreground/70">{orc.id}</span>
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-emerald-500">{orc.valor}</p>
-                    <p className="text-[9px] text-muted-foreground/60">{orc.data}</p>
+                    <p className="text-[12px] font-semibold text-emerald-600">{orc.valor}</p>
+                    <p className="text-[10px] text-muted-foreground">{orc.data}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Histórico de Pedidos — mock */}
-          <div className="pt-1 border-t border-border/60 space-y-2">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-              <ShoppingBag className="h-3 w-3" /> Pedidos
+          {/* Pedidos */}
+          <div className="pt-3 border-t border-border/50 space-y-2">
+            <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+              <ShoppingBag className="h-3.5 w-3.5" /> Pedidos
             </p>
             <div className="space-y-1.5">
               {[
                 { id: "PED #8210", desc: "Lustre Cristal 8 Braços", valor: "R$ 4.250,00" },
                 { id: "PED #7942", desc: "Arandela Clean LED", valor: "R$ 890,00" },
               ].map((ped) => (
-                <div key={ped.id} className="bg-background/40 rounded-lg px-2.5 py-1.5 border border-border/50">
+                <div key={ped.id} className="bg-muted/40 rounded-lg px-3 py-2">
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className="text-[10px] font-bold text-muted-foreground">{ped.id}</span>
-                    <span className="text-[10px] font-bold text-emerald-500">{ped.valor}</span>
+                    <span className="text-[12px] text-foreground/70">{ped.id}</span>
+                    <span className="text-[12px] font-semibold text-emerald-600">{ped.valor}</span>
                   </div>
-                  <p className="text-[10px] text-foreground/80 truncate">{ped.desc}</p>
+                  <p className="text-[11px] text-muted-foreground truncate">{ped.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Registros */}
-          <div className="pt-1 border-t border-border/60 space-y-2">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-              <ClipboardList className="h-3 w-3" /> Registros
+          <div className="pt-3 border-t border-border/50 space-y-2">
+            <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+              <ClipboardList className="h-3.5 w-3.5" /> Registros
             </p>
             <div className="space-y-1.5">
-              <div className="bg-background/40 rounded-lg px-2.5 py-1.5 border border-border/50">
-                <p className="text-[10px] font-medium text-muted-foreground">Contato realizado em 14/03/2025</p>
+              <div className="bg-muted/40 rounded-lg px-3 py-2">
+                <p className="text-[12px] text-foreground/70">Contato realizado em 14/03/2025</p>
               </div>
-              <div className="bg-background/40 rounded-lg px-2.5 py-1.5 border border-border/50">
-                <p className="text-[10px] font-medium text-muted-foreground">Follow-up agendado para 22/03/2025</p>
+              <div className="bg-muted/40 rounded-lg px-3 py-2">
+                <p className="text-[12px] text-foreground/70">Follow-up agendado para 22/03/2025</p>
               </div>
             </div>
           </div>
 
           {/* Área Destrutiva */}
-          <div className="pt-4 pb-2 border-t border-border/60">
-            <Button 
-                variant="ghost" 
-                size="sm"
-                className="w-full text-[9px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase font-bold tracking-widest h-8"
-                onClick={() => setIsDeleteDialogOpen(true)}
+          <div className="pt-4 pb-2 border-t border-border/50">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-red-50 h-8 rounded-lg"
+              onClick={() => setIsDeleteDialogOpen(true)}
             >
-              <Trash2 className="h-3 w-3 mr-2" />
-              Deletar Contato e Histórico
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Deletar contato e histórico
             </Button>
           </div>
 

@@ -18,11 +18,11 @@ function ChatPanelContent() {
   const [showAiOnly, setShowAiOnly] = useState(false);
 
   return (
-    <div className="flex h-full min-h-0 bg-background overflow-hidden ring-1 ring-white/5">
+    <div className="flex h-full min-h-0 overflow-hidden bg-[hsl(215_30%_94%)]">
       {/* Sidebar Esquerda - Lista de Conversas */}
-      <div className="w-[360px] flex-shrink-0 flex flex-col min-h-0 border-r border-border bg-card/30 backdrop-blur-md">
+      <div className="w-[340px] flex-shrink-0 flex flex-col min-h-0 border-r border-border bg-white shadow-sm">
         {/* Filtros - altura fixa */}
-        <div className="flex-shrink-0 bg-background/40">
+        <div className="flex-shrink-0">
           <ChatFilters onAiFilterChange={setShowAiOnly} />
         </div>
         {/* Lista - flex-1 para ocupar o resto */}
@@ -32,7 +32,7 @@ function ChatPanelContent() {
       </div>
 
       {/* Main - Área de Chat */}
-      <div className="flex-1 flex flex-col min-h-0 bg-background relative overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 bg-[hsl(215_30%_94%)] relative overflow-hidden">
         <ChatConversationPane />
       </div>
 

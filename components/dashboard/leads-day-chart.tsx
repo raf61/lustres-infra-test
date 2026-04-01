@@ -9,7 +9,7 @@ const data = Array.from({ length: 30 }, (_, i) => ({
 
 export function LeadsDayChart() {
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={190}>
       <AreaChart data={data}>
         <defs>
           <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">

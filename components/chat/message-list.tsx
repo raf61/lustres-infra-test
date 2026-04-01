@@ -221,7 +221,7 @@ function VideoAttachment({ attachment, caption }: { attachment: Attachment; capt
           ) : url ? (
             <video src={url} controls className="rounded-lg max-w-xs" />
           ) : (
-            <div className="flex items-center gap-2 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
+            <div className="flex items-center gap-2 p-4 bg-muted rounded-lg text-muted-foreground">
               <Video className="h-5 w-5" />
               <span>Vídeo indisponível</span>
             </div>
@@ -245,7 +245,7 @@ function AudioAttachment({ attachment }: { attachment: Attachment }) {
           ) : url ? (
             <audio src={url} controls className="max-w-xs" />
           ) : (
-            <div className="flex items-center gap-2 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg">
+            <div className="flex items-center gap-2 p-4 bg-muted rounded-lg text-muted-foreground">
               <Music className="h-5 w-5" />
               <span>Áudio indisponível</span>
             </div>
@@ -284,22 +284,22 @@ function DocumentAttachment({ attachment, caption }: { attachment: Attachment; c
           "hover:bg-secondary/80 cursor-pointer"
         )}
       >
-        <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+        <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
           {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin text-blue-600 dark:text-blue-400" />
+            <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
           ) : (
-            <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <FileText className="h-5 w-5 text-blue-600" />
           )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">
             {attachment.fileName || "Documento"}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             {isLoading ? "Abrindo..." : "Clique para baixar"}
           </p>
         </div>
-        <Download className="h-4 w-4 text-slate-400" />
+        <Download className="h-4 w-4 text-muted-foreground" />
       </button>
       {caption && <p className="text-sm whitespace-pre-wrap">{caption}</p>}
     </div>
@@ -369,9 +369,9 @@ interface ReplyPreviewProps {
 function ReplyPreview({ replyToMessage, previewText, isMediaReply, isLoading, onScrollToMessage }: ReplyPreviewProps) {
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-2 py-1.5 mb-1 rounded-md bg-slate-200/50 dark:bg-slate-700/50">
-        <Reply className="h-3 w-3 text-slate-400 flex-shrink-0" />
-        <Loader2 className="h-3 w-3 animate-spin text-slate-400" />
+      <div className="flex items-center gap-2 px-2 py-1.5 mb-1 rounded-md bg-black/10">
+        <Reply className="h-3 w-3 text-current opacity-60 flex-shrink-0" />
+        <Loader2 className="h-3 w-3 animate-spin text-current opacity-60" />
       </div>
     );
   }
@@ -383,12 +383,11 @@ function ReplyPreview({ replyToMessage, previewText, isMediaReply, isLoading, on
       onClick={() => onScrollToMessage?.(replyToMessage.id)}
       className={cn(
         "flex items-center gap-2 px-2 py-1.5 mb-1 rounded-md text-left w-full",
-        "bg-slate-200/50 dark:bg-slate-700/50",
-        "hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors",
-        "text-xs text-slate-600 dark:text-slate-300"
+        "bg-black/10 hover:bg-black/15 transition-colors",
+        "text-xs text-current opacity-80"
       )}
     >
-      <Reply className="h-3 w-3 text-slate-400 flex-shrink-0" />
+      <Reply className="h-3 w-3 text-current opacity-60 flex-shrink-0" />
       <span className={cn("truncate", isMediaReply && "italic")}>
         {previewText}
       </span>
@@ -520,7 +519,7 @@ function MessageBubble({
     >
       <div
         className={cn(
-          "max-w-[75%] flex flex-col gap-1.5 group relative",
+          "max-w-[68%] flex flex-col gap-1 group relative",
           isOutgoing ? "items-end" : "items-start"
         )}
       >
@@ -528,10 +527,10 @@ function MessageBubble({
 
         <div
           className={cn(
-            "rounded-2xl px-5 py-3 relative transition-all duration-300 shadow-2xl overflow-hidden",
+            "rounded-2xl px-4 py-2.5 relative overflow-hidden",
             isOutgoing
-              ? "bg-primary/15 text-foreground border border-primary/30 rounded-tr-sm kpi-glow-subtle"
-              : "bg-card text-foreground border border-border/50 rounded-tl-sm shadow-sm",
+              ? "bg-primary text-white rounded-tr-none shadow-md shadow-primary/15"
+              : "bg-white text-foreground border border-border/50 rounded-tl-none shadow-sm",
             isFailed && "ring-2 ring-red-500/50"
           )}
         >
@@ -539,12 +538,12 @@ function MessageBubble({
             <button
               type="button"
               className={cn(
-                "absolute top-1/2 -translate-y-1/2 h-8 w-8 rounded-xl bg-card border border-border shadow-xl items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white hover:border-primary z-10 flex",
-                isOutgoing ? "-left-10" : "-right-10"
+                "absolute top-1/2 -translate-y-1/2 h-7 w-7 rounded-lg bg-white border border-border shadow-md items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-white hover:border-primary z-10 flex text-muted-foreground",
+                isOutgoing ? "-left-9" : "-right-9"
               )}
               onClick={() => onReply(message.id)}
             >
-              <Reply className="h-3.5 w-3.5" />
+              <Reply className="h-3 w-3" />
             </button>
           )}
 
@@ -561,16 +560,15 @@ function MessageBubble({
 
           <div
             className={cn(
-              "flex items-center justify-end gap-1.5 mt-2 transition-opacity",
-              isOutgoing ? "text-primary/70" : "text-muted-foreground/60",
-              "group-hover:opacity-100 opacity-60"
+              "flex items-center justify-end gap-1 mt-1.5",
+              isOutgoing ? "text-white/55" : "text-muted-foreground/50",
             )}
           >
-            <span className="text-[9px] font-bold uppercase tracking-widest">{time}</span>
+            <span className="text-[10px]">{time}</span>
             {isOutgoing && !isFailed && (
-              <div className="flex items-center">
-                {message.status === "read" ? <CheckCheck className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-              </div>
+              message.status === "read"
+                ? <CheckCheck className="h-3 w-3" />
+                : <Check className="h-3 w-3" />
             )}
           </div>
         </div>
@@ -592,8 +590,8 @@ function MessageBubble({
 
 function DateSeparator({ date }: { date: string }) {
   return (
-    <div className="flex items-center justify-center py-4">
-      <div className="bg-secondary/40 text-muted-foreground text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-border/30">
+    <div className="flex items-center justify-center py-3">
+      <div className="bg-white/80 text-muted-foreground text-[11px] font-medium px-3 py-1 rounded-full border border-border/40 shadow-sm">
         {formatDateSeparator(date)}
       </div>
     </div>
@@ -925,9 +923,9 @@ export function MessageList() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
       // Highlight temporário
-      element.classList.add("bg-yellow-100", "dark:bg-yellow-900/30");
+      element.classList.add("bg-yellow-100");
       setTimeout(() => {
-        element.classList.remove("bg-yellow-100", "dark:bg-yellow-900/30");
+        element.classList.remove("bg-yellow-100");
       }, 1500);
     }
   }, []);
@@ -935,23 +933,23 @@ export function MessageList() {
   if (!activeConversation && activeConversationId) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400 mb-3" />
-        <p className="text-slate-500 dark:text-slate-400 font-medium">Carregando conversa...</p>
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground mb-3" />
+        <p className="text-muted-foreground font-medium">Carregando conversa...</p>
       </div>
     );
   }
 
   if (!activeConversation) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-background">
-        <div className="h-20 w-20 bg-card rounded-2xl flex items-center justify-center mb-6 shadow-2xl border border-border/50 group hover:scale-110 transition-all duration-500">
-          <MessageSquare className="h-10 w-10 text-primary/40 group-hover:text-primary transition-colors" />
+      <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+        <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center mb-5 shadow-md border border-border/30">
+          <MessageSquare className="h-8 w-8 text-primary/40" />
         </div>
-        <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-widest mb-2">
+        <h3 className="font-semibold text-base text-foreground mb-1.5">
           Selecione uma conversa
         </h3>
-        <p className="text-muted-foreground/60 text-[10px] font-bold uppercase tracking-widest max-w-xs leading-relaxed">
-          Escolha uma conversa na lista ao lado para começar a conversar com seus clientes
+        <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
+          Escolha uma conversa na lista ao lado para começar.
         </p>
       </div>
     );
@@ -959,7 +957,7 @@ export function MessageList() {
 
   if (isLoadingMessages && activeMessages.length === 0) {
     return (
-      <div className="flex-1 p-4 space-y-4 bg-background">
+      <div className="flex-1 p-4 space-y-4">
         {[...Array(6)].map((_, i) => (
           <MessageSkeleton key={i} isOutgoing={i % 2 === 0} />
         ))}
@@ -970,13 +968,13 @@ export function MessageList() {
   return (
     <>
       <div
-        className="h-full overflow-y-auto overscroll-contain flex flex-col-reverse bg-background p-4"
+        className="h-full overflow-y-auto overscroll-contain flex flex-col-reverse p-4"
         ref={scrollRef}
         onScroll={handleScroll}
         onWheel={(e) => e.stopPropagation()}
       >
         {/* flex-col-reverse + gap: scroll começa de baixo, mensagens na ordem certa */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           {/* Loading indicator for older messages (aparece no topo visualmente) */}
           {isLoadingMessages && (
             <div className="py-4 flex flex-col gap-3">
@@ -1013,13 +1011,13 @@ export function MessageList() {
       </div>
 
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-card border border-border shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Salvar Contato</DialogTitle>
+            <DialogTitle className="font-display text-base font-bold uppercase tracking-widest">Salvar Contato</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Selecionar Cliente</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Selecionar Cliente</label>
               <Select value={selectedClientId} onValueChange={setSelectedClientId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um cliente..." />
@@ -1041,12 +1039,12 @@ export function MessageList() {
             </div>
 
             {saveContactData && (
-              <div className="p-3 rounded-lg border bg-slate-50 dark:bg-slate-800/50 space-y-1">
-                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
+              <div className="p-3 rounded-xl border border-border bg-background space-y-1">
+                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                   Contato a ser salvo
                 </p>
-                <p className="text-sm font-medium">{saveContactData.name}</p>
-                <p className="text-xs text-slate-500">{saveContactData.phone}</p>
+                <p className="text-sm font-semibold text-foreground">{saveContactData.name}</p>
+                <p className="text-xs text-muted-foreground">{saveContactData.phone}</p>
               </div>
             )}
           </div>

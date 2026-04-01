@@ -1250,7 +1250,7 @@ export function AnaliseVendedoresPage() {
   }, [vendedores, vendedoresCarteira, vendedoresInativos, selectedVendedorId])
 
   const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 text-slate-400" />
+    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
     return sortDir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
   }
 
@@ -1319,7 +1319,7 @@ export function AnaliseVendedoresPage() {
             <CardContent className="pt-0">
               {(activeTab === "carteira" ? loadingCarteira : loadingVendedores) ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                 </div>
               ) : (
                 <div className="space-y-0.5 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
@@ -1338,7 +1338,7 @@ export function AnaliseVendedoresPage() {
                           "flex items-center justify-between p-2.5 rounded-md cursor-pointer transition-all",
                           isSelected
                             ? "bg-primary/15 border border-primary/30"
-                            : "hover:bg-white/5"
+                            : "hover:bg-muted/60"
                         )}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -1395,7 +1395,7 @@ export function AnaliseVendedoresPage() {
                               )}
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <span className="text-xs font-semibold w-5 text-center flex-shrink-0 text-orange-400">—</span>
+                                <span className="text-xs font-semibold w-5 text-center flex-shrink-0 text-orange-600">—</span>
                                 <p className={cn(
                                   "text-sm font-medium truncate",
                                   isSelected ? "text-orange-700" : "text-slate-600"
@@ -1420,12 +1420,12 @@ export function AnaliseVendedoresPage() {
                         {semVendedor && (semVendedor.totalPedidos > 0 || semVendedor.totalVendas > 0) && (
                           <div className="flex items-center justify-between p-2.5 rounded-md">
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <span className="text-xs font-semibold w-5 text-center flex-shrink-0 text-slate-400">—</span>
-                              <p className="text-sm font-medium text-slate-500 truncate italic">
+                              <span className="text-xs font-semibold w-5 text-center flex-shrink-0 text-muted-foreground">—</span>
+                              <p className="text-sm font-medium text-muted-foreground truncate italic">
                                 Sem vendedor
                               </p>
                             </div>
-                            <span className="text-xs font-semibold tabular-nums text-slate-400">
+                            <span className="text-xs font-semibold tabular-nums text-muted-foreground">
                               {formatCurrency(semVendedor.totalVendas)}
                             </span>
                           </div>
@@ -1519,7 +1519,7 @@ export function AnaliseVendedoresPage() {
                             <Building2 className="h-4 w-4" />
                             <span className="text-xs font-medium">No Dashboard Agora</span>
                           </div>
-                          <p className="text-3xl font-bold text-blue-700">{dadosCarteira.clientesNoDashboard ?? 0}</p>
+                          <p className="text-xl font-bold text-blue-700">{dadosCarteira.clientesNoDashboard ?? 0}</p>
                           {vendedorData?.orcadosNoDashboard !== undefined && vendedorData.orcadosNoDashboard > 0 && (
                             <p className="text-[10px] text-blue-500 mt-1">
                               {vendedorData.orcadosNoDashboard} orçados ({"a menos de "} 2 meses)
@@ -1539,7 +1539,7 @@ export function AnaliseVendedoresPage() {
                             <Building2 className="h-4 w-4" />
                             <span className="text-xs font-medium">Carteira Total</span>
                           </div>
-                          <p className="text-3xl font-bold text-blue-700">{dadosCarteira.totalClientes}</p>
+                          <p className="text-xl font-bold text-blue-700">{dadosCarteira.totalClientes}</p>
                           <p className="text-[10px] text-blue-500">clientes alocados</p>
                         </CardContent>
                       </Card>
@@ -1547,14 +1547,14 @@ export function AnaliseVendedoresPage() {
 
                     {/* Alerta: Clientes Kanban em Negociação */}
                     {!selectedVendedorId && carteiraAgregada && (
-                      <Card className="bg-gradient-to-br from-violet-500/10 to-violet-600/5 border-violet-500/30">
+                      <Card className="bg-gradient-to-br from-teal-500/10 to-teal-600/5 border-teal-500/30">
                         <CardContent className="pt-4">
-                          <div className="flex items-center gap-2 text-violet-400 mb-1">
+                          <div className="flex items-center gap-2 text-teal-600 mb-1">
                             <TrendingUp className="h-4 w-4" />
                             <span className="text-xs font-medium">Em Negociação</span>
                           </div>
-                          <p className="text-3xl font-bold text-violet-300">{Math.floor(carteiraAgregada.totalClientes * 0.18)}</p>
-                          <p className="text-[10px] text-violet-400">leads pipeline ativo</p>
+                          <p className="text-xl font-bold text-teal-700">{Math.floor(carteiraAgregada.totalClientes * 0.18)}</p>
+                          <p className="text-[10px] text-teal-600">leads pipeline ativo</p>
                         </CardContent>
                       </Card>
                     )}
@@ -1566,28 +1566,28 @@ export function AnaliseVendedoresPage() {
                     {/* Leads em Aberto */}
                     <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-blue-400 mb-1">
+                        <div className="flex items-center gap-2 text-blue-600 mb-1">
                           <MessageSquare className="h-4 w-4" />
                           <span className="text-xs font-medium">Conversas Abertas</span>
                         </div>
-                        <p className="text-3xl font-bold text-blue-300">
+                        <p className="text-xl font-bold text-blue-700">
                           {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.32) : 0}
                         </p>
-                        <p className="text-[10px] text-blue-400">conversas ativas no WhatsApp</p>
+                        <p className="text-[10px] text-blue-600">conversas ativas no WhatsApp</p>
                       </CardContent>
                     </Card>
 
                     {/* Esperando Vendedor */}
                     <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-amber-400 mb-1">
+                        <div className="flex items-center gap-2 text-amber-600 mb-1">
                           <Clock className="h-4 w-4" />
                           <span className="text-xs font-medium">Esperando Vendedor</span>
                         </div>
-                        <p className="text-3xl font-bold text-amber-300">
+                        <p className="text-xl font-bold text-amber-700">
                           {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.12) : 0}
                         </p>
-                        <p className="text-[10px] text-amber-400">
+                        <p className="text-[10px] text-amber-600">
                           {dadosCarteira
                             ? `~${Math.round(0.12 / 0.32 * 100)}% das abertas aguardando`
                             : "aguardando resposta"}
@@ -1598,64 +1598,64 @@ export function AnaliseVendedoresPage() {
                     {/* Tempo Médio de Resposta (mock) */}
                     <Card className="bg-gradient-to-br from-slate-500/10 to-slate-600/5 border-slate-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-slate-400 mb-1">
+                        <div className="flex items-center gap-2 text-slate-600 mb-1">
                           <Clock className="h-4 w-4" />
                           <span className="text-xs font-medium">Resposta Média</span>
                         </div>
-                        <p className="text-3xl font-bold text-slate-300">
+                        <p className="text-xl font-bold text-slate-700">
                           {(() => {
                             const seed = (Date.now() % 10000) + (selectedVendedorId ? selectedVendedorId.charCodeAt(0) : 5)
                             const minutos = 3 + (seed % 28)
                             return `${minutos}min`
                           })()}
                         </p>
-                        <p className="text-[10px] text-slate-400">tempo médio de resposta ao lead</p>
+                        <p className="text-[10px] text-slate-600">tempo médio de resposta ao lead</p>
                       </CardContent>
                     </Card>
 
                     {/* Taxa de Conversão */}
                     <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border-emerald-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                        <div className="flex items-center gap-2 text-emerald-600 mb-1">
                           <TrendingUp className="h-4 w-4" />
                           <span className="text-xs font-medium">Taxa de Conversão</span>
                         </div>
-                        <p className="text-3xl font-bold text-emerald-300">
+                        <p className="text-xl font-bold text-emerald-700">
                           {selectedVendedorId
                             ? `${(45 + selectedVendedorId.charCodeAt(0) % 35).toFixed(0)}%`
                             : "58%"}
                         </p>
-                        <p className="text-[10px] text-emerald-400">leads convertidos em pedido</p>
+                        <p className="text-[10px] text-emerald-600">leads convertidos em pedido</p>
                       </CardContent>
                     </Card>
 
                     {/* Follow-ups IA */}
-                    <Card className="bg-gradient-to-br from-violet-500/10 to-violet-600/5 border-violet-500/30">
+                    <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-violet-400 mb-1">
+                        <div className="flex items-center gap-2 text-orange-600 mb-1">
                           <RefreshCw className="h-4 w-4" />
                           <span className="text-xs font-medium">Follow-ups IA</span>
                         </div>
-                        <p className="text-3xl font-bold text-violet-300">
+                        <p className="text-xl font-bold text-orange-700">
                           {dadosCarteira ? Math.floor(dadosCarteira.totalClientes * 0.22) : 0}
                         </p>
-                        <p className="text-[10px] text-violet-400">disparados este mês · taxa recup. ~25%</p>
+                        <p className="text-[10px] text-orange-600">disparados este mês · taxa recup. ~25%</p>
                       </CardContent>
                     </Card>
 
                     {/* Ticket Médio */}
                     <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border-indigo-500/30">
                       <CardContent className="pt-4">
-                        <div className="flex items-center gap-2 text-indigo-400 mb-1">
+                        <div className="flex items-center gap-2 text-indigo-600 mb-1">
                           <Wallet className="h-4 w-4" />
                           <span className="text-xs font-medium">Ticket Médio</span>
                         </div>
-                        <p className="text-2xl font-bold text-indigo-300">
+                        <p className="text-xl font-bold text-indigo-700">
                           {formatCurrency(selectedVendedorId
                             ? 1800 + (selectedVendedorId.charCodeAt(0) % 1200)
                             : 2350)}
                         </p>
-                        <p className="text-[10px] text-indigo-400">valor médio por pedido fechado</p>
+                        <p className="text-[10px] text-indigo-600">valor médio por pedido fechado</p>
                       </CardContent>
                     </Card>
                   </div>
@@ -1673,12 +1673,12 @@ export function AnaliseVendedoresPage() {
                       {(() => {
                         const total = dadosCarteira?.totalClientes ?? 60
                         const stages = [
-                          { label: "Primeiro Contato", pct: 0.22, color: "#64748b", gFrom: "#475569", gTo: "#64748b", textCls: "text-slate-300" },
-                          { label: "Em Negociação",    pct: 0.18, color: "#3b82f6", gFrom: "#2563eb", gTo: "#3b82f6", textCls: "text-blue-300" },
-                          { label: "Orçamento",        pct: 0.14, color: "#f59e0b", gFrom: "#d97706", gTo: "#f59e0b", textCls: "text-amber-300" },
-                          { label: "Aguardando OK",    pct: 0.11, color: "#8b5cf6", gFrom: "#7c3aed", gTo: "#8b5cf6", textCls: "text-violet-300" },
-                          { label: "Vendas",           pct: 0.20, color: "#10b981", gFrom: "#059669", gTo: "#10b981", textCls: "text-emerald-300" },
-                          { label: "Perda",            pct: 0.15, color: "#ef4444", gFrom: "#dc2626", gTo: "#ef4444", textCls: "text-red-300" },
+                          { label: "Primeiro Contato", pct: 0.22, color: "#64748b", gFrom: "#475569", gTo: "#64748b", textCls: "text-slate-700" },
+                          { label: "Em Negociação",    pct: 0.18, color: "#3b82f6", gFrom: "#2563eb", gTo: "#3b82f6", textCls: "text-blue-700" },
+                          { label: "Orçamento",        pct: 0.14, color: "#f59e0b", gFrom: "#d97706", gTo: "#f59e0b", textCls: "text-amber-700" },
+                          { label: "Aguardando OK",    pct: 0.11, color: "#8b5cf6", gFrom: "#7c3aed", gTo: "#8b5cf6", textCls: "text-violet-700" },
+                          { label: "Vendas",           pct: 0.20, color: "#10b981", gFrom: "#059669", gTo: "#10b981", textCls: "text-emerald-700" },
+                          { label: "Perda",            pct: 0.15, color: "#ef4444", gFrom: "#dc2626", gTo: "#ef4444", textCls: "text-red-700" },
                         ]
                         // Funil só exibe os estágios de pipeline (excluindo perda)
                         const funnelStages = stages.slice(0, 5)
@@ -1699,7 +1699,7 @@ export function AnaliseVendedoresPage() {
                                   <div key={s.label} className="flex items-center gap-2.5 group">
                                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} />
                                     <span className={cn("text-xs font-medium w-28 shrink-0 truncate", s.textCls)}>{s.label}</span>
-                                    <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                                       <div
                                         className="h-full rounded-full transition-all"
                                         style={{ width: `${barW}%`, background: `linear-gradient(to right, ${s.gFrom}, ${s.gTo})` }}
@@ -2124,12 +2124,12 @@ export function AnaliseVendedoresPage() {
                                       const tel = `(${ddd[cliente.id % ddd.length]}) 9${String(cliente.id * 7919 % 100000000).padStart(8,'0').slice(0,4)}-${String(cliente.id * 6271 % 10000).padStart(4,'0')}`
                                       // Fase Kanban mock por id
                                       const kanbanStages = [
-                                        { label: "Primeiro Contato", cls: "bg-slate-500/10 text-slate-300 border-slate-500/30" },
-                                        { label: "Em Negociação",    cls: "bg-blue-500/10 text-blue-300 border-blue-500/30" },
-                                        { label: "Orçamento",        cls: "bg-amber-500/10 text-amber-300 border-amber-500/30" },
-                                        { label: "Aguardando OK",    cls: "bg-violet-500/10 text-violet-300 border-violet-500/30" },
-                                        { label: "Vendas",           cls: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30" },
-                                        { label: "Perda",            cls: "bg-red-500/10 text-red-300 border-red-500/30" },
+                                        { label: "Primeiro Contato", cls: "bg-slate-100 text-slate-700 border-slate-200" },
+                                        { label: "Em Negociação",    cls: "bg-blue-100 text-blue-700 border-blue-200" },
+                                        { label: "Orçamento",        cls: "bg-amber-100 text-amber-700 border-amber-200" },
+                                        { label: "Aguardando OK",    cls: "bg-violet-100 text-violet-700 border-violet-200" },
+                                        { label: "Vendas",           cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+                                        { label: "Perda",            cls: "bg-red-100 text-red-700 border-red-200" },
                                       ]
                                       const kanban = kanbanStages[cliente.id % kanbanStages.length]
                                       return (
@@ -2183,9 +2183,9 @@ export function AnaliseVendedoresPage() {
                   ) : (
                     <Card className="py-8">
                       <div className="flex flex-col items-center justify-center text-center text-slate-500">
-                        <Users className="h-10 w-10 mb-3 text-slate-300" />
+                        <Users className="h-10 w-10 mb-3 text-muted-foreground/50" />
                         <p className="text-sm font-medium">Selecione um vendedor para ver a lista de clientes</p>
-                        <p className="text-xs text-slate-400 mt-1">A visão geral mostra apenas os totais e distribuições</p>
+                        <p className="text-xs text-muted-foreground mt-1">A visão geral mostra apenas os totais e distribuições</p>
                       </div>
                     </Card>
                   )}
@@ -2300,7 +2300,7 @@ export function AnaliseVendedoresPage() {
                         <TrendingUp className="h-4 w-4" />
                         <span className="text-xs font-medium">Total Vendas</span>
                       </div>
-                      <p className="text-2xl font-bold text-emerald-700">{formatCurrency(metricasVendas.totalVendas)}</p>
+                      <p className="text-xl font-bold text-emerald-700">{formatCurrency(metricasVendas.totalVendas)}</p>
                       <p className="text-[10px] text-emerald-500 mt-0.5">
                         {getPeriodoLabel(periodo, mes, ano)}
                       </p>
@@ -2315,7 +2315,7 @@ export function AnaliseVendedoresPage() {
                           <TrendingUp className="h-4 w-4" />
                           <span className="text-xs font-medium">Total Pedidos</span>
                         </div>
-                        <p className="text-2xl font-bold text-blue-700">{metricasVendas.totalPedidos}</p>
+                        <p className="text-xl font-bold text-blue-700">{metricasVendas.totalPedidos}</p>
                         <p className="text-[10px] text-blue-500 mt-0.5">
                           {getPeriodoLabel(periodo, mes, ano)}
                         </p>
@@ -2358,14 +2358,14 @@ export function AnaliseVendedoresPage() {
                           </div>
                           {loadingClientesDashMes ? (
                             <div className="flex items-center gap-2 mt-2">
-                              <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                             </div>
                           ) : (
                             <>
-                              <p className="text-2xl font-bold text-slate-800">
+                              <p className="text-xl font-bold text-slate-800">
                                 {clientesDashboardMesSelecionado ?? "-"}
                               </p>
-                              <p className="text-[10px] text-slate-500 mt-0.5">
+                              <p className="text-[10px] text-muted-foreground mt-0.5">
                                 {getPeriodoLabel(periodo, mes, ano)}
                               </p>
 
@@ -2481,7 +2481,7 @@ export function AnaliseVendedoresPage() {
                             </Button>
                           )}
 
-                          <span className="text-xs text-slate-400 ml-auto">
+                          <span className="text-xs text-muted-foreground ml-auto">
                             {clientesPedidosVendasFiltrados.length} de {clientesPedidosVendas.length}
                           </span>
                         </div>
@@ -2609,12 +2609,12 @@ export function AnaliseVendedoresPage() {
                                   const nomeSindico = nomes[sid]
                                   const tel = `(${ddd[cliente.clienteId % ddd.length]}) 9${String(cliente.clienteId * 7919 % 100000000).padStart(8,'0').slice(0,4)}-${String(cliente.clienteId * 6271 % 10000).padStart(4,'0')}`
                                   const kanbanStages = [
-                                    { label: "Primeiro Contato", cls: "bg-slate-500/10 text-slate-300 border-slate-500/30" },
-                                    { label: "Em Negociação",   cls: "bg-blue-500/10 text-blue-300 border-blue-500/30" },
-                                    { label: "Orçamento",       cls: "bg-amber-500/10 text-amber-300 border-amber-500/30" },
-                                    { label: "Aguardando OK",   cls: "bg-violet-500/10 text-violet-300 border-violet-500/30" },
-                                    { label: "Vendas",          cls: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30" },
-                                    { label: "Perda",           cls: "bg-red-500/10 text-red-300 border-red-500/30" },
+                                    { label: "Primeiro Contato", cls: "bg-slate-100 text-slate-700 border-slate-200" },
+                                    { label: "Em Negociação",   cls: "bg-blue-100 text-blue-700 border-blue-200" },
+                                    { label: "Orçamento",       cls: "bg-amber-100 text-amber-700 border-amber-200" },
+                                    { label: "Aguardando OK",   cls: "bg-violet-100 text-violet-700 border-violet-200" },
+                                    { label: "Vendas",          cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+                                    { label: "Perda",           cls: "bg-red-100 text-red-700 border-red-200" },
                                   ]
                                   const kanban = kanbanStages[cliente.clienteId % kanbanStages.length]
 
@@ -2650,7 +2650,7 @@ export function AnaliseVendedoresPage() {
                                       <TableCell className="text-xs font-medium text-foreground text-right">
                                         {cliente.totalPedidos}
                                       </TableCell>
-                                      <TableCell className="text-xs font-bold text-emerald-400 text-right">
+                                      <TableCell className="text-xs font-bold text-emerald-700 text-right">
                                         {formatCurrency(cliente.totalValor)}
                                       </TableCell>
                                     </TableRow>
@@ -2825,32 +2825,32 @@ export function AnaliseVendedoresPage() {
             <DialogDescription>
               Torna visíveis no dashboard os clientes que entraram na janela de aparição.
               <br />
-              <span className="text-xs text-slate-400">Esta ação NÃO remove clientes do dashboard.</span>
+              <span className="text-xs text-muted-foreground">Esta ação NÃO remove clientes do dashboard.</span>
             </DialogDescription>
           </DialogHeader>
 
           {loadingAtribuicaoPreview ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : atribuicaoPreview ? (
             <div className="space-y-4">
               {/* Resumo por categoria */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                  <p className="text-2xl font-bold text-green-700">
+                  <p className="text-xl font-bold text-green-700">
                     {atribuicaoPreview.entradasDashboard.porCategoria.ativos}
                   </p>
                   <p className="text-xs text-green-600">Ativos</p>
                 </div>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
-                  <p className="text-2xl font-bold text-blue-700">
+                  <p className="text-xl font-bold text-blue-700">
                     {atribuicaoPreview.entradasDashboard.porCategoria.agendados}
                   </p>
                   <p className="text-xs text-blue-600">Livres c/ data</p>
                 </div>
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
-                  <p className="text-2xl font-bold text-orange-700">
+                  <p className="text-xl font-bold text-orange-700">
                     {atribuicaoPreview.entradasDashboard.porCategoria.explorados}
                   </p>
                   <p className="text-xs text-orange-600">Livres s/ data</p>
@@ -2874,7 +2874,7 @@ export function AnaliseVendedoresPage() {
                         Clientes cuja manutenção foi feita nos últimos {atribuicaoPreview.config.mesesRenovado} meses
                       </p>
                     </div>
-                    <p className="text-2xl font-bold text-amber-700">
+                    <p className="text-xl font-bold text-amber-700">
                       {atribuicaoPreview.saidasDashboard.renovados}
                     </p>
                   </div>
@@ -2923,7 +2923,7 @@ export function AnaliseVendedoresPage() {
               )}
 
               {/* Config info */}
-              <div className="text-xs text-slate-400 text-center pt-2 border-t">
+              <div className="text-xs text-muted-foreground text-center pt-2 border-t">
                 Janela de aparição: {atribuicaoPreview.config.mesesAntecedenciaAtivos} meses antes do vencimento
               </div>
             </div>
