@@ -673,7 +673,7 @@ export function VendedorDashboard() {
   const [fichasLoading, setFichasLoading] = useState(false)
   const [fichasError, setFichasError] = useState<string | null>(null)
 
-  const [showAtrasados, setShowAtrasados] = useState(true)
+  const [showAtrasados, setShowAtrasados] = useState(false)
 
   const { openChatWithClient } = useChatLauncher()
 
