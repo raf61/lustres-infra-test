@@ -16,6 +16,7 @@ type Role = "MASTER" | "ADMINISTRADOR" | "SUPERVISOR" | "VENDEDOR" | "PESQUISADO
 const PUBLIC_ROUTES = [
   "/",              // Página de login
   "/api/auth",      // Rotas de autenticação do Auth.js
+  "/proposta",      // Proposta comercial pública
 ] as const
 
 // ============================================================================
