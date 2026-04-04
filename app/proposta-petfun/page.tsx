@@ -292,7 +292,7 @@ export default function PropostaPetFunPage() {
               },
               {
                 Ilu: IlluDados,
-                title: "Dashboards sobre tudo",
+                title: "Visibilidade total sobre a operação",
                 desc: "Quantidade de leads, tempo de resposta, taxa de conversão, motivos de perda — em dashboards em tempo real. Para tomar decisões com base no que realmente acontece, não no feeling.",
               },
             ].map(({ Ilu, title, desc }, i) => (
