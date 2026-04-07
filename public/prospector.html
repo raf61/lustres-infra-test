@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospector CNPJ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh }
+
+  .top-bar { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 16px 24px; display: flex; align-items: center; gap: 12px }
+  .top-bar h1 { font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0 }
+  .search-wrap { display: flex; gap: 8px; flex: 1; max-width: 480px }
+  .search-wrap input { flex: 1; background: #0f1117; border: 1px solid #2d3148; border-radius: 8px; padding: 9px 14px; color: #e2e8f0; font-size: 14px; outline: none }
+  .search-wrap input:focus { border-color: #6366f1 }
+  .search-wrap input::placeholder { color: #4b5563 }
+  .btn-search { background: #6366f1; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap }
+  .btn-search:hover { background: #4f52c8 }
+  .btn-search:disabled { opacity: 0.5; cursor: not-allowed }
+
+  .status-bar { padding: 10px 24px; font-size: 13px; color: #6b7280; min-height: 36px; display: flex; align-items: center; gap: 8px }
+  .spinner { width: 14px; height: 14px; border: 2px solid #2d3148; border-top-color: #6366f1; border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0 }
+  @keyframes spin { to { transform: rotate(360deg) } }
+
+  .content { padding: 0 24px 40px }
+
+  /* Main company */
+  .main-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 12px; padding: 24px; margin-bottom: 32px }
+  .main-header { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px; margin-bottom: 20px }
+  .main-name { font-size: 22px; font-weight: 700; color: #fff; flex: 1 }
+  .badge-cnpj { background: #1e2235; border: 1px solid #2d3148; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #94a3b8; font-family: monospace; white-space: nowrap }
+  .badge-porte { background: #1e3a2f; border: 1px solid #2d5a44; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #4ade80; white-space: nowrap }
+  .main-actions { display: flex; gap: 8px; flex-wrap: wrap }
+  .btn-link { display: inline-flex; align-items: center; gap: 6px; background: #1e2235; border: 1px solid #2d3148; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #e2e8f0; text-decoration: none; cursor: pointer; transition: border-color .15s, background .15s }
+  .btn-link:hover { border-color: #6366f1; background: #23273d }
+  .btn-link.instagram:hover { border-color: #e1306c }
+  .btn-link svg { flex-shrink: 0 }
+
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px }
+  .contact-item { background: #0f1117; border: 1px solid #2d3148; border-radius: 8px; padding: 14px 16px }
+  .contact-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px }
+  .contact-value { font-size: 15px; color: #e2e8f0; font-weight: 500; word-break: break-all }
+  .contact-value a { color: #6366f1; text-decoration: none }
+  .contact-value a:hover { text-decoration: underline }
+  .socios-inline { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px }
+  .tag-socio { background: #1e2235; border: 1px solid #2d3148; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #94a3b8 }
+
+  /* Related companies */
+  .section-title { font-size: 14px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px }
+  .section-title span.count { background: #2d3148; border-radius: 999px; padding: 2px 8px; font-size: 12px; color: #6366f1 }
+  .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px }
+
+  .company-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 10px; padding: 18px }
+  .company-card.is-main { border-color: #6366f1; }
+  .company-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px }
+  .company-name { font-size: 15px; font-weight: 600; color: #fff; flex: 1; line-height: 1.3 }
+  .company-cnpj { font-family: monospace; font-size: 11px; color: #6b7280; white-space: nowrap }
+
+  .info-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; border-top: 1px solid #1e2235 }
+  .info-icon { flex-shrink: 0; margin-top: 1px; opacity: .5 }
+  .info-body { flex: 1; min-width: 0 }
+  .info-val { font-size: 13px; color: #e2e8f0; word-break: break-all }
+  .info-val.empty { color: #4b5563; font-style: italic }
+  .socios-row { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px }
+
+  .warn { font-size: 12px; color: #f59e0b; padding: 4px 0 }
+
+  #placeholder { text-align: center; padding: 80px 0; color: #4b5563; font-size: 15px }
+  #placeholder p { margin-top: 8px; font-size: 13px }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Prospector</h1>
+  <div class="search-wrap">
+    <input id="cnpjInput" type="text" placeholder="00.000.000/0000-00" maxlength="18" />
+    <button class="btn-search" id="btnSearch" onclick="buscar()">Buscar</button>
+  </div>
+</div>
+
+<div class="status-bar" id="statusBar">
+  <span id="statusText">Digite um CNPJ para começar.</span>
+</div>
+
+<div class="content" id="content">
+  <div id="placeholder">
+    <svg width="48" height="48" fill="none" stroke="#374151" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+    <p>Busque por CNPJ para ver os dados da empresa e seus sócios.</p>
+  </div>
+</div>
+
+<script>
+let currentEs = null
+
+const cnpjInput = document.getElementById('cnpjInput')
+const btnSearch = document.getElementById('btnSearch')
+const statusText = document.getElementById('statusText')
+const statusBar = document.getElementById('statusBar')
+const content = document.getElementById('content')
+
+cnpjInput.addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 14)
+  if (v.length > 12) v = v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5,8)+'/'+v.slice(8,12)+'-'+v.slice(12)
+  else if (v.length > 8) v = v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5,8)+'/'+v.slice(8)
+  else if (v.length > 5) v = v.slice(0,2)+'.'+v.slice(2,5)+'.'+v.slice(5)
+  else if (v.length > 2) v = v.slice(0,2)+'.'+v.slice(2)
+  e.target.value = v
+})
+cnpjInput.addEventListener('keydown', e => { if (e.key === 'Enter') buscar() })
+
+function setStatus(msg, loading=true) {
+  statusText.textContent = msg
+  const spinner = statusBar.querySelector('.spinner')
+  if (loading && !spinner) {
+    const s = document.createElement('div'); s.className = 'spinner'
+    statusBar.insertBefore(s, statusText)
+  } else if (!loading && spinner) {
+    spinner.remove()
+  }
+}
+
+function buscar() {
+  const raw = cnpjInput.value.replace(/\D/g, '')
+  if (raw.length !== 14) { setStatus('CNPJ inválido — precisa ter 14 dígitos.', false); return }
+
+  if (currentEs) { currentEs.close(); currentEs = null }
+
+  btnSearch.disabled = true
+  setStatus('Conectando...')
+
+  // Build DOM structure upfront so events always find what they need
+  content.innerHTML = `
+    <div id="main-card" class="main-card" style="display:none"></div>
+    <div id="related-section" style="display:none">
+      <div class="section-title">Empresas relacionadas <span class="count" id="related-count">0</span></div>
+      <div class="companies-grid" id="companies-grid"></div>
+    </div>
+  `
+
+  let companiesMap = {}
+  let companyCount = 0
+  let done = false
+
+  const es = new EventSource(`/api/cnpj/${raw}`)
+  currentEs = es
+
+  es.onmessage = e => {
+    let d
+    try { d = JSON.parse(e.data) } catch { return }
+
+    if (d.type === 'status') {
+      setStatus(d.message)
+    }
+
+    else if (d.type === 'main') {
+      renderMain(d)
+    }
+
+    else if (d.type === 'links') {
+      const actions = document.getElementById('main-actions')
+      if (actions) renderMainActions(d.site, d.instagram, actions)
+    }
+
+    else if (d.type === 'porte') {
+      const badge = document.getElementById('badge-porte')
+      if (badge) badge.textContent = d.porte
+      else {
+        const wrap = document.getElementById('main-badges')
+        if (wrap) {
+          const b = document.createElement('span')
+          b.id = 'badge-porte'; b.className = 'badge-porte'; b.textContent = d.porte
+          wrap.appendChild(b)
+        }
+      }
+    }
+
+    else if (d.type === 'company') {
+      if (companiesMap[d.cnpjRaw]) {
+        const card = document.getElementById(`card-${d.cnpjRaw}`)
+        if (card) card.innerHTML = companyCardHTML(d)
+      } else {
+        companiesMap[d.cnpjRaw] = true
+        companyCount++
+        const grid = document.getElementById('companies-grid')
+        if (grid) {
+          const card = document.createElement('div')
+          card.className = 'company-card' + (d.isMain ? ' is-main' : '')
+          card.id = `card-${d.cnpjRaw}`
+          card.innerHTML = companyCardHTML(d)
+          grid.appendChild(card)
+          document.getElementById('related-section').style.display = ''
+        }
+      }
+      const cnt = document.getElementById('related-count')
+      if (cnt) cnt.textContent = companyCount
+    }
+
+    else if (d.type === 'warn') {
+      console.warn(d.message)
+    }
+
+    else if (d.type === 'done') {
+      done = true
+      setStatus(`Concluído — ${d.total} empresa(s) relacionada(s) encontrada(s).`, false)
+      btnSearch.disabled = false
+      es.close(); currentEs = null
+    }
+
+    else if (d.type === 'error') {
+      setStatus('Erro: ' + d.message, false)
+      btnSearch.disabled = false
+      es.close(); currentEs = null
+    }
+  }
+
+  es.onerror = () => {
+    if (!done) setStatus('Conexão encerrada.', false)
+    btnSearch.disabled = false
+    es.close(); currentEs = null
+  }
+}
+
+function renderMain(d) {
+  const el = document.getElementById('main-card')
+  if (!el) return
+  el.style.display = ''
+  const sociosHtml = d.socios && d.socios.length
+    ? `<div class="socios-inline">${d.socios.map(s=>`<span class="tag-socio">${esc(s.name||s)}</span>`).join('')}</div>` : ''
+  el.innerHTML = `
+    <div class="main-header">
+      <div class="main-name">${esc(d.companyName)}</div>
+      <div id="main-badges" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="badge-cnpj">${esc(d.cnpj)}</span>
+      </div>
+    </div>
+    <div id="main-actions" class="main-actions" style="margin-bottom:16px">
+      <span class="btn-link" style="opacity:.35;cursor:default">${iconGlobe()} Site — buscando...</span>
+      <span class="btn-link" style="opacity:.35;cursor:default">${iconInsta()} Instagram — buscando...</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <div class="contact-label">Telefone</div>
+        <div class="contact-value">${d.phone ? `<a href="tel:${esc(d.phone)}">${esc(d.phone)}</a>` : '<span style="color:#4b5563;font-style:italic">não encontrado</span>'}</div>
+        ${sociosHtml}
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">E-mail</div>
+        <div class="contact-value">${d.email ? `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>` : '<span style="color:#4b5563;font-style:italic">não encontrado</span>'}</div>
+        ${sociosHtml}
+      </div>
+    </div>
+  `
+}
+
+function renderMainActions(site, instagram, wrap) {
+  let html = ''
+  html += site
+    ? `<a class="btn-link" href="${site}" target="_blank" rel="noopener">${iconGlobe()} Site oficial</a>`
+    : `<span class="btn-link" style="opacity:.35;cursor:default">${iconGlobe()} Site — não encontrado</span>`
+  html += instagram
+    ? `<a class="btn-link instagram" href="${instagram}" target="_blank" rel="noopener">${iconInsta()} Instagram</a>`
+    : `<span class="btn-link" style="opacity:.35;cursor:default">${iconInsta()} Instagram — não encontrado</span>`
+  wrap.innerHTML = html
+}
+
+function companyCardHTML(d) {
+  const phoneLine = d.phone
+    ? `<a href="tel:${d.phone}" style="color:#e2e8f0;text-decoration:none">${esc(d.phone)}</a>`
+    : `<span class="empty">não encontrado</span>`
+  const emailLine = d.email
+    ? `<a href="mailto:${d.email}" style="color:#6366f1;text-decoration:none">${esc(d.email)}</a>`
+    : `<span class="empty">não encontrado</span>`
+  const sociosHtml = d.socios && d.socios.length
+    ? `<div class="socios-row">${[...new Set(d.socios)].map(s=>`<span class="tag-socio">${esc(s)}</span>`).join('')}</div>` : ''
+  const advLink = `<a href="${d.url}" target="_blank" rel="noopener" style="color:#4b5563;text-decoration:none;font-size:11px;font-family:monospace">${esc(d.cnpj)}</a>`
+
+  return `
+    <div class="company-top">
+      <div>
+        <div class="company-name">${esc(d.nome)}</div>
+        <div style="margin-top:4px">${advLink}${d.isMain ? ' <span style="color:#6366f1;font-size:11px">(principal)</span>' : ''}</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">${iconPhone()}</div>
+      <div class="info-body">
+        <div class="info-val">${phoneLine}</div>
+        ${sociosHtml}
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">${iconMail()}</div>
+      <div class="info-body">
+        <div class="info-val">${emailLine}</div>
+        ${sociosHtml}
+      </div>
+    </div>
+  `
+}
+
+function esc(s) {
+  if (!s) return ''
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+function iconGlobe() {
+  return `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
+}
+function iconInsta() {
+  return `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>`
+}
+function iconPhone() {
+  return `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.08 4.18 2 2 0 0 1 5.06 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`
+}
+function iconMail() {
+  return `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>`
+}
+</script>
+</body>
+</html>
