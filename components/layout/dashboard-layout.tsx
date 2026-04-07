@@ -134,7 +134,7 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
                 <Building2 className="w-5 h-5 text-white" />
               </div>
               <div className={cn("flex flex-col", sidebarCollapsed && "lg:hidden")}>
-                <span className="font-semibold text-[14px] text-sidebar-foreground leading-none tracking-tight">Casarão Lustres</span>
+                <span className="font-semibold text-[14px] text-sidebar-foreground leading-none tracking-tight">Corretora de Seguros</span>
                 <span className="text-[10px] text-sidebar-foreground/45 font-medium mt-0.5">Infraestrutura IA</span>
               </div>
             </div>

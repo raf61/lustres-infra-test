@@ -18,24 +18,25 @@ type Period = "Hoje" | "Semana" | "Mês"
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const KPIs = {
-  comissaoMes:       94_800,
-  comissaoMeta:     110_000,
-  comissaoAnterior:  81_200,
-  leadsMes:            847,
-  leadsAnterior:       741,
-  leadsHoje:            38,
-  leadsOntem:           31,
-  leadsSemana:         214,
+  comissaoMes:      600_000,
+  comissaoMeta:     750_000,
+  comissaoAnterior: 480_000,
+  leadsMes:           1_247,
+  leadsAnterior:       941,
+  leadsHoje:            58,
+  leadsOntem:           41,
+  leadsSemana:         314,
   taxaFechamento:     31.4,
   taxaFechamentoAnt:  25.2,
   renovacoes30d:       142,
   renovacoesCritical:   38,
-  conversasIA:          47,
-  followupsIA:       1_247,
-  followupsAnt:        980,
+  conversasIA:          67,
+  followupsIA:       2_547,
+  followupsAnt:      1_980,
   recuperacaoIA:      25.5,
   coberturaIA:          82,
 }
+
 
 function getChartData(period: Period) {
   if (period === "Hoje") {
@@ -79,14 +80,15 @@ const PIPELINE = [
 ]
 
 const VENDEDORES = [
-  { name:"Rodrigo S.",  initials:"RS", leads:287, fechados:91,  comissao:28_400 },
-  { name:"Ana Beatriz", initials:"AB", leads:241, fechados:78,  comissao:23_800 },
-  { name:"Marcos O.",   initials:"MO", leads:198, fechados:58,  comissao:19_200 },
-  { name:"Larissa P.",  initials:"LP", leads:162, fechados:47,  comissao:15_600 },
-  { name:"Eduardo C.",  initials:"EC", leads:134, fechados:39,  comissao:12_400 },
-  { name:"Camila F.",   initials:"CF", leads:118, fechados:32,  comissao:10_100 },
-  { name:"Felipe A.",   initials:"FA", leads: 89, fechados:25,  comissao: 7_800 },
+  { name:"Rodrigo S.",  initials:"RS", leads:487, fechados:191, comissao:128_400 },
+  { name:"Ana Beatriz", initials:"AB", leads:441, fechados:178, comissao:113_800 },
+  { name:"Marcos O.",   initials:"MO", leads:398, fechados:158, comissao:109_200 },
+  { name:"Larissa P.",  initials:"LP", leads:362, fechados:147, comissao:95_600 },
+  { name:"Eduardo C.",  initials:"EC", leads:334, fechados:139, comissao:82_400 },
+  { name:"Camila F.",   initials:"CF", leads:318, fechados:132, comissao:70_100 },
+  { name:"Felipe A.",   initials:"FA", leads:289, fechados:125, comissao:57_800 },
 ]
+
 
 const VENCIMENTOS = [
   { name:"Juliana Costa",            seguro:"Auto",        dias:4,  premio:"R$ 287/mês" },

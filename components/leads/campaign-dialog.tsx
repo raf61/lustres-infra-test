@@ -54,6 +54,8 @@ const CONDOMINIOS = [
   "Res. Brisa do Mar","Cond. Vila Real","Ed. Monte Alegre","Res. Primavera",
 ]
 
+const INSURANCES = ["Seguro Auto", "Seguro Vida", "Residencial", "Empresarial", "RC Obras", "Saúde Individual", "Frota", "Seguro Viagem"]
+
 const MOCK_CLIENTS = Array.from({ length: 280 }, (_, i) => {
   const seed = (i * 1337 + 7) % 1000
   const mesesSemContato = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12][i % 10]
@@ -69,16 +71,18 @@ const MOCK_CLIENTS = Array.from({ length: 280 }, (_, i) => {
     mesesSemContato,
     temOrcamento,
     valorUltimoOrcamento: temOrcamento ? 1000 + (seed * 47) % 15000 : 0,
+    seguro: INSURANCES[i % INSURANCES.length],
+    score: 60 + (seed % 40)
   }
 })
 
 // ─── Message templates ────────────────────────────────────────────────────────
 
 const TEMPLATES = [
-  { id: "1", name: "Apresentação Comercial",    desc: "Apresentação inicial de produtos",        content: "Olá {{contact.name}}, aqui é da Casarão Lustres. Gostaria de apresentar nossas soluções em iluminação para condomínios." },
-  { id: "2", name: "Promoção Lâmpadas LED",     desc: "Oferta para áreas comuns",                content: "Prezado {{contact.name}}, temos uma condição especial para troca de lâmpadas LED nas áreas comuns. Posso te enviar uma proposta?" },
-  { id: "3", name: "Consultoria Técnica",       desc: "Agendamento de visita técnica",           content: "Olá {{contact.name}}! Podemos agendar uma visita técnica para avaliar a iluminação do {{contact.condominio}}?" },
-  { id: "4", name: "Follow-up Orçamento",       desc: "Recontato para orçamentos pendentes",     content: "Oi {{contact.name}}, tudo bem? Passando para ver se restou alguma dúvida sobre o orçamento que enviamos." },
+  { id: "1", name: "Renovação Seguro Auto",    desc: "Aviso de vencimento de apólice",        content: "Olá {{contact.name}}, aqui é da nossa Corretora. Notei que seu Seguro Auto está próximo do vencimento. Posso te enviar as melhores cotações de renovação?" },
+  { id: "2", name: "Seguro Residencial Condomínio", desc: "Oferta para unidades autônomas", content: "Prezado {{contact.name}}, temos uma condição especial de Seguro Residencial para o {{contact.condominio}}. Gostaria de proteger seu patrimônio por menos de R$ 1/dia?" },
+  { id: "3", name: "Análise de Riscos (PJ)",   desc: "Consultoria para seguros empresariais", content: "Olá {{contact.name}}! Podemos agendar uma rápida conversa para avaliar os riscos da sua empresa e otimizar seus custos com seguros?" },
+  { id: "4", name: "Follow-up Cotação",       desc: "Recontato para cotações enviadas",     content: "Oi {{contact.name}}, tudo bem? Passando para ver se conseguiu analisar as cotações que te enviei. Alguma dúvida?" },
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -91,7 +95,7 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
   const [campaignName, setCampaignName] = useState("")
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [customMessage, setCustomMessage] = useState("")
-  const [aiInstructions, setAiInstructions] = useState("Aja como consultor sênior da Casarão Lustres. Seja cordial e breve. Foque em agendar visita técnica ou confirmar interesse.")
+  const [aiInstructions, setAiInstructions] = useState("Aja como um corretor de seguros sênior. Seja cordial, técnico e breve. Foque em agendar uma conversa, tirar dúvidas sobre coberturas ou confirmar o recebimento da cotação.")
   const [selectedVendedor, setSelectedVendedor] = useState("")
   const [sending, setSending] = useState(false)
 
@@ -102,6 +106,8 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
   const [filterBairro, setFilterBairro] = useState("")
   const [filterMesesSemContato, setFilterMesesSemContato] = useState<number | null>(null)
   const [filterOrcamento, setFilterOrcamento] = useState<"todos" | "com" | "sem">("todos")
+  const [filterSeguro, setFilterSeguro] = useState("")
+  const [filterMinScore, setFilterMinScore] = useState<number>(0)
 
   // Selected recipients
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
@@ -122,9 +128,11 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
       if (filterMesesSemContato !== null && c.mesesSemContato < filterMesesSemContato) return false
       if (filterOrcamento === "com" && !c.temOrcamento) return false
       if (filterOrcamento === "sem" && c.temOrcamento) return false
+      if (filterSeguro && c.seguro !== filterSeguro) return false
+      if (c.score < filterMinScore) return false
       return true
     })
-  }, [search, filterKanban, filterCategoria, filterBairro, filterMesesSemContato, filterOrcamento])
+  }, [search, filterKanban, filterCategoria, filterBairro, filterMesesSemContato, filterOrcamento, filterSeguro, filterMinScore])
 
   const activeFilterCount = [
     filterKanban.length > 0,
@@ -132,6 +140,8 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
     !!filterBairro,
     filterMesesSemContato !== null,
     filterOrcamento !== "todos",
+    !!filterSeguro,
+    filterMinScore > 0,
   ].filter(Boolean).length
 
   const toggleKanban = (code: number) =>
@@ -170,6 +180,7 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
   const clearFilters = () => {
     setFilterKanban([]); setFilterCategoria([]); setFilterBairro("")
     setFilterMesesSemContato(null); setFilterOrcamento("todos"); setSearch("")
+    setFilterSeguro(""); setFilterMinScore(0)
   }
 
   return (
@@ -291,6 +302,33 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
                   </select>
                 </div>
 
+                {/* Seguro */}
+                <div>
+                  <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">Produto de Seguro</p>
+                  <select
+                    value={filterSeguro}
+                    onChange={e => setFilterSeguro(e.target.value)}
+                    className="w-full h-7 text-[10px] bg-background border border-border rounded-lg px-2 outline-none focus:ring-1 focus:ring-primary/30 appearance-none"
+                  >
+                    <option value="">Todos os produtos</option>
+                    {INSURANCES.map(i => <option key={i} value={i}>{i}</option>)}
+                  </select>
+                </div>
+
+                {/* Score */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[10px] font-semibold text-muted-foreground">Score IA Mínimo</p>
+                    <span className="text-[10px] font-bold text-primary">{filterMinScore}%</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="100" step="5"
+                    value={filterMinScore}
+                    onChange={e => setFilterMinScore(Number(e.target.value))}
+                    className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
+                </div>
+
                 {/* Sem contato há */}
                 <div>
                   <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">Sem contato há pelo menos</p>
@@ -399,7 +437,10 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
                             {stage?.label}
                           </span>
                           <span className="text-[9px] text-muted-foreground/60">{c.bairro}</span>
+                          <span className="text-muted-foreground/40 text-[9px]">•</span>
+                          <span className="text-[9px] font-bold text-emerald-600">{c.score}%</span>
                         </div>
+                        <p className="text-[9px] text-primary/70 mt-0.5 font-medium">{c.seguro}</p>
                       </div>
                     </button>
                   )
@@ -424,7 +465,7 @@ export function CampaignDialog({ open, onClose, selectedClients, vendedores }: C
               <div className="space-y-1.5">
                 <Label className="text-[11px] font-medium text-muted-foreground">Nome da campanha</Label>
                 <Input
-                  placeholder="Ex: Recuperação de orçamentos — Abril"
+                  placeholder="Ex: Campanha de Renovação — Abril"
                   value={campaignName}
                   onChange={e => setCampaignName(e.target.value)}
                   className="h-9 border-border text-sm"

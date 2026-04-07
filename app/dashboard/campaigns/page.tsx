@@ -9,7 +9,7 @@ import {
   Send, MessageSquare, RefreshCcw, DollarSign,
   Bot, Eye, UserCheck, UserMinus, ShoppingCart,
   Search, Megaphone, AlertTriangle, ChevronRight,
-  Sparkles, ArrowRight, Trash2, BarChart3,
+  Sparkles, ArrowRight, Trash2, BarChart3, FileText,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -39,46 +39,47 @@ const RECIPIENTS_MOCK = Array.from({ length: 200 }, (_, i) => ({
 
 const CAMPAIGNS = [
   {
-    id: "1", name: "Recuperação de Orçamentos — Março",
+    id: "1", name: "Recuperação de Cotações — Março",
     status: "active" as const, type: "AI_ASSISTED",
-    sent: 1250, read: 980, replied: 420, interested: 280, ignored: 140, followups: 340,
+    sent: 1250, read: 980, replied: 420, orcados: 350, interested: 280, ignored: 140, followups: 340,
     revenue: 142500, recoveryRate: 27.2, salesRate: 12.5,
     date: "12/03", vendor: "Rodrigo Silva",
-    audience: "Orçamentos em aberto",
+    audience: "Cotações em aberto",
   },
   {
-    id: "2", name: "Reativação Base Inativa 2023",
+    id: "2", name: "Reativação de Apólices — Base Inativa",
     status: "completed" as const, type: "STANDARD",
-    sent: 3400, read: 2100, replied: 150, interested: 45, ignored: 105, followups: 0,
+    sent: 3400, read: 2100, replied: 150, orcados: 80, interested: 45, ignored: 105, followups: 0,
     revenue: 48200, recoveryRate: 8.5, salesRate: 3.2,
     date: "05/03", vendor: "Ana Beatriz",
     audience: "Inativos há +180 dias",
   },
   {
-    id: "3", name: "Lançamento: Coleção Cristal Italiana",
+    id: "3", name: "Campanha: Renovação Seguro Auto",
     status: "active" as const, type: "AI_ASSISTED",
-    sent: 850, read: 720, replied: 310, interested: 210, ignored: 100, followups: 120,
+    sent: 850, read: 720, replied: 310, orcados: 260, interested: 210, ignored: 100, followups: 120,
     revenue: 89900, recoveryRate: 22.1, salesRate: 18.4,
     date: "18/03", vendor: "Marcos Oliveira",
-    audience: "Base de alto ticket",
+    audience: "Vencimentos em 30 dias",
   },
   {
-    id: "4", name: "Programa de Parceria: Arquitetos",
+    id: "4", name: "Parceria Estratégica: Imobiliárias",
     status: "active" as const, type: "AI_ASSISTED",
-    sent: 420, read: 380, replied: 190, interested: 145, ignored: 45, followups: 85,
+    sent: 420, read: 380, replied: 190, orcados: 165, interested: 145, ignored: 45, followups: 85,
     revenue: 215000, recoveryRate: 34.5, salesRate: 22.1,
     date: "20/03", vendor: "Rodrigo Silva",
-    audience: "Arquitetos e Decoradores",
+    audience: "Seguros Incêndio / Locação",
   },
   {
-    id: "5", name: "Promoção Relâmpago: Leds Blindados",
+    id: "5", name: "Oferta: Seguro de Vida Resgatável",
     status: "completed" as const, type: "STANDARD",
-    sent: 1800, read: 1540, replied: 340, interested: 180, ignored: 160, followups: 150,
+    sent: 1800, read: 1540, replied: 340, orcados: 220, interested: 180, ignored: 160, followups: 150,
     revenue: 62300, recoveryRate: 19.8, salesRate: 9.2,
     date: "10/03", vendor: "Ana Beatriz",
-    audience: "Condomínios litorâneos",
+    audience: "Empresas (PME)",
   },
 ]
+
 
 type Campaign = typeof CAMPAIGNS[0]
 
@@ -130,6 +131,7 @@ function CampaignDetailsDialog({ campaign, open, onClose }: {
 
   const openPct    = pct(campaign.read,      campaign.sent)
   const replyPct   = pct(campaign.replied,   campaign.sent)
+  const orcadosPct = pct(campaign.orcados,   campaign.sent)
   const interPct   = pct(campaign.interested,campaign.sent)
 
   return (
@@ -173,6 +175,7 @@ function CampaignDetailsDialog({ campaign, open, onClose }: {
               { label: "Disparados",  value: campaign.sent,            sub: "total enviado",              accentCls: "bg-slate-400",    valueCls: "text-foreground",     icon: Send },
               { label: "Lidos",       value: `${campaign.read} (${openPct}%)`, sub: "taxa de abertura",  accentCls: "bg-blue-500",     valueCls: "text-blue-700",       icon: Eye },
               { label: "Responderam", value: `${campaign.replied} (${replyPct}%)`, sub: "engajamento",   accentCls: "bg-sky-500",      valueCls: "text-sky-700",        icon: MessageSquare },
+              { label: "Orçados",     value: `${campaign.orcados} (${orcadosPct}%)`, sub: "cotação enviada", accentCls: "bg-indigo-500", valueCls: "text-indigo-700",   icon: FileText },
               { label: "Interessados",value: `${campaign.interested} (${interPct}%)`, sub: "qualificados",accentCls: "bg-emerald-500", valueCls: "text-emerald-700",    icon: UserCheck },
               { label: "Ignoraram",   value: campaign.ignored,         sub: `${pct(campaign.ignored, campaign.sent)}% taxa`, accentCls: "bg-red-400", valueCls: "text-red-600", icon: UserMinus },
               { label: "Follow-ups",  value: campaign.followups,       sub: `recup. ${campaign.recoveryRate}%`, accentCls: "bg-amber-500", valueCls: "text-amber-700", icon: RefreshCcw },
@@ -200,6 +203,7 @@ function CampaignDetailsDialog({ campaign, open, onClose }: {
                 { label: "Enviados",    value: campaign.sent,            color: "bg-slate-400",    pct: 100 },
                 { label: "Lidos",       value: campaign.read,            color: "bg-blue-500",     pct: openPct },
                 { label: "Responderam", value: campaign.replied,         color: "bg-sky-500",      pct: replyPct },
+                { label: "Orçados",     value: campaign.orcados,         color: "bg-indigo-500",   pct: orcadosPct },
                 { label: "Interessados",value: campaign.interested,      color: "bg-emerald-500",  pct: interPct },
               ].map((step, i) => (
                 <div key={step.label} className="flex items-center gap-1 flex-1">
@@ -321,6 +325,7 @@ function CampaignDetailsDialog({ campaign, open, onClose }: {
 function CampaignCard({ campaign, onAnalyze }: { campaign: Campaign; onAnalyze: () => void }) {
   const openPct  = pct(campaign.read,      campaign.sent)
   const replyPct = pct(campaign.replied,   campaign.sent)
+  const orcadosPct = pct(campaign.orcados,   campaign.sent)
   const interPct = pct(campaign.interested,campaign.sent)
   const alert    = needsAttention(campaign)
 
@@ -384,6 +389,7 @@ function CampaignCard({ campaign, onAnalyze }: { campaign: Campaign; onAnalyze: 
             { label: "Enviados",     value: campaign.sent,        rate: null,     dotCls: "bg-slate-400" },
             { label: "Lidos",        value: campaign.read,        rate: openPct,  dotCls: "bg-blue-500"  },
             { label: "Responderam",  value: campaign.replied,     rate: replyPct, dotCls: "bg-sky-500"   },
+            { label: "Orçados",      value: campaign.orcados,     rate: orcadosPct, dotCls: "bg-indigo-500" },
             { label: "Interessados", value: campaign.interested,  rate: interPct, dotCls: "bg-emerald-500" },
             { label: "FUPs",         value: campaign.followups,   rate: null,     dotCls: "bg-amber-500" },
           ].map((step, i) => (
