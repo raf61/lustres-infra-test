@@ -18,6 +18,7 @@ const PUBLIC_ROUTES = [
   "/api/auth",      // Rotas de autenticação do Auth.js
   "/proposta",          // Proposta comercial pública — Casarão Lustres
   "/proposta-petfun",   // Apresentação comercial pública — Pet Fun
+  "/proposta-klin",     // Proposta comercial pública — Dental Klin
 ] as const
 
 // ============================================================================
