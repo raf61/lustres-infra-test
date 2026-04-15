@@ -376,7 +376,7 @@ export default function PropostaKlinPage() {
             {/* Opção A */}
             <div className="fu d3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-6 flex flex-col">
               <p className="text-[#4ade80]/50 text-xs uppercase tracking-[.15em] mb-4">Opção A · Fixo</p>
-              <p className="text-white text-3xl font-bold mb-6">R$ 13.100</p>
+              <p className="text-white text-3xl font-bold mb-6">2× de R$ 6.550</p>
               <div className="space-y-3 flex-1">
                 {[
                   "Implantação completa em até 7 dias",
