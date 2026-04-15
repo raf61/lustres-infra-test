@@ -3,7 +3,7 @@ import Image from "next/image"
 
 export const metadata: Metadata = {
   title: "Proposta · Vopy × Dental Klin",
-  description: "Captação de dentistas parceiros em massa para a Dental Klin.",
+  description: "Credenciamento de dentistas parceiros em massa para a Dental Klin.",
 }
 
 /* ─── Illustrations ────────────────────────────────────────────────── */
@@ -150,10 +150,21 @@ export default function PropostaKlinPage() {
         <div className="max-w-3xl mx-auto">
           <p className="fi d1 text-[#4ade80]/60 text-xs tracking-[.18em] uppercase mb-7">Proposta · Vopy × Dental Klin</p>
           <h1 className="fu d2 text-[2rem] md:text-[2.8rem] font-bold leading-[1.18] tracking-tight mb-5 max-w-2xl">
-            Dental Klin — captação de dentistas parceiros em massa.
+            Dental Klin — credenciamento de dentistas parceiros em massa.
           </h1>
           <p className="fu d3 text-white/45 text-base md:text-lg leading-relaxed max-w-xl">
-            Disparo em massa, I.A conversacional, organização de leads e WhatsApp centralizado — integrado ao ERP.
+            Disparo em massa, I.A conversacional, organização de oportunidades e WhatsApp centralizado — integrado ao ERP.
+          </p>
+        </div>
+      </section>
+
+      {/* ── OBJETIVO ── */}
+      <section className="px-5 py-16 md:px-14 md:py-20 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="fu d1 text-[#16a34a] text-xs font-medium uppercase tracking-[.15em] mb-2">Objetivo</p>
+          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-6">Credenciar dentistas parceiros em escala</h2>
+          <p className="fu d3 text-white/40 text-sm md:text-base leading-relaxed max-w-xl">
+            A equipe já sabe conduzir o credenciamento. A I.A amplia o alcance — milhares de primeiros contatos simultâneos, qualificando e entregando o dentista pronto para a representante finalizar.
           </p>
         </div>
       </section>
@@ -224,7 +235,7 @@ export default function PropostaKlinPage() {
               },
               {
                 Ilu: IlluKanban,
-                title: "Organização automática de leads",
+                title: "Organização automática de oportunidades",
                 desc: "A I.A categoriza cada dentista por status e prioridade. Sem input manual.",
               },
               {
@@ -259,14 +270,15 @@ export default function PropostaKlinPage() {
       <section className="px-5 py-16 md:px-14 md:py-20 border-b border-white/[0.07]">
         <div className="max-w-3xl mx-auto">
           <p className="fu d1 text-[#16a34a] text-xs font-medium uppercase tracking-[.15em] mb-2">03</p>
-          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-10">Implantação</h2>
+          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-3">Implantação em 7 dias</h2>
+          <p className="fu d3 text-white/35 text-sm mb-10">Da integração ao primeiro disparo.</p>
 
           {/* timeline desktop */}
           <div className="mb-10 hidden md:flex items-center">
             {[
-              { label: "Configuração" },
               { label: "Integração ERP" },
               { label: "Setup WhatsApp" },
+              { label: "Definição da I.A" },
               { label: "Go-live" },
             ].map((item, i, arr) => (
               <div key={item.label} className="flex items-center flex-1">
@@ -287,18 +299,18 @@ export default function PropostaKlinPage() {
             {[
               {
                 num: "01",
-                phase: "Configuração",
-                desc: "Mapeamos o processo de captação, definimos as etapas, critérios de qualificação e o tom da I.A.",
-              },
-              {
-                num: "02",
                 phase: "Integração com o ERP",
                 desc: "Conectamos ao sistema da Dental Klin para puxar a base de dentistas e sincronizar dados.",
               },
               {
-                num: "03",
+                num: "02",
                 phase: "Setup do WhatsApp",
-                desc: "Configuramos os números na API oficial da Meta. Verificação da empresa, templates de mensagem e testes.",
+                desc: "Configuramos os números na API oficial da Meta — criação da Business Manager, verificação da empresa, registro dos números e aprovação dos templates de mensagem.",
+              },
+              {
+                num: "03",
+                phase: "Definição do processo da I.A",
+                desc: "Definimos o que a I.A vai falar, quais perguntas fazer, como qualificar o interesse, quando passar para a representante e o tom de cada etapa da conversa.",
               },
               {
                 num: "04",
@@ -315,6 +327,113 @@ export default function PropostaKlinPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── O QUE CONFIGURAMOS ── */}
+      <section className="px-5 py-16 md:px-14 md:py-20 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="fu d1 text-[#16a34a] text-xs font-medium uppercase tracking-[.15em] mb-2">Detalhes</p>
+          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-8">Também cuidamos dos detalhes</h2>
+
+          <div className="fu d3 space-y-3">
+            {[
+              "Criação e configuração da Business Manager (Meta)",
+              "Verificação da empresa junto à Meta",
+              "Registro e configuração dos números de WhatsApp na API oficial",
+              "Criação e aprovação dos templates de mensagem",
+              "Integração com o ERP para importação da base de dentistas",
+              "Configuração completa da I.A — tom, perguntas, qualificação e regras de passagem",
+              "Testes de disparo e ajustes antes do go-live",
+            ].map((t) => (
+              <div key={t} className="flex items-start gap-3">
+                <span className="text-[#4ade80]/40 text-sm mt-px">-</span>
+                <p className="text-white/45 text-sm leading-relaxed">{t}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── DISCLAIMER ── */}
+      <section className="px-5 py-12 md:px-14 md:py-16 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <div className="fu d2 rounded-xl border border-white/[0.05] bg-white/[0.015] px-6 py-5">
+            <p className="text-white/30 text-sm leading-relaxed">
+              Em casos raros, a Meta pode demorar mais que o normal para verificar a empresa ou aprovar templates de mensagem. Não depende de nós, mas vale o aviso.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── INVESTIMENTO ── */}
+      <section className="px-5 py-16 md:px-14 md:py-20 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="fu d1 text-[#16a34a] text-xs font-medium uppercase tracking-[.15em] mb-2">Investimento</p>
+          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-10">Duas opções</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Opção A */}
+            <div className="fu d3 rounded-xl border border-white/[0.07] bg-white/[0.02] p-6 flex flex-col">
+              <p className="text-[#4ade80]/50 text-xs uppercase tracking-[.15em] mb-4">Opção A · Fixo</p>
+              <p className="text-white text-3xl font-bold mb-6">R$ 13.100</p>
+              <div className="space-y-3 flex-1">
+                {[
+                  "Implantação completa em até 7 dias",
+                  "Todos os módulos incluídos",
+                  "Sistema posteriormente adaptável para CRM",
+                ].map((t) => (
+                  <div key={t} className="flex items-start gap-3">
+                    <span className="text-[#4ade80]/40 text-sm mt-px">-</span>
+                    <p className="text-white/45 text-sm leading-relaxed">{t}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Opção B */}
+            <div className="fu d4 rounded-xl border border-[#4ade80]/15 bg-[#4ade80]/[0.02] p-6 flex flex-col">
+              <p className="text-[#4ade80]/50 text-xs uppercase tracking-[.15em] mb-4">Opção B · Fixo + Variável</p>
+              <p className="text-white text-3xl font-bold mb-2">Fixo + por dentista credenciado</p>
+              <p className="text-white/25 text-xs mb-6">valor fixo menor + variável por resultado</p>
+              <div className="space-y-3 flex-1">
+                {[
+                  "Valor fixo reduzido pela implantação",
+                  "Valor por dentista parceiro vindo dos disparos",
+                  "Alinha o investimento ao resultado real",
+                  "Valores e formato abertos para conversa",
+                ].map((t) => (
+                  <div key={t} className="flex items-start gap-3">
+                    <span className="text-[#4ade80]/40 text-sm mt-px">-</span>
+                    <p className="text-white/45 text-sm leading-relaxed">{t}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── NEGOCIAÇÃO ── */}
+      <section className="px-5 py-12 md:px-14 md:py-16 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="fu d2 text-white/40 text-sm md:text-base leading-relaxed max-w-xl">
+            Nosso objetivo é trazer dentistas credenciados. O trabalho só faz sentido se isso acontecer — então estamos abertos a alternativas.
+          </p>
+        </div>
+      </section>
+
+      {/* ── GARANTIA ── */}
+      <section className="px-5 py-12 md:px-14 md:py-16 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="fu d1 text-[#16a34a] text-xs font-medium uppercase tracking-[.15em] mb-2">Garantia</p>
+          <h2 className="fu d2 text-xl md:text-2xl font-bold mb-6">Garantia por contrato</h2>
+          <p className="fu d3 text-white/40 text-sm md:text-base leading-relaxed mb-4 max-w-xl">
+            Se o sistema não funcionar como descrito nesta proposta — disparos em massa, I.A conversacional, organização automática de oportunidades, integração com o ERP e WhatsApp centralizado — devolvemos o valor integral.
+          </p>
+          <p className="fu d4 text-white/30 text-sm leading-relaxed max-w-xl">
+            Condicionada ao cumprimento das etapas da Dental Klin: acesso ao ERP, dados da empresa para verificação na Meta e disponibilidade para definição do processo da I.A.
+          </p>
         </div>
       </section>
 
