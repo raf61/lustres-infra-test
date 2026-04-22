@@ -363,7 +363,7 @@ export default function ClientesPage() {
       <div className="grid grid-cols-4 gap-3">
         {[
           { label: "Total da Base", value: "3.847", sub: "clientes cadastrados", icon: Users, accentCls: "bg-blue-500", iconCls: "text-blue-500" },
-          { label: "Ativos", value: String(totalAtivos), sub: "apólices vigentes", icon: Shield, accentCls: "bg-emerald-500", iconCls: "text-emerald-500" },
+          { label: "Ativos", value: String(totalAtivos), sub: "apólices perdidas", icon: Shield, accentCls: "bg-emerald-500", iconCls: "text-emerald-500" },
           { label: "Próx. Renovações", value: String(totalRenov), sub: "nos próximos 30 dias", icon: Clock, accentCls: "bg-amber-500", iconCls: "text-amber-500" },
           { label: "Sem Seguro Ativo", value: String(totalInativos), sub: "candidatos à reativação", icon: AlertTriangle, accentCls: "bg-slate-400", iconCls: "text-slate-500" },
         ].map(kpi => (

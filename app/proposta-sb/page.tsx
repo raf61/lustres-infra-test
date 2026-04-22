@@ -204,7 +204,7 @@ export default function PropostaSBPage() {
               {
                 Ilu: IlluBase,
                 title: "Reativação de base",
-                desc: "Apólices vigentes, clientes antigos e cotações não fechadas são oportunidade contínua de receita — e hoje ficam paradas na base.",
+                desc: "Apólices não renovadas, clientes antigos e cotações não fechadas são oportunidade contínua de receita — e hoje ficam paradas na base.",
               },
               {
                 Ilu: IlluResponseTime,
@@ -367,7 +367,7 @@ export default function PropostaSBPage() {
             {[
               {
                 area: "Atendimento",
-                items: ["Agente de I.A no WhatsApp", "Cotação automática de auto", "Handoff automático para corretor", "Padronização do processo comercial"],
+                items: ["Agente de I.A no WhatsApp", "Handoff automático para corretor", "Padronização do processo comercial"],
               },
               {
                 area: "Gestão comercial",
@@ -474,6 +474,18 @@ export default function PropostaSBPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── COMPROMISSO ── */}
+      <section className="px-5 py-14 md:px-14 md:py-20 border-b border-white/[0.07]">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl font-bold leading-snug mb-5 max-w-2xl">
+            A personalização é <span className="text-[#4ade80]">extrema</span>.
+          </p>
+          <p className="text-white/45 text-sm md:text-base leading-relaxed max-w-xl">
+            O objetivo final não é cumprir uma lista de entregáveis — é aumentar a receita da Santa Bárbara. Cada entregável existe para isso, e se ajustes forem necessários no caminho, ajustamos.
+          </p>
         </div>
       </section>
 
