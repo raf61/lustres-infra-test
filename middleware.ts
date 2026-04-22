@@ -19,6 +19,7 @@ const PUBLIC_ROUTES = [
   "/proposta",          // Proposta comercial pública — Casarão Lustres
   "/proposta-petfun",   // Apresentação comercial pública — Pet Fun
   "/proposta-klin",     // Proposta comercial pública — Dental Klin
+  "/proposta-sb",       // Proposta comercial pública — Santa Bárbara Seguros
 ] as const
 
 // ============================================================================

@@ -332,6 +332,18 @@ export function DashboardLayout({ children, hideHeader = false }: DashboardLayou
           </header>
         )}
 
+        {/* Floating mobile menu button when header is hidden */}
+        {hideHeader && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-3 left-3 z-40 lg:hidden h-9 w-9 rounded-full bg-card/80 backdrop-blur shadow-md border border-border/50 text-foreground hover:bg-card"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        )}
+
         {/* Page content */}
         <main className={cn(
           "bg-background flex-1",
